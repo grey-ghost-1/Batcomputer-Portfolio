@@ -1182,7 +1182,7 @@ body,
 .skyline-wrap .skyline {
     object-fit: cover;
     object-position: center 15%;
-    filter: drop-shadow(0 0 10px #00bfff);
+    filter: none;
 }
 
 .hero .topbar-brand h1 {
