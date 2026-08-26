@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IT Support | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="/">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
   <header class="detail-header">
     <p class="eyebrow">IT Support</p>
@@ -37,6 +49,24 @@
       <li>Voice-input and spoken-response flow for hands-free interaction</li>
       <li>Faster website and weather answers through direct support-style routing</li>
     </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Featured Projects</h2>
+    <ul>
+      <li><a href="projects/device-troubleshooting-toolkit.html"><strong>Device Troubleshooting Toolkit</strong></a> — Developed a Python-based GUI application capable of diagnosing CPU load, RAM usage, disk health, driver issues, and network connectivity problems. Designed to replicate real help desk diagnostic workflows, providing structured output and actionable recommendations for system remediation.</li>
+      <li><a href="projects/messaging-rcs-diagnostic-simulator.html"><strong>Messaging/RCS Diagnostic Simulator</strong></a> — Built a simulation tool to test RCS/SMS fallback behavior, carrier routing issues, and message delivery reliability. Used to analyze inconsistent messaging performance across devices and networks, improving understanding of telecom protocols and troubleshooting methods.</li>
+      <li><a href="projects/system-health-checker.html"><strong>System Health Checker</strong></a> — Engineered an automated scanning utility that evaluates system updates, driver status, storage capacity, and network configuration. Consolidated results into clear reports, enabling faster identification of system vulnerabilities and maintenance needs.</li>
+      <li><a href="projects/network-diagnostic-utility.html"><strong>Network Diagnostic Utility</strong></a> — Implemented a suite of network diagnostic tools including ping, traceroute, DNS lookup, and latency measurement. Designed to assist in identifying connectivity issues, routing problems, and DNS misconfigurations in real-world support environments.</li>
+      <li><a href="projects/support-automation-scripts.html"><strong>Support Automation Scripts</strong></a> — Created Python scripts that streamline repetitive help desk tasks such as log collection, system cleanup, configuration checks, and report generation. Reduced manual workload and improved consistency across troubleshooting workflows.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Open project in VS Code</h2>
+    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
+    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
+    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
   </section>
 </main>
 </body>

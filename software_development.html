@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Software &amp; Automation | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="/">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
   <header class="detail-header">
     <p class="eyebrow">Software &amp; Automation</p>
@@ -37,6 +49,24 @@
       <li>One-command PowerShell launcher for starting the latest Alfred site</li>
       <li>Automated verification with unit tests and smoke checks</li>
     </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Featured Projects</h2>
+    <ul>
+      <li><a href="projects/alfred-ai-assistant.html"><strong>Alfred AI Assistant</strong></a> — Engineered a fully local Python-based AI assistant featuring wake-word detection, speech-to-text, text-to-speech, and a Flask backend. Integrated modular automation functions to execute system tasks, retrieve information, and interact with desktop workflows, demonstrating strong capability in Python automation and AI-driven utility development.</li>
+      <li><a href="projects/personal-dashboard-web-app.html"><strong>Personal Dashboard Web App</strong></a> — Built a Flask/FastAPI-powered dashboard that aggregates system metrics, weather data, and network information through REST APIs. Implemented dynamic UI components, real-time data polling, and modular API endpoints to create an interactive monitoring interface suitable for personal or operational use.</li>
+      <li><a href="projects/file-automation-toolkit.html"><strong>File Automation Toolkit</strong></a> — Developed a suite of Python automation scripts capable of organizing directories, renaming files based on patterns, compressing archives, and syncing folder structures. Designed for efficiency and repeatability, reducing manual workload and improving file management workflows.</li>
+      <li><a href="projects/rest-api-backend.html"><strong>REST API Backend</strong></a> — Implemented a FastAPI backend with JWT authentication, structured routing, and full CRUD operations. Built reusable service layers, validation schemas, and secure authentication flows, showcasing backend engineering fundamentals and API lifecycle understanding.</li>
+      <li><a href="projects/portfolio-website.html"><strong>Portfolio Website</strong></a> — Designed and deployed a personal website to showcase projects, technical skills, and interactive demos. Focused on clean UI, responsive layout, and clear project presentation to support professional branding and visibility.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Open project in VS Code</h2>
+    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
+    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
+    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
   </section>
 </main>
 </body>

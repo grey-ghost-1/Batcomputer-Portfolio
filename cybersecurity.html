@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cyber Security | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="/">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
   <header class="detail-header">
     <p class="eyebrow">Cyber Security</p>
@@ -37,6 +49,24 @@
       <li>Guarded assistant behavior designed to reduce risky or misleading actions</li>
       <li>Test-backed updates that verify the safer behavior remains intact</li>
     </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Featured Projects</h2>
+    <ul>
+      <li><a href="projects/network-scanner.html"><strong>Network Scanner</strong></a> — Created a Python-based multithreaded network scanner capable of probing IP ranges, detecting open ports, and identifying running services. Implemented socket-level communication, concurrency, and structured output formatting to support reconnaissance and network mapping tasks.</li>
+      <li><a href="projects/siem-log-analyzer.html"><strong>SIEM Log Analyzer</strong></a> — Built a simulated SIEM ingestion pipeline that parses logs, identifies anomalies, and flags suspicious patterns. Developed regex-based detection, timestamp correlation, and event categorization to mirror real-world Blue Team log analysis workflows.</li>
+      <li><a href="projects/vulnerability-assessment-toolkit.html"><strong>Vulnerability Assessment Toolkit</strong></a> — Developed a Python utility that queries CVE databases and cross-references installed software versions to identify potential vulnerabilities. Automated data retrieval, parsing, and reporting to support vulnerability management and risk assessment.</li>
+      <li><a href="projects/password-cracking-lab.html"><strong>Password Cracking Lab</strong></a> — Conducted controlled password cracking exercises using Hashcat and Python to understand hashing algorithms, brute-force strategies, and defensive password policies. Documented results to strengthen knowledge of authentication weaknesses and mitigation techniques.</li>
+      <li><a href="projects/owasp-juice-shop-testing.html"><strong>OWASP Juice Shop Testing</strong></a> — Performed hands-on web application security testing aligned with OWASP Top 10 vulnerabilities. Executed practical exploits including injection, broken authentication, insecure direct object references, and cross-site scripting to build real-world offensive and defensive security awareness.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Open project in VS Code</h2>
+    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
+    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
+    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
   </section>
 </main>
 </body>

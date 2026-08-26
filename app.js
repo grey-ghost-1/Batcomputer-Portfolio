@@ -6,6 +6,7 @@ const startVoiceInputButton = document.getElementById("startVoiceInput");
 const alfredChatLogElement = document.getElementById("alfred-chat-log");
 const alfredChatInputElement = document.getElementById("alfred-chat-input");
 const alfredChatSendButton = document.getElementById("alfred-chat-send");
+const alfredApiBase = window.location.port === "8080" ? "http://127.0.0.1:5000" : "";
 
 function normalizePanelId(panelId) {
     return panelIds.has(panelId) ? panelId : "about";
@@ -139,21 +140,39 @@ function speakAssistantResponse(message) {
     window.speechSynthesis.speak(utterance);
 }
 
+function buildLocalAlfredReply(message) {
+    const normalized = message.toLowerCase();
+    if (normalized.includes("status") || normalized.includes("health")) {
+        return "Standalone mode is online. The HUD is loaded, but the Flask service is not connected.";
+    }
+    if (normalized.includes("help") || normalized.includes("what can")) {
+        return "I can answer basic status questions in standalone mode. Start the Flask server for live system actions, weather, and coding-agent features.";
+    }
+    return "I am ready to help. Ask me about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
+}
+
 async function sendAlfredMessage(message) {
     setRedesignStatus("Alfred is responding…");
     const pendingEntry = appendPendingAssistantEntry();
-    const response = await fetch("/alfred", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-        throw new Error(payload.error || "Unable to reach Alfred.");
+    try {
+        const response = await fetch(`${alfredApiBase}/alfred`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message }),
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+            throw new Error(payload.error || "Unable to reach Alfred.");
+        }
+        updateChatEntry(pendingEntry, payload.reply || "Alfred is standing by.");
+        setRedesignStatus("Alfred is live and ready.");
+        speakAssistantResponse(payload.reply || "Alfred is standing by.");
+    } catch (error) {
+        const reply = buildLocalAlfredReply(message);
+        updateChatEntry(pendingEntry, reply);
+        setRedesignStatus("Standalone mode: Flask service unavailable.", true);
+        speakAssistantResponse(reply);
     }
-    updateChatEntry(pendingEntry, payload.reply || "Alfred is standing by.");
-    setRedesignStatus("Alfred is live and ready.");
-    speakAssistantResponse(payload.reply || "Alfred is standing by.");
 }
 
 async function submitChatMessage() {

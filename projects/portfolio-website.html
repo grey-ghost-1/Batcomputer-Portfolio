@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Website | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">Software &amp; Automation</p>
+    <h1>Portfolio Website</h1>
+    <p class="detail-focus">Designed and deployed a personal website to showcase projects, technical skills, and interactive demos. Focused on clean UI, responsive layout, and clear project presentation to support professional branding and visibility. This HUD-style site itself is the deliverable: a Flask-served resume with an embedded live assistant and per-project detail pages.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>&lt;nav class="resume-nav" aria-label="Resume sections"&gt;
+  &lt;a class="hud-btn nav-link-btn" href="/software-development"&gt;Software &amp;amp; Automation&lt;/a&gt;
+  &lt;a class="hud-btn nav-link-btn" href="/cybersecurity"&gt;Cyber Security&lt;/a&gt;
+  &lt;a class="hud-btn nav-link-btn" href="/it-support"&gt;IT Support&lt;/a&gt;
+  &lt;a class="hud-btn nav-link-btn" href="/network-software"&gt;Network&lt;/a&gt;
+&lt;/nav&gt;
+
+@app.route("/projects/&lt;string:slug&gt;")
+def project_detail_page(slug):
+    return send_from_directory(str(BASE_DIR / "projects"), f"{slug}.html")
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Each category page links out to a dedicated project page like this one, with a full write-up, a code excerpt, and a runnable example.</p>
+    <pre><code>/software-development → Featured Projects → "Portfolio Website" → /projects/portfolio-website</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The portfolio combines Flask routing with static HTML project pages, shared CSS, browser JavaScript, Alfred chat, and explicit proposal-review controls to present technical work through an interactive HUD.</p>
+    <ul><li>Flask maps clean routes to category and project pages.</li><li>Shared CSS keeps the visual language consistent.</li><li>Browser JavaScript powers chat, panels, voice, and review controls.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include responsive project presentation, category navigation, project detail pages, embedded Alfred chat, voice support, and proposal review. Next additions should include project metadata, automated link checks, accessibility testing, image-backed demonstrations, analytics, and a published repository link.</p>
+    <p><strong>Visuals:</strong> route map, homepage HUD view, project detail layout, and assistant interaction flow.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add project metadata, automated link checks, accessibility tests, image-backed demonstrations, analytics, and a published repository link.</p><pre><code>GET /api/site/summary
+categories=5
+projects=20
+route_check=all project pages returned 200</code></pre><p><strong>Simulation:</strong> the Flask site served the homepage, category routes, project pages, and Alfred console as one navigable portfolio.</p></section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Software Automation\portfolio-website</code></p><p>Run: <code>python main.py path\to\Website</code></p><p>The current build inventories HTML pages for portfolio verification.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>PORTFOLIO HUD / ROUTE MAP</span><span class="visual-status">SERVING</span></div><div class="visual-grid"><div class="visual-metric">Categories<strong>5</strong></div><div class="visual-metric">Projects<strong>20</strong></div><div class="visual-metric">Routes<strong>100%</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>HTML pages</span><i style="width:100%"></i><b>READY</b></div><div class="visual-bar"><span>Alfred console</span><i style="width:90%"></i><b>LIVE</b></div></div></section>
+</main>
+</body>
+</html>

@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Network | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="/">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
   <header class="detail-header">
     <p class="eyebrow">Network</p>
@@ -37,6 +49,24 @@
       <li>Diagnostic-oriented content for connected systems and operations work</li>
       <li>Automation direction aligned to monitoring, visibility, and support workflows</li>
     </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Featured Projects</h2>
+    <ul>
+      <li><a href="projects/network-monitoring-dashboard.html"><strong>Network Monitoring Dashboard</strong></a> — Built an SNMP-powered monitoring dashboard that tracks device uptime, latency, bandwidth usage, and alert conditions. Integrated real-time polling and visualizations to support network operations and infrastructure oversight.</li>
+      <li><a href="projects/ping-latency-analyzer.html"><strong>Ping &amp; Latency Analyzer</strong></a> — Developed a multithreaded Python tool that performs continuous ping tests, packet loss detection, and latency analysis across multiple hosts. Useful for diagnosing intermittent network issues and monitoring connection stability.</li>
+      <li><a href="projects/subnet-calculator.html"><strong>Subnet Calculator</strong></a> — Implemented a Python CLI utility that computes CIDR ranges, usable host counts, broadcast addresses, and network boundaries. Designed to support subnet planning, network segmentation, and infrastructure documentation.</li>
+      <li><a href="projects/api-based-network-inventory-tool.html"><strong>API-Based Network Inventory Tool</strong></a> — Built a system that retrieves device information from network APIs and stores it in a structured database. Enables automated inventory tracking, device classification, and infrastructure mapping for network operations.</li>
+      <li><a href="projects/automated-device-configuration-utility.html"><strong>Automated Device Configuration Utility</strong></a> — Created an SSH automation tool that pushes configuration files to routers and switches, validates changes, and logs results. Demonstrates infrastructure scripting skills and supports scalable network configuration management.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Open project in VS Code</h2>
+    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
+    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
+    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
   </section>
 </main>
 </body>

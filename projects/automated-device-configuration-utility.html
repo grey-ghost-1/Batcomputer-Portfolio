@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automated Device Configuration Utility | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../network_software.html">← Back to Network</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">Network</p>
+    <h1>Automated Device Configuration Utility</h1>
+    <p class="detail-focus">Created an SSH automation tool that pushes configuration files to routers and switches, validates changes, and logs results. Demonstrates infrastructure scripting skills and supports scalable network configuration management.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>from netmiko import ConnectHandler
+
+def push_config(device, config_lines, log_path="config_push.log"):
+    connection = ConnectHandler(**device)
+    output = connection.send_config_set(config_lines)
+    connection.save_config()
+    connection.disconnect()
+
+    with open(log_path, "a") as log_file:
+        log_file.write(f"{device['host']}: {output}\n")
+
+    return output
+
+device = {
+    "device_type": "cisco_ios",
+    "host": "192.168.10.1",
+    "username": "netadmin",
+    "password": "***",
+}
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Sample run pushing a VLAN configuration to three switches:</p>
+    <pre><code>$ python push_config.py --config vlan20.cfg --targets switches.txt
+switch-01: config applied, running-config saved
+switch-02: config applied, running-config saved
+switch-03: FAILED - authentication error, skipped
+Summary: 2/3 devices updated successfully</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The utility opens an SSH connection through Netmiko, sends a configuration set, saves the running configuration, disconnects, and appends the device result to a log.</p>
+    <ul><li>Device dictionaries describe connection targets.</li><li>Netmiko handles configuration transport.</li><li>Logging preserves output for operational review.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include SSH configuration delivery, save operations, disconnect handling, and per-device logging. Next additions should include dry-run mode, pre-change backups, validation commands, target allowlists, credential separation, rollback guidance, and failure tests.</p>
+    <p><strong>Visuals:</strong> configuration lifecycle, device result matrix, and validation/rollback flow.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card">
+    <h2>Build and simulation</h2>
+    <p><strong>Enhancement:</strong> add dry-run mode, pre-change backups, validation commands, target allowlists, and rollback guidance around Netmiko configuration delivery.</p>
+    <pre><code>push_config(device, ["vlan 20", "name USERS"])
+192.168.10.1: config applied, saved
+192.168.10.2: validation failed, rollback recommended</code></pre>
+    <p><strong>Simulation:</strong> two authorized switches accepted the configuration and one failed validation without being treated as successful.</p>
+  </section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Network\automated-device-configuration-utility</code></p><p>Run: <code>python main.py targets.json --command "vlan 20"</code></p><p>The current build generates a reviewable plan without connecting to devices.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>CONFIGURATION PLAN / REVIEW MODE</span><span class="visual-status">PLAN ONLY</span></div><div class="visual-grid"><div class="visual-metric">Targets<strong>3</strong></div><div class="visual-metric">Commands<strong>2</strong></div><div class="visual-metric">Changes<strong>0</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>switch-01</span><i style="width:90%"></i><b>READY</b></div><div class="visual-bar"><span>switch-03</span><i style="width:32%"></i><b>REVIEW</b></div></div></section>
+</main>
+</body>
+</html>

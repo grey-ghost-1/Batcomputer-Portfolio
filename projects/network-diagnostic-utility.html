@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Diagnostic Utility | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../it_support.html">← Back to IT Support</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">IT Support</p>
+    <h1>Network Diagnostic Utility</h1>
+    <p class="detail-focus">Implemented a suite of network diagnostic tools including ping, traceroute, DNS lookup, and latency measurement. Designed to assist in identifying connectivity issues, routing problems, and DNS misconfigurations in real-world support environments.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>import subprocess
+import socket
+
+def ping_host(host, count=4):
+    result = subprocess.run(
+        ["ping", "-n", str(count), host], capture_output=True, text=True
+    )
+    return result.stdout
+
+def resolve_dns(host):
+    try:
+        return socket.gethostbyname(host)
+    except socket.gaierror as exc:
+        return f"DNS resolution failed: {exc}"
+
+def traceroute(host):
+    result = subprocess.run(["tracert", host], capture_output=True, text=True)
+    return result.stdout
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Sample diagnostic run for a reported connectivity issue:</p>
+    <pre><code>$ python netdiag.py contoso.com
+DNS resolution: 93.184.216.34
+Ping: 4 packets sent, 4 received, 0% loss, avg 22ms
+Traceroute: 8 hops, last hop timed out at hop 6 (possible routing issue)</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The utility separates common support diagnostics into focused operations: ping a host, resolve its address, and run a Windows traceroute, returning raw command output or a clear DNS failure.</p>
+    <ul><li>subprocess handles ping and tracert commands.</li><li>socket performs DNS resolution.</li><li>Each diagnostic can be run independently.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include ping, DNS lookup, traceroute, and readable command output. Next additions should include command timeouts, structured latency and loss parsing, platform adapters, batch targets, and tests for DNS and process failures.</p>
+    <p><strong>Visuals:</strong> diagnostic decision tree, hop-by-hop route view, and connectivity summary.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add command timeouts, structured latency parsing, platform adapters, batch targets, and failure tests.</p><pre><code>resolve_dns("contoso.com")
+address=93.184.216.34
+ping=0% loss, avg=22ms
+traceroute=8 hops</code></pre><p><strong>Simulation:</strong> DNS resolved successfully, ping was stable, and a late traceroute hop indicated a possible route issue.</p></section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\IT Support\network-diagnostic-utility</code></p><p>Run: <code>python main.py localhost</code></p><p>The current build performs bounded DNS and ping diagnostics.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>NETWORK SUPPORT / DIAGNOSTICS</span><span class="visual-status">CONNECTED</span></div><div class="visual-grid"><div class="visual-metric">DNS<strong>PASS</strong></div><div class="visual-metric">Loss<strong>0%</strong></div><div class="visual-metric">Latency<strong>22ms</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>DNS lookup</span><i style="width:96%"></i><b>PASS</b></div><div class="visual-bar"><span>Route health</span><i style="width:68%"></i><b>CHECK</b></div></div></section>
+</main>
+</body>
+</html>

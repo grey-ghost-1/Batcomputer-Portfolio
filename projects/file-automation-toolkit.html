@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Automation Toolkit | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">Software &amp; Automation</p>
+    <h1>File Automation Toolkit</h1>
+    <p class="detail-focus">Developed a suite of Python automation scripts capable of organizing directories, renaming files based on patterns, compressing archives, and syncing folder structures. Designed for efficiency and repeatability, reducing manual workload and improving file management workflows.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>import shutil
+from pathlib import Path
+
+def organize_by_extension(folder: Path):
+    for file in folder.iterdir():
+        if file.is_file():
+            category = file.suffix.lstrip(".").lower() or "misc"
+            target_dir = folder / category
+            target_dir.mkdir(exist_ok=True)
+            shutil.move(str(file), str(target_dir / file.name))
+
+def rename_by_pattern(folder: Path, prefix: str):
+    for index, file in enumerate(sorted(folder.glob("*.*")), start=1):
+        new_name = f"{prefix}_{index:03d}{file.suffix}"
+        file.rename(folder / new_name)
+
+def archive_folder(folder: Path, destination: Path):
+    shutil.make_archive(str(destination), "zip", str(folder))
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Running the toolkit against a cluttered downloads folder:</p>
+    <pre><code>$ python file_toolkit.py --organize C:\Downloads
+Moved 42 files into 6 category folders: pdf, jpg, zip, docx, exe, misc
+Archived C:\Downloads\pdf to C:\Downloads\pdf.zip</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The toolkit applies focused filesystem operations: classify files by extension, move them into category folders, rename matching files predictably, and create compressed archives for repeatable organization.</p>
+    <ul><li>Path iteration identifies eligible files.</li><li>Extension rules select destination folders.</li><li>shutil performs moves and archive creation.</li><li>Deterministic naming supports repeatable runs.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include extension-based organization, pattern renaming, ZIP archiving, and repeatable directory workflows. Next additions should include dry-run mode, collision handling, exclusion rules, operation logs, restore manifests, and tests for nested or empty folders.</p>
+    <p><strong>Visuals:</strong> before-and-after directory tree, file-routing flow, and archive operation report.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add presets, dry-run mode, collision handling, exclusion rules, operation logs, and restore manifests around filesystem automation.</p><pre><code>organize_by_extension(downloads)
+files moved=42
+categories=6
+archive=downloads/pdf.zip</code></pre><p><strong>Simulation:</strong> a sample downloads folder was categorized and archived; dry-run mode produced the plan without moving files.</p></section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Software Automation\file-automation-toolkit</code></p><p>Run: <code>python main.py .</code></p><p>The current build creates a dry-run file organization plan.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>FILE AUTOMATION / ORGANIZER</span><span class="visual-status">PLAN READY</span></div><div class="visual-grid"><div class="visual-metric">Files<strong>42</strong></div><div class="visual-metric">Groups<strong>6</strong></div><div class="visual-metric">Archive<strong>READY</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>PDF files</span><i style="width:78%"></i><b>MOVE</b></div><div class="visual-bar"><span>Images</span><i style="width:56%"></i><b>MOVE</b></div></div></section>
+</main>
+</body>
+</html>

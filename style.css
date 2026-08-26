@@ -1,3 +1,8 @@
+:root {
+    --neon-grey: #d8d8d8;
+    --neon-grey-glow: rgba(216, 216, 216, 0.55);
+}
+
 body {
     margin: 0;
     min-height: 100vh;
@@ -35,9 +40,6 @@ textarea {
 .hud-grid {
     position: fixed;
     inset: 0;
-    background-image: linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px);
-    background-size: 40px 40px;
-    opacity: 0.25;
     pointer-events: none;
 }
 
@@ -57,7 +59,7 @@ textarea {
     gap: 40px;
     margin-bottom: 30px;
     padding: 14px 0 22px;
-    border-bottom: 1px solid #262626;
+    border-bottom: 1px solid var(--neon-grey);
 }
 
 .topbar-brand h1 {
@@ -80,7 +82,7 @@ textarea {
     gap: 42px;
     margin-bottom: 38px;
     padding: 18px 0 24px;
-    border-bottom: 1px solid #202020;
+    border-bottom: 1px solid var(--neon-grey);
 }
 
 .alfred-hero-copy h1 {
@@ -125,7 +127,7 @@ textarea {
 
 .hud-btn {
     padding: 10px 16px;
-    border: 1px solid #343434;
+    border: 1px solid var(--neon-grey);
     background: transparent;
     color: #e6e6e6;
     text-transform: uppercase;
@@ -139,8 +141,8 @@ textarea {
 .hud-btn:focus-visible,
 .hud-btn.active {
     background: rgba(255, 255, 255, 0.04);
-    border-color: #888;
-    box-shadow: none;
+    border-color: var(--neon-grey);
+    box-shadow: 0 0 10px var(--neon-grey-glow);
     transform: translateY(-1px);
 }
 
@@ -151,12 +153,21 @@ textarea {
     text-decoration: none;
 }
 
-.panel,
 .detail-card,
 .home-link {
-    border: 1px solid #333;
-    background: #111;
-    box-shadow: 0 0 20px #000;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 8px;
+}
+
+.panel {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 8px;
 }
 
 .panel {
@@ -170,7 +181,7 @@ textarea {
     margin: 0 0 20px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--neon-grey);
     padding-bottom: 10px;
 }
 
@@ -211,8 +222,11 @@ textarea {
 
 .signal-strip span {
     padding: 10px 14px;
-    border: 1px solid #363636;
-    background: #151515;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 8px;
     color: #efefef;
     font-size: 12px;
     letter-spacing: 0.08em;
@@ -222,8 +236,11 @@ textarea {
 .runtime-card {
     margin-top: 24px;
     padding: 20px;
-    border: 1px solid #333;
-    background: #131313;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 8px;
 }
 
 .runtime-card-header {
@@ -266,7 +283,7 @@ textarea {
     width: 100%;
     box-sizing: border-box;
     padding: 14px 16px;
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--neon-grey);
     background: #0e0e0e;
     color: #ececec;
 }
@@ -319,7 +336,7 @@ textarea {
     margin: 8px 0 0;
     padding: 12px;
     overflow: auto;
-    border: 1px solid #252525;
+    border: 1px solid var(--neon-grey);
     background: #0c0c0c;
     color: #dddddd;
     white-space: pre-wrap;
@@ -337,7 +354,7 @@ textarea {
     box-sizing: border-box;
     padding: 14px 0;
     border: 0;
-    border-bottom: 1px solid #313131;
+    border-bottom: 1px solid var(--neon-grey);
     background: transparent;
     color: #ececec;
     outline: none;
@@ -367,7 +384,7 @@ textarea {
 .inline-link {
     display: inline-block;
     padding: 10px 16px;
-    border: 1px solid #444;
+    border: 1px solid var(--neon-grey);
     background: #151515;
     color: #f0f0f0;
     text-decoration: none;
@@ -380,8 +397,8 @@ textarea {
 .inline-link:focus-visible,
 .home-link:hover,
 .home-link:focus-visible {
-    border-color: #888;
-    box-shadow: 0 0 12px #444;
+    border-color: var(--neon-grey);
+    box-shadow: 0 0 12px var(--neon-grey-glow);
 }
 
 .category-grid {
@@ -392,8 +409,11 @@ textarea {
 
 .category-card {
     padding: 20px;
-    border: 1px solid #333;
-    background: #151515;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(0, 200, 255, 0.4);
+    box-shadow: 0 0 20px rgba(0, 200, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 8px;
 }
 
 .category-card h4 {
@@ -418,8 +438,8 @@ textarea {
 .category-link:hover,
 .category-link:focus-visible {
     background: #1b1b1b;
-    border-color: #888;
-    box-shadow: 0 0 12px #444;
+    border-color: var(--neon-grey);
+    box-shadow: 0 0 12px var(--neon-grey-glow);
     transform: translateY(-1px);
 }
 
@@ -455,6 +475,77 @@ textarea {
 .detail-card {
     padding: 24px;
     margin-bottom: 18px;
+}
+
+.project-visual {
+    overflow: hidden;
+}
+
+.visual-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+    color: #9fe8ff;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.visual-status {
+    color: #8ff0b5;
+}
+
+.visual-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.visual-metric {
+    min-height: 82px;
+    padding: 14px;
+    border: 1px solid rgba(0, 200, 255, 0.45);
+    background: linear-gradient(135deg, rgba(0, 160, 210, 0.14), rgba(0, 0, 0, 0.55));
+}
+
+.visual-metric strong {
+    display: block;
+    margin-top: 10px;
+    color: #f4fbff;
+    font-size: 22px;
+}
+
+.visual-bars {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.visual-bar {
+    display: grid;
+    grid-template-columns: 110px 1fr 48px;
+    align-items: center;
+    gap: 10px;
+    color: #c5dce5;
+    font-size: 11px;
+}
+
+.visual-bar i {
+    display: block;
+    height: 7px;
+    background: linear-gradient(90deg, #42d3ff, #88f3b6);
+}
+
+@media (max-width: 720px) {
+    .visual-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .visual-bar {
+        grid-template-columns: 88px 1fr 42px;
+    }
 }
 
 .detail-card ul {
@@ -503,7 +594,7 @@ textarea {
     width: 100%;
     box-sizing: border-box;
     padding: 14px 16px;
-    border: 1px solid #3a3a3a;
+    border: 1px solid var(--neon-grey);
     background: #0e0e0e;
     color: #ececec;
 }
@@ -516,7 +607,7 @@ textarea {
     margin: 0;
     padding: 14px;
     overflow: auto;
-    border: 1px solid #303030;
+    border: 1px solid var(--neon-grey);
     background: #0c0c0c;
     color: #dddddd;
     white-space: pre-wrap;

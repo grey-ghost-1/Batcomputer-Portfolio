@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Alfred Coding Agent</title>
 <link rel="stylesheet" href="style.css">
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
 </head>
 <body class="site-shell">
 <main class="detail-shell agent-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="/">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
 
   <header class="detail-header">
@@ -84,6 +96,6 @@
   </section>
 </main>
 
-<script src="alfred-agent.js"></script>
+<script src="alfred_agent.js"></script>
 </body>
 </html>

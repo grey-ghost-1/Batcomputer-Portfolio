@@ -18,12 +18,12 @@
 
     <nav class="resume-nav" aria-label="Resume sections">
       <button class="hud-btn active" type="button" data-panel="about" aria-controls="about" aria-expanded="true">About</button>
-      <a class="hud-btn nav-link-btn" href="/software-development">Software &amp; Automation</a>
-      <a class="hud-btn nav-link-btn" href="/cybersecurity">Cyber Security</a>
-      <a class="hud-btn nav-link-btn" href="/it-support">IT Support</a>
-      <a class="hud-btn nav-link-btn" href="/network-software">Network</a>
+      <a class="hud-btn nav-link-btn" href="software_development.html">Software &amp; Automation</a>
+      <a class="hud-btn nav-link-btn" href="cybersecurity.html">Cyber Security</a>
+      <a class="hud-btn nav-link-btn" href="it_support.html">IT Support</a>
+      <a class="hud-btn nav-link-btn" href="network_software.html">Network</a>
       <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">Contact</button>
-      <a class="hud-btn nav-link-btn" href="/alfred-agent">Coding Agent</a>
+      <a class="hud-btn nav-link-btn" href="alfred_agent_console.html">Coding Agent</a>
     </nav>
   </header>
 
@@ -31,7 +31,7 @@
     <div class="alfred-hero-copy">
       <p class="eyebrow">Embedded AI Assistant</p>
       <h1 id="alfredHeroHeading">Alfred</h1>
-      <p class="alfred-mission">Mission: respond live, keep the HUD sharp, and deliver expert guidance across software development, cybersecurity, IT support, and network software.</p>
+      <p class="alfred-mission">Alfred integrates voice, vision, and system control into one unified intelligence — built to automate tasks, enhance productivity, and expand what’s possible.</p>
       <p class="runtime-summary" id="redesignConsoleStatus">Speak or type naturally. Alfred is here for live assistance, technical questions, and real-time guidance through the Batcomputer.</p>
     </div>
     <section class="alfred-hero-console" aria-label="Alfred live console">
@@ -54,16 +54,6 @@
     <p class="panel-lead">I build practical systems at the intersection of software engineering, cybersecurity, infrastructure, and automation.</p>
     <p>My work is centered on turning complex technical workflows into usable tools: Python automation, backend services, operator dashboards, diagnostics, and security utilities that are clear enough to use and durable enough to trust.</p>
     <p>This HUD-style portfolio reflects the same design mindset behind Alfred and the Batcomputer project: strong interfaces, resilient automation, and systems built for real operational value instead of demos alone.</p>
-    <div class="signal-strip" aria-label="Professional focus">
-      <span>Automation-first builds</span>
-      <span>Operator-friendly tooling</span>
-      <span>Security-aware design</span>
-    </div>
-    <div class="panel-actions">
-      <a class="inline-link" href="/software-development">View software &amp; automation</a>
-      <a class="inline-link" href="#contact">Open contact panel</a>
-      <a class="inline-link" href="/alfred-agent">Launch Alfred coding agent</a>
-    </div>
   </section>
 
   <section id="skills" class="panel hidden">
@@ -92,23 +82,23 @@
     <h3>Projects</h3>
     <p class="section-intro">Each category below now reflects work already represented in the Alfred/Batcomputer build, from assistant workflows and automation to approval-gated tools and operator-focused interfaces.</p>
     <div class="category-grid">
-      <a class="category-card category-link" href="/software-development">
+      <a class="category-card category-link" href="software_development.html">
         <h4>Software &amp; Automation</h4>
         <p>Alfred live assistant, Batcomputer HUD updates, Flask routing, Ollama integration, launcher automation, and verification workflows tied to real shipped behavior.</p>
       </a>
-      <a class="category-card category-link" href="/cybersecurity">
+      <a class="category-card category-link" href="cybersecurity.html">
         <h4>Cyber Security</h4>
         <p>Security-aware design through state-file boundaries, safer capability routing, explicit approval flows, guarded actions, and more trustworthy assistant behavior.</p>
       </a>
-      <a class="category-card category-link" href="/it-support">
+      <a class="category-card category-link" href="it_support.html">
         <h4>IT Support</h4>
         <p>Fast troubleshooting, stale-process recovery, support-friendly UX, live technical guidance, and tools designed to reduce friction during real system use.</p>
       </a>
-      <a class="category-card category-link" href="/network-software">
+      <a class="category-card category-link" href="network_software.html">
         <h4>Network</h4>
         <p>Network-oriented summaries, infrastructure support patterns, monitoring-minded interfaces, and tooling direction built around visibility, diagnostics, and automation.</p>
       </a>
-      <a class="category-card category-link" href="/alfred-agent">
+      <a class="category-card category-link" href="alfred_agent_console.html">
         <h4>Alfred Coding Agent</h4>
         <p>Open the live coding-agent console to draft workspace changes with plan, preview, and explicit approval controls.</p>
       </a>
@@ -133,6 +123,18 @@
   </section>
 </main>
 
-<script src="app.js"></script>
+<script>
+  // Redirect root-relative links to the live server when this page was opened as a local file.
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Health Checker | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../it_support.html">← Back to IT Support</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">IT Support</p>
+    <h1>System Health Checker</h1>
+    <p class="detail-focus">Engineered an automated scanning utility that evaluates system updates, driver status, storage capacity, and network configuration. Consolidated results into clear reports, enabling faster identification of system vulnerabilities and maintenance needs.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>import shutil
+import subprocess
+
+def check_disk_space(path="C:\\"):
+    total, used, free = shutil.disk_usage(path)
+    return {"total_gb": total // (2**30), "free_gb": free // (2**30)}
+
+def check_pending_updates():
+    result = subprocess.run(
+        ["powershell", "-Command", "Get-WindowsUpdate"],
+        capture_output=True, text=True
+    )
+    return result.stdout.strip() or "No pending updates found"
+
+def build_health_report():
+    return {
+        "disk": check_disk_space(),
+        "updates": check_pending_updates(),
+    }
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Sample consolidated report from a scheduled health check:</p>
+    <pre><code>Disk: 118 GB free of 476 GB
+Updates: 2 pending (KB5031354, KB5030310)
+Drivers: 1 outdated (Realtek audio driver)
+Overall status: Maintenance recommended</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The checker combines disk-capacity inspection with a PowerShell update query, then consolidates the results into one maintenance report for a Windows workstation.</p>
+    <ul><li>shutil reads storage capacity.</li><li>subprocess invokes the system update check.</li><li>A report builder combines independent checks.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include free-space measurement, pending-update inspection, and consolidated reporting. Next additions should include driver status, network configuration, explicit command timeouts, structured JSON output, and mocked subprocess tests.</p>
+    <p><strong>Visuals:</strong> scheduled health-check flow, storage status panel, and maintenance recommendation report.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add driver status, network checks, command timeouts, JSON output, and mocked subprocess tests.</p><pre><code>build_health_report()
+disk=118 GB free
+updates=2 pending
+overall=maintenance recommended</code></pre><p><strong>Simulation:</strong> low free space and pending updates produced a clear maintenance state.</p></section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\IT Support\system-health-checker</code></p><p>Run: <code>python main.py .</code></p><p>The current build reports free disk space and a health state.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>SYSTEM HEALTH / MAINTENANCE</span><span class="visual-status">REVIEW</span></div><div class="visual-grid"><div class="visual-metric">Free disk<strong>118 GB</strong></div><div class="visual-metric">Updates<strong>2</strong></div><div class="visual-metric">Drivers<strong>1</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>Storage</span><i style="width:75%"></i><b>CHECK</b></div><div class="visual-bar"><span>Updates</span><i style="width:48%"></i><b>PENDING</b></div></div></section>
+</main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messaging/RCS Diagnostic Simulator | Justin Wimmer HUD</title>
+<link rel="stylesheet" href="../style.css">
+<script>
+  if (window.location.protocol === "file:") {
+    document.addEventListener("click", (event) => {
+      const link = event.target.closest("a[href^='/']");
+      if (link) {
+        event.preventDefault();
+        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
+      }
+    });
+  }
+</script>
+</head>
+<body class="site-shell">
+<main class="detail-shell">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../it_support.html">← Back to IT Support</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">IT Support</p>
+    <h1>Messaging/RCS Diagnostic Simulator</h1>
+    <p class="detail-focus">Built a simulation tool to test RCS/SMS fallback behavior, carrier routing issues, and message delivery reliability. Used to analyze inconsistent messaging performance across devices and networks, improving understanding of telecom protocols and troubleshooting methods.</p>
+  </header>
+
+  <section class="detail-card">
+    <h2>Code Example</h2>
+    <pre><code>import random
+import time
+
+class MessageSimulator:
+    def __init__(self, rcs_available=True, failure_rate=0.1):
+        self.rcs_available = rcs_available
+        self.failure_rate = failure_rate
+
+    def send(self, message):
+        if self.rcs_available and random.random() > self.failure_rate:
+            return {"protocol": "RCS", "status": "delivered", "latency_ms": random.randint(200, 600)}
+
+        # Simulate fallback to SMS when RCS fails or is unavailable
+        time.sleep(0.1)
+        return {"protocol": "SMS", "status": "delivered (fallback)", "latency_ms": random.randint(800, 2000)}
+</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Example</h2>
+    <p>Simulated run showing intermittent RCS failures triggering SMS fallback:</p>
+    <pre><code>Message 1: protocol=RCS status=delivered latency_ms=340
+Message 2: protocol=SMS status=delivered (fallback) latency_ms=1120
+Message 3: protocol=RCS status=delivered latency_ms=410
+Summary: 1/3 messages fell back to SMS due to simulated RCS unavailability</code></pre>
+  </section>
+  <section class="detail-card">
+    <h2>Project architecture</h2>
+    <p>The simulator models message delivery by checking RCS availability and a configurable failure rate, then selecting RCS or SMS fallback and returning protocol, status, and latency data.</p>
+    <ul><li>MessageSimulator owns delivery state and policy.</li><li>Randomized failure models intermittent service conditions.</li><li>Structured results make protocol fallback observable.</li></ul>
+  </section>
+  <section class="detail-card">
+    <h2>Features and expansion</h2>
+    <p>Current features include RCS availability modeling, configurable failures, SMS fallback, simulated latency, and delivery summaries. Next additions should include seeded simulations, carrier profiles, retry rules, batch reports, and tests for deterministic fallback behavior.</p>
+    <p><strong>Visuals:</strong> message-routing sequence, RCS-to-SMS fallback timeline, and delivery reliability chart.</p>
+    <p><strong>GitHub:</strong> repository link placeholder</p>
+  </section>
+  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add seeded simulations, carrier profiles, retry rules, batch reports, and deterministic tests.</p><pre><code>MessageSimulator(rcs_available=False).send("hello")
+protocol=SMS
+status=delivered (fallback)</code></pre><p><strong>Simulation:</strong> unavailable RCS routed the message through the SMS fallback with increased latency.</p></section>
+  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\IT Support\messaging-rcs-diagnostic-simulator</code></p><p>Run: <code>python main.py hello --rcs-unavailable</code></p><p>The current build simulates RCS delivery and SMS fallback locally.</p></section>
+  <section class="detail-card project-visual"><div class="visual-toolbar"><span>MESSAGE ROUTING / RCS SIMULATOR</span><span class="visual-status">FALLBACK</span></div><div class="visual-grid"><div class="visual-metric">Protocol<strong>SMS</strong></div><div class="visual-metric">Status<strong>DELIVERED</strong></div><div class="visual-metric">Latency<strong>1120ms</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>RCS route</span><i style="width:26%"></i><b>OFFLINE</b></div><div class="visual-bar"><span>SMS fallback</span><i style="width:84%"></i><b>ACTIVE</b></div></div></section>
+</main>
+</body>
+</html>
