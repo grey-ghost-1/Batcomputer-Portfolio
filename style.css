@@ -1342,16 +1342,101 @@ body,
     }
 }
 
+/* Final exact reference-image layout */
+.resume-shell {
+    padding-top: 8px !important;
+}
+
+.hud-header {
+    padding-top: 0 !important;
+}
+
+.hud-header .skyline-wrap {
+    height: 350px !important;
+    margin-bottom: 6px !important;
+}
+
+.hud-header .header-skyline {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    display: block !important;
+    width: 100vw !important;
+    max-width: none !important;
+    height: 350px !important;
+    object-fit: fill !important;
+    object-position: center !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+.hud-header .skyline-wrap {
+    height: 350px !important;
+    margin-bottom: 6px !important;
+}
+
+.hud-header .hud-header-center {
+    position: relative;
+    z-index: 5;
+}
+
+.hud-header .hud-header-center {
+    position: relative;
+    z-index: 5;
+}
+
+@media (max-width: 720px) {
+    .resume-shell {
+        padding-top: 8px !important;
+    }
+
+    .hud-header .skyline-wrap {
+        height: 190px !important;
+    }
+
+    .hud-header .header-skyline {
+        height: 190px !important;
+    }
+}
+
 .hud-header .header-skyline {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
-    height: auto !important;
+    height: 350px !important;
     max-width: none !important;
     z-index: 2 !important;
     display: block !important;
     pointer-events: none !important;
+}
+
+.hud-header .skyline-wrap {
+    height: 350px !important;
+    margin-bottom: 12px !important;
+}
+
+.hud-header .hud-header-center {
+    position: relative;
+    z-index: 5;
+}
+
+.hud-header .hud-name,
+.hud-header .hud-title,
+.hud-header .resume-nav {
+    position: relative;
+    z-index: 5;
+}
+
+@media (max-width: 720px) {
+    .hud-header .skyline-wrap {
+        height: 190px !important;
+    }
+
+    .hud-header .header-skyline {
+        height: 190px !important;
+    }
 }
 
 .hud-header .skyline-wrap {
@@ -1396,6 +1481,11 @@ body,
     width: 100% !important;
     height: 160px !important;
     pointer-events: none !important;
+}
+
+.hud-header .skyline-wrap {
+    height: 350px !important;
+    margin-bottom: 6px !important;
 }
 
 @media (max-width: 720px) {
@@ -2045,9 +2135,10 @@ body,
 .hud-header .header-skyline {
     position: fixed !important;
     top: 0 !important;
+    right: 0 !important;
     left: 0 !important;
     width: 100vw !important;
-    height: auto !important;
+    height: 350px !important;
     max-width: none !important;
     z-index: 2 !important;
     display: block !important;
