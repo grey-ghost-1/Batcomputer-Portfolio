@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" role="img" aria-label="Bat cave neon arc header">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#04070b"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="960" fill="url(#bg)"/>
+
+  <path d="M120 860 A680 680 0 0 1 1480 860 L1480 860 L120 860 Z" fill="none" stroke="#00aaff" stroke-width="22" stroke-linecap="round"/>
+
+  <path d="M180 860 A620 620 0 0 1 1420 860" fill="none" stroke="#00aaff" stroke-width="13" stroke-linecap="round" opacity="0.9"/>
+
+  <path d="M170 835 C300 720, 420 620, 560 610 C640 610, 740 650, 800 685 C860 650, 960 610, 1040 610 C1180 620, 1300 720, 1430 835 L1430 960 L170 960 Z"
+        fill="#050a11" opacity="0.96"/>
+
+  <path d="M190 845 C340 720, 520 660, 700 668 C790 672, 850 695, 900 710 C980 700, 1050 670, 1140 668 C1250 680, 1360 730, 1430 845"
+        fill="none" stroke="#0d2b48" stroke-width="26" stroke-linecap="round" opacity="0.7"/>
+
+  <path d="M260 560 L310 466 L360 560 L410 470 L460 560 L510 466 L560 560" fill="none" stroke="#0a1119" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M1040 560 L1090 466 L1140 560 L1190 470 L1240 560 L1290 466 L1340 560" fill="none" stroke="#0a1119" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <path d="M300 210 L330 155 L360 210 L390 150 L420 210 L455 130 L490 210" fill="none" stroke="#0a1119" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" opacity="0.8"/>
+  <path d="M1110 210 L1140 155 L1170 210 L1200 150 L1230 210 L1265 130 L1300 210" fill="none" stroke="#0a1119" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" opacity="0.8"/>
+
+  <g fill="#05080d" opacity="0.9">
+    <path d="M200 825 C250 780, 300 770, 330 790 C360 820, 400 840, 480 820 C560 800, 620 760, 685 780 C740 795, 760 810, 810 820 C760 890, 690 930, 610 935 C520 940, 440 915, 360 885 C290 860, 240 845, 200 825 Z"/>
+    <path d="M1400 825 C1350 780, 1300 770, 1270 790 C1240 820, 1200 840, 1120 820 C1040 800, 980 760, 915 780 C860 795, 840 810, 790 820 C840 890, 910 930, 990 935 C1080 940, 1160 915, 1240 885 C1310 860, 1360 845, 1400 825 Z"/>
+  </g>
+
+  <g fill="#05080d" stroke="#00aaff" stroke-width="6" stroke-linejoin="round" stroke-linecap="round" opacity="0.86">
+    <path d="M535 320 C570 305, 610 300, 640 315 C670 330, 700 350, 730 355 C690 370, 650 390, 610 390 C570 390, 540 370, 515 345 Z"/>
+    <path d="M960 320 C925 305, 885 300, 855 315 C825 330, 795 350, 765 355 C805 370, 845 390, 885 390 C925 390, 955 370, 980 345 Z"/>
+  </g>
+
+  <g fill="#03070a" stroke="#00aaff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M1050 170 C1100 140, 1160 145, 1200 170 C1160 210, 1100 215, 1050 170 Z"/>
+    <path d="M500 170 C450 140, 390 145, 350 170 C390 210, 450 215, 500 170 Z"/>
+  </g>
+
+  <g fill="#03070a" stroke="#00aaff" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" opacity="0.8">
+    <path d="M370 245 L420 172 L470 245"/>
+    <path d="M1130 245 L1180 172 L1230 245"/>
+  </g>
+
+  <g fill="#020406" opacity="0.95">
+    <path d="M220 335 C280 305, 340 298, 390 314 C440 330, 485 355, 515 370 C470 395, 420 405, 360 402 C298 398, 250 382, 220 335 Z"/>
+    <path d="M1380 335 C1320 305, 1260 298, 1210 314 C1160 330, 1115 355, 1085 370 C1130 395, 1180 405, 1240 402 C1302 398, 1350 382, 1380 335 Z"/>
+  </g>
+
+  <g fill="#020406" stroke="#00aaff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M670 505 L720 365 L770 505 Z"/>
+    <path d="M690 500 L720 440 L750 500 Z"/>
+  </g>
+
+  <g fill="#020406" stroke="#00aaff" stroke-width="4" stroke-linejoin="round" opacity="0.9">
+    <path d="M260 610 L300 500 L340 610"/>
+    <path d="M1260 610 L1300 500 L1340 610"/>
+  </g>
+
+  <g fill="#070d14" opacity="0.9">
+    <path d="M350 720 L450 710 L500 780 L450 820 L360 810 Z"/>
+    <path d="M1250 720 L1150 710 L1100 780 L1150 820 L1240 810 Z"/>
+  </g>
+
+  <g fill="#020406" opacity="0.9">
+    <path d="M790 540 L780 620 L820 620 L830 540 Z"/>
+    <path d="M760 650 L840 650 L850 710 L750 710 Z"/>
+  </g>
+
+  <g fill="#020406" stroke="#00aaff" stroke-width="4" stroke-linejoin="round" opacity="0.85">
+    <path d="M300 650 l40 40 l-70 30 Z"/>
+    <path d="M1300 650 l-40 40 l70 30 Z"/>
+  </g>
+
+  <g fill="#000000" stroke="#00aaff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M760 300 C790 275, 820 280, 845 300 C815 330, 790 345, 760 300 Z"/>
+    <path d="M500 330 C530 315, 550 315, 575 330 C555 350, 530 355, 500 330 Z"/>
+    <path d="M1025 330 C995 315, 975 315, 950 330 C970 350, 995 355, 1025 330 Z"/>
+  </g>
+
+  <g fill="#000000" stroke="#00aaff" stroke-width="4" stroke-linejoin="round" opacity="0.8">
+    <path d="M350 470 C380 455, 410 460, 430 475 C405 500, 380 510, 350 470 Z"/>
+    <path d="M1250 470 C1220 455, 1190 460, 1170 475 C1195 500, 1220 510, 1250 470 Z"/>
+  </g>
+
+  <g fill="#000000" opacity="0.93">
+    <path d="M240 390 C270 380, 298 382, 322 396 C298 415, 276 424, 240 390 Z"/>
+    <path d="M1360 390 C1330 380, 1302 382, 1278 396 C1302 415, 1324 424, 1360 390 Z"/>
+  </g>
+
+  <g fill="#000000" opacity="0.9">
+    <path d="M600 540 C625 520, 655 520, 675 540 C655 565, 635 575, 600 540 Z"/>
+    <path d="M1000 540 C975 520, 945 520, 925 540 C945 565, 965 575, 1000 540 Z"/>
+  </g>
+</svg>

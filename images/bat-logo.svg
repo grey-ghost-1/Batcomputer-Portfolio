@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" role="img" aria-label="Batman-style bat emblem">
+  <defs>
+    <linearGradient id="batGlow" x1="0" x2="1">
+      <stop offset="0%" stop-color="#b9f0ff"/>
+      <stop offset="100%" stop-color="#00aaff"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="220" fill="#000000"/>
+  <g fill="none" stroke="url(#batGlow)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M105 160 L175 50 L240 115 L300 45 L360 115 L425 50 L495 160"/>
+    <path d="M175 50 L150 120 L120 90 L105 160"/>
+    <path d="M425 50 L450 120 L480 90 L495 160"/>
+    <path d="M220 100 L170 145 L250 145 L220 100"/>
+    <path d="M380 100 L430 145 L350 145 L380 100"/>
+    <path d="M260 145 L300 185 L340 145"/>
+    <path d="M235 145 L210 170 L255 170"/>
+    <path d="M365 145 L390 170 L345 170"/>
+    <path d="M170 145 L300 174 L430 145"/>
+  </g>
+  <circle cx="300" cy="104" r="10" fill="#00aaff" opacity="0.9"/>
+</svg>
