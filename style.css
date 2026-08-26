@@ -1054,6 +1054,19 @@ body,
     box-shadow: none;
 }
 
+.alfred-hero .alfred-hero-copy h2 {
+    margin: 0 0 12px;
+    color: #ffffff;
+    font-family: "Orbitron", "Inter", sans-serif;
+    font-size: clamp(24px, 4vw, 36px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.alfred-hero .alfred-console {
+    flex: 0 0 min(420px, 38%);
+}
+
 @media (max-width: 900px) {
     .hud-header {
         flex-direction: column;
