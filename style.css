@@ -548,6 +548,261 @@ textarea {
     }
 }
 
+/* Blue-wave console direction */
+:root {
+    --blue-deep: #021833;
+    --blue-mid: #064b9b;
+    --blue-bright: #00bfff;
+    --blue-pale: #e6f7ff;
+    --blue-muted: rgba(230, 247, 255, 0.78);
+    --blue-glass: rgba(255, 255, 255, 0.08);
+    --blue-line: rgba(230, 247, 255, 0.18);
+    --blue-shadow: 0 18px 60px rgba(0, 24, 51, 0.5);
+}
+
+body {
+    background: var(--blue-deep);
+    color: var(--blue-pale);
+    font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.site-shell {
+    background:
+        radial-gradient(800px 350px at 12% 18%, rgba(0, 191, 255, 0.15), transparent 70%),
+        radial-gradient(700px 300px at 88% 78%, rgba(0, 87, 217, 0.18), transparent 70%),
+        linear-gradient(160deg, #071226 0%, #0b2f64 48%, #021833 100%);
+}
+
+.site-shell::after {
+    position: fixed;
+    inset: 42% -10% auto;
+    height: 52vh;
+    background:
+        radial-gradient(ellipse at 50% 100%, rgba(0, 191, 255, 0.22), transparent 56%),
+        linear-gradient(172deg, transparent 48%, rgba(230, 247, 255, 0.2) 49%, transparent 50%),
+        linear-gradient(168deg, transparent 56%, rgba(0, 191, 255, 0.22) 57%, transparent 58%);
+    content: "";
+    pointer-events: none;
+}
+
+.hud-grid {
+    opacity: 0.2;
+    background:
+        linear-gradient(rgba(230, 247, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(230, 247, 255, 0.1) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, black, transparent 80%);
+}
+
+.resume-shell,
+.detail-shell {
+    width: min(1440px, calc(100% - 48px));
+    padding-top: 32px;
+}
+
+.topbar {
+    position: relative;
+    z-index: 2;
+    align-items: center;
+    padding: 0 0 22px;
+    border-bottom-color: var(--blue-line);
+}
+
+.topbar-brand h1,
+.alfred-hero-copy h1,
+.detail-header h1 {
+    letter-spacing: 0.08em;
+}
+
+.topbar-brand p,
+.detail-header .eyebrow,
+.eyebrow {
+    color: var(--blue-muted);
+}
+
+.resume-nav {
+    gap: 8px;
+}
+
+.hud-btn,
+.inline-link,
+.home-link {
+    border-color: var(--blue-line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--blue-pale);
+}
+
+.hud-btn:hover,
+.hud-btn:focus-visible,
+.hud-btn.active,
+.inline-link:hover,
+.inline-link:focus-visible,
+.home-link:hover,
+.home-link:focus-visible {
+    border-color: rgba(0, 191, 255, 0.72);
+    background: rgba(0, 191, 255, 0.12);
+    box-shadow: 0 8px 26px rgba(0, 87, 217, 0.24);
+}
+
+.alfred-hero {
+    position: relative;
+    z-index: 1;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 40px;
+    align-items: center;
+    min-height: 520px;
+    padding: 34px;
+    border: 1px solid var(--blue-line);
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
+    box-shadow: var(--blue-shadow);
+    backdrop-filter: blur(14px) saturate(125%);
+}
+
+.alfred-hero::before {
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(230, 247, 255, 0.09);
+    border-radius: 12px;
+    content: "";
+    pointer-events: none;
+}
+
+.alfred-hero-copy,
+.alfred-hero-console {
+    position: relative;
+    z-index: 1;
+}
+
+.alfred-hero-copy h1 {
+    font-size: clamp(42px, 7vw, 82px);
+    line-height: 0.95;
+}
+
+.alfred-mission {
+    max-width: 520px;
+    color: var(--blue-pale);
+    line-height: 1.75;
+}
+
+.runtime-summary {
+    color: var(--blue-muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.alfred-hero-console,
+.runtime-card,
+.panel,
+.detail-card,
+.category-card {
+    border-color: var(--blue-line);
+    border-radius: 12px;
+    background: linear-gradient(180deg, var(--blue-glass), rgba(255, 255, 255, 0.035));
+    box-shadow: 0 12px 38px rgba(0, 24, 51, 0.32);
+    backdrop-filter: blur(12px) saturate(120%);
+}
+
+.alfred-hero-console {
+    padding: 22px;
+}
+
+.runtime-card-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--blue-line);
+}
+
+#alfred-chat-log {
+    min-height: 240px;
+    padding: 10px 0 18px;
+}
+
+.chat-entry {
+    padding: 11px 13px;
+    border-left: 2px solid rgba(230, 247, 255, 0.24);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.chat-entry.assistant {
+    border-left-color: var(--blue-bright);
+}
+
+#alfred-chat-input {
+    padding: 13px;
+    border: 1px solid var(--blue-line);
+    border-radius: 10px;
+    background: rgba(0, 10, 26, 0.34);
+    color: var(--blue-pale);
+}
+
+#alfred-chat-input:focus {
+    border-color: rgba(0, 191, 255, 0.68);
+    box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.12);
+}
+
+#alfred-chat-send {
+    padding: 12px 17px;
+    border: 0;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--blue-bright), #0057d9);
+    color: #021022;
+    box-shadow: 0 10px 30px rgba(0, 87, 217, 0.28);
+}
+
+.panel,
+.detail-card {
+    color: var(--blue-pale);
+}
+
+.panel p,
+.detail-focus,
+.detail-card li,
+.category-card p {
+    color: rgba(230, 247, 255, 0.82);
+}
+
+.category-link:hover,
+.category-link:focus-visible {
+    border-color: rgba(0, 191, 255, 0.72);
+    background: rgba(0, 191, 255, 0.1);
+}
+
+.visual-toolbar {
+    color: var(--blue-pale);
+}
+
+.visual-status {
+    color: #8beaff;
+}
+
+.visual-metric {
+    border-color: var(--blue-line);
+    background: linear-gradient(135deg, rgba(0, 191, 255, 0.14), rgba(0, 0, 0, 0.22));
+}
+
+.visual-bar {
+    color: rgba(230, 247, 255, 0.82);
+}
+
+.visual-bar i {
+    background: linear-gradient(90deg, var(--blue-bright), #0057d9);
+}
+
+@media (max-width: 720px) {
+    .resume-shell,
+    .detail-shell {
+        width: min(100%, calc(100% - 24px));
+        padding-top: 20px;
+    }
+
+    .alfred-hero {
+        min-height: auto;
+        padding: 24px;
+    }
+}
+
 /* Monochrome console theme */
 :root {
     --neon-grey: #f2f2f2;
