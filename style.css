@@ -124,10 +124,28 @@ textarea {
     text-transform: uppercase;
 }
 
+.topbar {
+    padding-top: 152px;
+}
+
+.skyline {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 160px;
+    z-index: 2;
+    pointer-events: none;
+}
+
 .topbar-brand p {
     margin: 8px 0 0;
     color: #9e9e9e;
     font-size: 14px;
+
+    .topbar {
+        padding-top: 0;
+    }
     letter-spacing: 0.06em;
 }
 
@@ -899,6 +917,60 @@ body,
     box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
 }
 
+.topbar {
+    padding-top: 152px;
+}
+
+@media (max-width: 720px) {
+    .skyline {
+        display: none;
+    }
+
+    .topbar {
+        padding-top: 0;
+    }
+}
+
+/* Final monochrome skyline theme */
+:root {
+    --neon-grey: #f2f2f2;
+    --neon-grey-glow: rgba(255, 255, 255, 0.2);
+}
+
+.skyline .glow {
+    opacity: 0.84;
+}
+
+.skyline .outline {
+    filter: drop-shadow(0 6px 12px rgba(255, 255, 255, 0.14)) drop-shadow(0 10px 30px rgba(170, 170, 170, 0.1));
+}
+
+.hud-btn,
+.inline-link,
+.home-link {
+    border-color: rgba(255, 255, 255, 0.28);
+    color: #f2f2f2;
+}
+
+.hud-btn:hover,
+.hud-btn:focus-visible,
+.hud-btn.active,
+.inline-link:hover,
+.inline-link:focus-visible,
+.home-link:hover,
+.home-link:focus-visible {
+    border-color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.24);
+}
+
+.topbar-brand p,
+.runtime-summary,
+.detail-header .eyebrow,
+.eyebrow {
+    color: #9c9c9c;
+}
+
 /* Pure-black skyline header variant */
 .site-shell,
 body {
@@ -1380,4 +1452,18 @@ body,
 .home-link:focus-visible {
     background: rgba(0, 191, 255, 0.08);
     box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
+}
+
+.topbar {
+    padding-top: 152px;
+}
+
+@media (max-width: 720px) {
+    .skyline {
+        display: none;
+    }
+
+    .topbar {
+        padding-top: 0;
+    }
 }
