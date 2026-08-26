@@ -18,6 +18,8 @@
 
     <nav class="resume-nav" aria-label="Resume sections">
       <button class="hud-btn active" type="button" data-panel="about" aria-controls="about" aria-expanded="true">About</button>
+      <button class="hud-btn" type="button" data-panel="website" aria-controls="website" aria-expanded="false">Batcomputer Website</button>
+      <button class="hud-btn" type="button" data-panel="alfred" aria-controls="alfred" aria-expanded="false">Alfred</button>
       <a class="hud-btn nav-link-btn" href="software_development.html">Software &amp; Automation</a>
       <a class="hud-btn nav-link-btn" href="cybersecurity.html">Cyber Security</a>
       <a class="hud-btn nav-link-btn" href="it_support.html">IT Support</a>
@@ -47,6 +49,52 @@
         </div>
       </div>
     </section>
+  </section>
+
+  <section id="website" class="panel hidden">
+    <h3>Batcomputer Website</h3>
+    <p class="panel-lead">A Flask-served portfolio HUD that presents 20 technical projects through focused category pages, individual project views, and interactive implementation visuals.</p>
+    <div class="category-grid">
+      <article class="category-card">
+        <h4>Platform</h4>
+        <p>Flask routing, shared HTML and CSS, project inventory APIs, health checks, and static asset delivery.</p>
+      </article>
+      <article class="category-card">
+        <h4>Portfolio system</h4>
+        <p>Four technical categories, 20 individual project pages, runnable project folders, demonstrations, and visual status panels.</p>
+      </article>
+      <article class="category-card">
+        <h4>Operator workflow</h4>
+        <p>Clean navigation, explicit proposal review, project run commands, and route validation keep the experience understandable and testable.</p>
+      </article>
+      <article class="category-card">
+        <h4>Runtime</h4>
+        <p>Start the site with <code>python app.py</code>, then open <code>http://127.0.0.1:5000</code>.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="alfred" class="panel hidden">
+    <h3>Alfred</h3>
+    <p class="panel-lead">A local assistant layer for conversational guidance, voice interaction, system status, and explicitly reviewed workspace proposals.</p>
+    <div class="category-grid">
+      <article class="category-card">
+        <h4>Conversation</h4>
+        <p>Alfred handles greetings, capabilities, portfolio topics, technical categories, and status questions through the Flask chat endpoint.</p>
+      </article>
+      <article class="category-card">
+        <h4>Voice</h4>
+        <p>The browser console supports voice input and speech synthesis when the active browser provides those capabilities.</p>
+      </article>
+      <article class="category-card">
+        <h4>Workspace agent</h4>
+        <p>The Coding Agent page supports proposal creation, previews, explicit approval or rejection, and event reporting.</p>
+      </article>
+      <article class="category-card">
+        <h4>Boundaries</h4>
+        <p>Actions remain review-driven, project previews are constrained to the Website directory, and unavailable services return controlled responses.</p>
+      </article>
+    </div>
   </section>
 
   <section id="about" class="panel">
