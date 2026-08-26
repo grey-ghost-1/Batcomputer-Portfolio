@@ -1342,6 +1342,68 @@ body,
     }
 }
 
+/* Normal site scrolling: keep all homepage elements in document flow. */
+.hud-resume-page {
+    height: auto !important;
+    min-height: 100vh;
+    padding-top: 0 !important;
+    overflow-x: hidden;
+    overflow-y: auto !important;
+}
+
+.hud-resume-page .resume-shell {
+    padding-top: 32px !important;
+}
+
+.hud-resume-page .hud-header {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: auto !important;
+    z-index: 5 !important;
+}
+
+.hud-resume-page .header-skyline,
+.hud-resume-page .hud-header .skyline {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    transform: none !important;
+    animation: none !important;
+}
+
+.hud-resume-page .skyline-wrap {
+    height: auto !important;
+}
+
+.hud-resume-page .ai-badge {
+    position: absolute;
+}
+
+.hud-resume-page .hud-header {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: auto !important;
+    z-index: 5 !important;
+}
+
+.hud-resume-page .header-skyline {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+}
+
 /* Final exact reference-image layout */
 .resume-shell {
     padding-top: 8px !important;
@@ -2172,6 +2234,11 @@ body,
     z-index: 999 !important;
 }
 
+.hud-resume-page {
+    height: 100vh;
+    overflow: hidden;
+}
+
 @media (max-width: 720px) {
     .skyline {
         display: none;
@@ -2193,4 +2260,48 @@ body,
     .hud-resume-page {
         padding-top: 700px;
     }
+}
+
+/* Final normal document-flow behavior */
+.hud-resume-page {
+    height: auto !important;
+    min-height: 100vh;
+    padding-top: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+}
+
+.hud-resume-page .resume-shell {
+    padding-top: 32px !important;
+}
+
+.hud-resume-page .hud-header {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: auto !important;
+    z-index: 5 !important;
+}
+
+.hud-resume-page .header-skyline {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    transform: none !important;
+    animation: none !important;
+}
+
+.hud-resume-page .skyline-wrap {
+    height: auto !important;
+}
+
+.hud-resume-page .ai-badge {
+    position: absolute !important;
 }
