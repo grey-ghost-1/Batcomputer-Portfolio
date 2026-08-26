@@ -1340,6 +1340,66 @@ body,
     }
 }
 
+/* Reference-matched identity header scale */
+.hud-header {
+    padding: 40px 32px 22px;
+}
+
+.hud-header .skyline-wrap {
+    height: 250px;
+    margin-bottom: 16px;
+}
+
+.hud-header .skyline {
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: fill;
+}
+
+.hud-name {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: clamp(34px, 5vw, 50px);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.hud-title {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.hud-header .resume-nav {
+    margin-top: 22px;
+}
+
+.hud-header .hud-btn {
+    font-family: "Inter", "Segoe UI", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+@media (max-width: 720px) {
+    .hud-header {
+        padding: 24px 0 28px;
+    }
+
+    .hud-header .skyline-wrap {
+        height: 140px;
+    }
+
+    .hud-name {
+        font-size: 30px;
+    }
+
+    .hud-title {
+        font-size: 12px;
+    }
+}
+
 /* Final stationary polyline skyline rules */
 .hero {
     padding: 184px 0 60px;
