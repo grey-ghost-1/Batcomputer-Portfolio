@@ -858,6 +858,114 @@ body {
     }
 }
 
+/* Final header palette override */
+body,
+.site-shell {
+    background: #000000;
+}
+
+.site-shell::after,
+.hud-grid {
+    display: none;
+}
+
+.alfred-hero {
+    background: #050505;
+}
+
+.alfred-hero-console,
+.runtime-card,
+.panel,
+.detail-card,
+.category-card {
+    background: #0a0a0a;
+    box-shadow: none;
+}
+
+.hud-btn,
+.inline-link,
+.home-link {
+    background: transparent;
+}
+
+.hud-btn:hover,
+.hud-btn:focus-visible,
+.hud-btn.active,
+.inline-link:hover,
+.inline-link:focus-visible,
+.home-link:hover,
+.home-link:focus-visible {
+    background: rgba(0, 191, 255, 0.08);
+    box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
+}
+
+/* Pure-black skyline header variant */
+.site-shell,
+body {
+    background: #000000;
+}
+
+.site-shell::after,
+.hud-grid {
+    display: none;
+}
+
+.topbar {
+    z-index: 5;
+}
+
+.skyline {
+    z-index: 2;
+    opacity: 0.98;
+}
+
+.alfred-hero {
+    background: #050505;
+}
+
+.alfred-hero-console,
+.runtime-card,
+.panel,
+.detail-card,
+.category-card {
+    background: #0a0a0a;
+    box-shadow: none;
+}
+
+.hud-btn,
+.inline-link,
+.home-link {
+    background: transparent;
+}
+
+.hud-btn:hover,
+.hud-btn:focus-visible,
+.hud-btn.active,
+.inline-link:hover,
+.inline-link:focus-visible,
+.home-link:hover,
+.home-link:focus-visible {
+    background: rgba(0, 191, 255, 0.08);
+    box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
+}
+
+.alfred-hero-copy h1 {
+    color: #ffffff;
+}
+
+.topbar-brand p,
+.runtime-summary,
+.detail-header .eyebrow,
+.eyebrow {
+    color: #8e9aa3;
+}
+
+@media (max-width: 720px) {
+    .skyline {
+        display: none;
+    }
+}
+
 /* Monochrome console theme */
 :root {
     --neon-grey: #f2f2f2;
@@ -1231,4 +1339,45 @@ body {
     .panel {
         padding: 22px;
     }
+}
+
+/* Final pure-black skyline header rules */
+body,
+.site-shell {
+    background: #000000;
+}
+
+.site-shell::after,
+.hud-grid {
+    display: none;
+}
+
+.alfred-hero {
+    background: #050505;
+}
+
+.alfred-hero-console,
+.runtime-card,
+.panel,
+.detail-card,
+.category-card {
+    background: #0a0a0a;
+    box-shadow: none;
+}
+
+.hud-btn,
+.inline-link,
+.home-link {
+    background: transparent;
+}
+
+.hud-btn:hover,
+.hud-btn:focus-visible,
+.hud-btn.active,
+.inline-link:hover,
+.inline-link:focus-visible,
+.home-link:hover,
+.home-link:focus-visible {
+    background: rgba(0, 191, 255, 0.08);
+    box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
 }
