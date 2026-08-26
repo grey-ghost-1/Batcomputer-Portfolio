@@ -63,8 +63,9 @@ textarea {
 
 .skyline .glow {
     transform-origin: center;
-    animation: neonPulse 3.6s ease-in-out infinite;
-    will-change: filter, opacity, transform;
+    animation: none;
+    transform: none;
+    will-change: auto;
     opacity: 0.9;
 }
 
@@ -136,6 +137,7 @@ textarea {
     height: 160px;
     z-index: 2;
     pointer-events: none;
+    transform: none;
 }
 
 .topbar-brand p {
