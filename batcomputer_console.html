@@ -11,6 +11,28 @@
 </head>
 <body class="site-shell hud-resume-page">
 <div class="hud-grid" aria-hidden="true"></div>
+<div class="skyline" aria-hidden="true">
+  <svg viewBox="0 0 1200 200" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="neonGrad" x1="0" x2="1">
+        <stop offset="0" stop-color="#66e0ff" />
+        <stop offset="0.5" stop-color="#00bfff" />
+        <stop offset="1" stop-color="#0057d9" />
+      </linearGradient>
+      <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="8" result="blur1" />
+        <feGaussianBlur stdDeviation="3" result="blur2" />
+        <feMerge>
+          <feMergeNode in="blur1" />
+          <feMergeNode in="blur2" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+    <path class="glow" d="M0,150 L20,140 L40,140 L60,110 L90,110 L120,130 L150,100 L180,100 L200,80 L240,80 L260,140 L300,120 L340,60 L380,60 L400,130 L440,90 L480,50 L520,50 L560,140 L600,30 L640,70 L680,30 L720,80 L760,110 L800,70 L840,130 L880,100 L920,60 L960,120 L1000,90 L1040,140 L1080,100 L1120,120 L1160,90 L1200,150" fill="none" stroke="url(#neonGrad)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.9" filter="url(#neonGlow)" />
+    <path class="outline" d="M0,150 L20,140 L40,140 L60,110 L90,110 L120,130 L150,100 L180,100 L200,80 L240,80 L260,140 L300,120 L340,60 L380,60 L400,130 L440,90 L480,50 L520,50 L560,140 L600,30 L640,70 L680,30 L720,80 L760,110 L800,70 L840,130 L880,100 L920,60 L960,120 L1000,90 L1040,140 L1080,100 L1120,120 L1160,90 L1200,150" fill="none" stroke="url(#neonGrad)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="1" />
+  </svg>
+</div>
 
 <main class="resume-shell" aria-label="Justin Wimmer HUD resume">
   <header class="topbar">
