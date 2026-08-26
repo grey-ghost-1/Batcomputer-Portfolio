@@ -2305,3 +2305,30 @@ body,
 .hud-resume-page .ai-badge {
     position: absolute !important;
 }
+
+.hud-resume-page .skyline-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.hud-resume-page .skyline-wrap::before {
+    position: absolute;
+    inset: 0 0 42% 0;
+    z-index: 2;
+    background:
+        radial-gradient(circle at 8% 26%, rgba(255, 255, 255, 0.34) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 17% 62%, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 29% 34%, rgba(210, 235, 255, 0.3) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 42% 72%, rgba(255, 255, 255, 0.2) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 55% 20%, rgba(255, 255, 255, 0.3) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 68% 58%, rgba(210, 235, 255, 0.24) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 79% 30%, rgba(255, 255, 255, 0.28) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 91% 68%, rgba(255, 255, 255, 0.22) 0 1px, transparent 1.5px);
+    content: "";
+    pointer-events: none;
+}
+
+.hud-resume-page .skyline-wrap .header-skyline {
+    position: relative !important;
+    z-index: 1 !important;
+}
