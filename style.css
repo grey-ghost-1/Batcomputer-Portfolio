@@ -968,11 +968,37 @@ body,
 .hud-header .resume-nav {
     justify-content: center;
     margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 10px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .hud-header .hud-btn {
+    position: relative;
+    padding: 4px 18px;
     color: #00bfff;
-    border-color: rgba(0, 191, 255, 0.5);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.hud-header .resume-nav > * + *::before {
+    position: absolute;
+    left: 0;
+    color: rgba(255, 255, 255, 0.25);
+    content: "|";
+}
+
+.hud-header .hud-btn:hover,
+.hud-header .hud-btn:focus-visible,
+.hud-header .hud-btn.active {
+    color: #ffffff;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    text-shadow: 0 0 8px #00bfff;
 }
 
 .alfred-console {
