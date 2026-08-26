@@ -12,48 +12,37 @@
 </head>
 <body class="site-shell hud-resume-page">
 <main class="resume-shell" aria-label="Justin Wimmer HUD resume">
-  <header class="hero">
-    <div class="skyline-wrap" aria-hidden="true">
-      <svg class="skyline" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <polyline points="0,150 40,150 40,120 80,120 80,150 120,150 120,90 160,90 160,150 210,150 210,60 250,60 250,150 300,150 300,40 340,40 340,150 390,150 390,80 430,80 430,150 480,150 480,30 520,30 520,150 570,150 570,70 610,70 610,150 660,150 660,50 700,50 700,150 750,150 750,90 790,90 790,150 840,150 840,40 880,40 880,150 930,150 930,80 970,80 970,150 1020,150 1020,60 1060,60 1060,150 1100,150 1100,100 1140,100 1140,150 1200,150" />
-      </svg>
-    </div>
-    <div class="topbar-brand">
-      <h1>Justin Wimmer</h1>
-      <p>Cyber Operations • AI Systems • Software Development</p>
-    </div>
-
-    <nav class="resume-nav" aria-label="Resume sections">
-      <button class="hud-btn active" type="button" data-panel="about" aria-controls="about" aria-expanded="true">About</button>
-      <a class="hud-btn nav-link-btn" href="software_development.html">Software &amp; Automation</a>
-      <a class="hud-btn nav-link-btn" href="cybersecurity.html">Cyber Security</a>
-      <a class="hud-btn nav-link-btn" href="it_support.html">IT Support</a>
-      <a class="hud-btn nav-link-btn" href="network_software.html">Network</a>
-      <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">Contact</button>
-    </nav>
-  </header>
-
-  <section class="alfred-hero" aria-labelledby="alfredHeroHeading">
-    <div class="alfred-hero-copy">
-      <p class="eyebrow">Embedded AI Assistant</p>
-      <h1 id="alfredHeroHeading">Alfred</h1>
-      <p class="alfred-mission">Alfred integrates voice, vision, and system control into one unified intelligence — built to automate tasks, enhance productivity, and expand what’s possible.</p>
-      <p class="runtime-summary" id="redesignConsoleStatus">Speak or type naturally. Alfred is here for live assistance, technical questions, and real-time guidance through the Batcomputer.</p>
-    </div>
-    <section class="alfred-hero-console" aria-label="Alfred live console">
-      <div class="runtime-card-header">
-        <h4>Live console</h4>
-        <button class="inline-link runtime-refresh" id="startVoiceInput" type="button">Voice input</button>
+  <header class="hud-header">
+    <div class="hud-header-center">
+      <div class="skyline-wrap" aria-hidden="true">
+        <svg class="skyline" viewBox="0 0 1200 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="0,150 40,150 40,120 80,120 80,150 120,150 120,90 160,90 160,150 210,150 210,60 250,60 250,150 300,150 300,40 340,40 340,150 390,150 390,80 430,80 430,150 480,150 480,30 520,30 520,150 570,150 570,70 610,70 610,150 660,150 660,50 700,50 700,150 750,150 750,90 790,90 790,150 840,150 840,40 880,40 880,150 930,150 930,80 970,80 970,150 1020,150 1020,60 1060,60 1060,150 1100,150 1100,100 1140,100 1140,150 1200,150" />
+        </svg>
       </div>
+      <h1 class="hud-name">JUSTIN WIMMER</h1>
+      <p class="hud-title">CYBER OPERATIONS • AI SYSTEMS • SOFTWARE DEVELOPMENT</p>
+      <nav class="resume-nav" aria-label="Resume sections">
+        <button class="hud-btn active" type="button" data-panel="about" aria-controls="about" aria-expanded="true">ABOUT</button>
+        <a class="hud-btn nav-link-btn" href="software_development.html">SOFTWARE &amp; AUTOMATION</a>
+        <a class="hud-btn nav-link-btn" href="cybersecurity.html">CYBER SECURITY</a>
+        <a class="hud-btn nav-link-btn" href="it_support.html">IT SUPPORT</a>
+        <a class="hud-btn nav-link-btn" href="network_software.html">NETWORK</a>
+        <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">CONTACT</button>
+      </nav>
+    </div>
+    <section class="alfred-console" aria-label="Alfred live console">
+      <p class="alfred-label">[ ALFRED ]</p>
+      <button class="mic-circle" id="startVoiceInput" type="button" aria-label="Start voice input"><span class="mic-icon" aria-hidden="true">MIC</span></button>
+      <p class="runtime-summary" id="redesignConsoleStatus">Alfred is online and ready.</p>
       <div id="alfred-chatbox">
         <div id="alfred-chat-log"></div>
         <div id="alfred-chat-input-row">
-          <input id="alfred-chat-input" type="text" placeholder="Talk to Alfred..." />
-          <button id="alfred-chat-send" type="button">Send</button>
+          <input class="alfred-input" id="alfred-chat-input" type="text" placeholder="Ask Alfred a question..." />
+          <button id="alfred-chat-send" type="button">SEND</button>
         </div>
       </div>
     </section>
-  </section>
+  </header>
 
   <section id="about" class="panel">
     <h3>About Me</h3>
