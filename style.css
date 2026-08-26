@@ -43,6 +43,52 @@ textarea {
     pointer-events: none;
 }
 
+.skyline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 160px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.95;
+    mix-blend-mode: screen;
+}
+
+.skyline svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.skyline .glow {
+    transform-origin: center;
+    animation: skylineFloat 6s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+.skyline .outline {
+    filter: drop-shadow(0 4px 8px rgba(0, 128, 255, 0.12)) drop-shadow(0 8px 24px rgba(0, 88, 217, 0.08));
+    transition: opacity 0.35s ease, stroke-width 0.35s ease;
+}
+
+.skyline:hover .outline,
+:focus-within .outline {
+    stroke-width: 3.2;
+    opacity: 1;
+}
+
+@keyframes skylineFloat {
+    from { transform: translateY(0) scaleY(1); }
+    to { transform: translateY(-6px) scaleY(1.01); }
+}
+
+@media (max-width: 720px) {
+    .skyline {
+        display: none;
+    }
+}
+
 .resume-shell,
 .detail-shell {
     position: relative;
