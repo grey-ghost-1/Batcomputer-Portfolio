@@ -1,17 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Algorithm Quality Lab | Justin Wimmer HUD</title><link rel="stylesheet" href="../style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Case study for original Python data structures and algorithms with deterministic edge-case tests and documented complexity trade-offs.">
+  <title>Algorithms &amp; Quality | Case Study</title>
+  <link rel="stylesheet" href="../style.css?v=recruiter-ready">
 </head>
-<body class="site-shell"><main class="detail-shell">
-  <nav class="detail-nav"><a class="home-link" href="../batcomputer_console.html">← Back to portfolio</a></nav>
-  <header class="detail-header"><p class="eyebrow">Algorithm and Test Evidence</p><h1>Algorithm Quality Lab</h1>
-    <p class="detail-focus">Original Python implementations across core data structures and algorithm strategies, with deterministic edge-case tests and documented trade-offs.</p></header>
-  <section class="detail-card"><h2>Evidence snapshot</h2>
-    <p><strong>Source:</strong> <code>algorithms-quality</code></p>
-    <p><strong>Run from repository root:</strong> <code>python -m pytest algorithms-quality\tests -q</code></p>
-    <p><strong>Validation:</strong> Executable tests cover empty, duplicate, invalid, missing, ordering, mutation-safety, and deterministic-path behavior.</p></section>
-  <section class="detail-card"><h2>Implemented</h2><ul><li>Arrays/strings, hash maps, a queue from stacks, binary search tree, and graph BFS</li><li>Merge sort, binary search, recursive backtracking permutations, and dynamic-programming coin change</li><li>Complexity table, trade-offs, explicit limits, and strict CI execution</li></ul></section>
-  <section class="detail-card"><h2>Limitations</h2><p>The tree is unbalanced, permutation output grows factorially, graph edges are unweighted, and these educational implementations do not replace optimized standard-library or production packages.</p></section>
-</main></body></html>
+<body class="site-shell">
+<a class="skip-link" href="#case-study">Skip to case study</a>
+<main class="detail-shell" id="case-study">
+  <nav class="detail-nav" aria-label="Case study navigation">
+    <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../labs.html">Labs &amp; Prototypes</a>
+    <a class="home-link" href="../project-evidence.json">Evidence</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">03 // Algorithms and quality flagship</p>
+    <h1>Algorithms &amp; Quality</h1>
+    <p class="detail-focus">Original Python implementations across data structures and algorithm strategies, backed by deterministic edge-case tests and explicit complexity trade-offs.</p>
+    <div class="card-actions">
+      <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/algorithms-quality">View algorithm source</a>
+    </div>
+  </header>
+
+  <section class="detail-card">
+    <h2>Problem and users</h2>
+    <p>Reviewers need concrete evidence of algorithm reasoning and test design that is independent of frameworks or external services. This lab gives learners and interviewers readable implementations, stated complexity, failure behavior, and tests that cover more than happy paths.</p>
+    <dl class="case-meta">
+      <div><dt>Implemented by me</dt><dd>All algorithms and data structures, public behavior, deterministic tests, complexity table, and quality notes.</dd></div>
+      <div><dt>Strongest evidence</dt><dd>Normal, empty, duplicate, missing, invalid, ordering, mutation-safety, and deterministic traversal cases.</dd></div>
+      <div><dt>Demo status</dt><dd>Source-and-test project; there is no hosted UI or service, and none is implied.</dd></div>
+    </dl>
+  </section>
+
+  <section class="detail-card">
+    <h2>Architecture</h2>
+    <ol class="architecture-flow" aria-label="Algorithm quality flow">
+      <li>Typed Python inputs</li>
+      <li>Data structure or strategy</li>
+      <li>Deterministic result or explicit error</li>
+      <li>Pytest normal + edge assertions</li>
+    </ol>
+    <p>The module has no network, filesystem, clock, database, or random state. That deliberately small boundary keeps behavior deterministic and lets tests focus on contracts, ordering, mutation, complexity assumptions, and failure modes.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Trade-offs and implementation</h2>
+    <ul>
+      <li>Hash-based <code>two_sum</code> and sliding-window unique substring use additional memory to avoid quadratic scans</li>
+      <li>A queue built from stacks provides amortized O(1) operations, with occasional O(n) transfers</li>
+      <li>The binary search tree is intentionally unbalanced and rejects duplicates</li>
+      <li>BFS returns deterministic shortest paths only for unweighted edges</li>
+      <li>Merge sort is stable and O(n log n), but allocates O(n) additional space</li>
+      <li>Backtracking permutations materialize factorial output; dynamic-programming coin change returns a count, not selected coins</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Run and verify</h2>
+    <p><strong>Run from repository root:</strong></p>
+    <pre><code>python -m pip install -r requirements.txt
+python -m pytest algorithms-quality\tests -q
+python -m ruff check algorithms-quality</code></pre>
+    <p>The suite maps tests to arrays/strings, maps, stacks/queues, trees, graphs, sorting, searching, recursion/backtracking, and dynamic programming. See <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/blob/grey-ghost-1-recruiter-ready-portfolio/algorithms-quality/QUALITY.md">the quality report</a> for test boundaries.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Security and reliability</h2>
+    <p>The project accepts in-process values only and performs no I/O, so it has no secret, authentication, or network surface. Reliability comes from deterministic contracts, explicit invalid-input behavior, mutation-safety assertions, and tests that do not depend on external state.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Current Limitations</h2>
+    <p>These educational implementations do not replace optimized standard-library or production packages. Generic ordering is expected but not runtime-enforced, the tree can degrade to O(n), the graph is unweighted, and permutation output becomes impractical quickly. No benchmark claim is made.</p>
+  </section>
+</main>
+</body>
+</html>

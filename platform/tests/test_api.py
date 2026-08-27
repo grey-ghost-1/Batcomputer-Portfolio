@@ -100,6 +100,12 @@ def test_production_configuration_guards():
             database_url="sqlite:///unsafe.db",
             secret_key="unique-production-secret-with-at-least-32-characters",
         )
+    render_style = Settings(
+        environment="production",
+        database_url="postgresql://db/app",
+        secret_key="unique-production-secret-with-at-least-32-characters",
+    )
+    assert render_style.database_url == "postgresql+psycopg://db/app"
 
 
 def test_password_auth_and_rbac(client: TestClient):

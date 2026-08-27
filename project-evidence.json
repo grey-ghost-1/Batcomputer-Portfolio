@@ -222,10 +222,10 @@
       "source_folder": "orbital-data-lab",
       "entrypoint": "orbital-data-lab/orbital_lab/api.py",
       "run_command": "Set-Location orbital-data-lab; python -m uvicorn orbital_lab.api:app --port 8010",
-      "implemented_features": ["bounded configurable two-body simulation", "RK4 and velocity-Verlet integration", "trajectory and energy-drift output", "integrator comparison", "browser canvas visualization", "content-addressed idempotent SQLite scenarios", "share paths", "lineage metadata", "JSON and CSV exports"],
+      "implemented_features": ["bounded configurable two-body simulation", "RK4 and velocity-Verlet integration", "trajectory and energy-drift output", "integrator comparison", "browser canvas visualization", "content-addressed idempotent SQLite scenarios", "share paths", "lineage metadata", "JSON and CSV exports", "liveness and database-readiness endpoints"],
       "limitations": ["educational and not flight grade", "fixed two-dimensional point-mass central gravity only", "no perturbations, atmosphere, burns, ephemerides, frames, uncertainty, or collision handling"],
       "validation_status": "passed-numerical-api-storage",
-      "validation_notes": "Tests cover a known circular-orbit case, energy drift, determinism, bounded validation, API behavior, idempotent storage, lineage, exports, and missing records."
+      "validation_notes": "Tests cover a known circular-orbit case, energy drift, determinism, bounded validation, API behavior, health/readiness, idempotent storage, lineage, exports, and missing records."
     },
     {
       "slug": "algorithm-quality-lab",

@@ -1,0 +1,51 @@
+databases:
+  - name: batcomputer-platform-db
+    databaseName: batcomputer
+    user: batcomputer
+    plan: free
+
+services:
+  - type: web
+    name: batcomputer-portfolio
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: false
+
+  - type: web
+    name: batcomputer-platform
+    runtime: docker
+    plan: free
+    dockerfilePath: ./platform/Dockerfile
+    dockerCommand: >-
+      sh -c "python -m alembic -c alembic.ini upgrade head &&
+      uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health/ready
+    autoDeploy: false
+    envVars:
+      - key: PLATFORM_ENVIRONMENT
+        value: production
+      - key: PLATFORM_DATABASE_URL
+        fromDatabase:
+          name: batcomputer-platform-db
+          property: connectionString
+      - key: PLATFORM_SECRET_KEY
+        generateValue: true
+      - key: PLATFORM_ALLOWED_ORIGINS
+        sync: false
+
+  - type: web
+    name: batcomputer-orbital
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./orbital-data-lab/Dockerfile
+    healthCheckPath: /health/ready
+    autoDeploy: false
+    disk:
+      name: orbital-scenarios
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: ORBITAL_DATABASE_PATH
+        value: /data/scenarios.db

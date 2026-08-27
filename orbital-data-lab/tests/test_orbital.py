@@ -59,6 +59,18 @@ def test_bounded_validation():
     assert invalid_radius.status_code == 422
 
 
+def test_health_endpoints_report_liveness_and_database_readiness():
+    client = TestClient(app)
+    assert client.get("/health/live").json() == {
+        "status": "ok",
+        "service": "orbital-data-lab",
+    }
+    assert client.get("/health/ready").json() == {
+        "status": "ready",
+        "database": "reachable",
+    }
+
+
 def test_api_storage_idempotence_exports_and_lineage():
     database = ROOT / "orbital-test.db"
     database.unlink(missing_ok=True)

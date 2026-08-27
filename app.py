@@ -2,6 +2,8 @@ from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory
 
+from site_config import public_site_config
+
 BASE_DIR = Path(__file__).resolve().parent
 app = Flask(__name__, static_folder=None)
 
@@ -16,9 +18,14 @@ CATEGORY_PAGES = {
     "network-software": "network_software.html",
     "alfred-agent": "alfred_agent_console.html",
 }
+PRIMARY_PROJECTS = (
+    "operations-platform",
+    "orbital-data-lab",
+    "algorithm-quality-lab",
+)
 ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
 ROOT_PUBLIC_FILES = {"project-evidence.json"}
-ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}
+ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
 PREVIEW_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
 
 
@@ -107,9 +114,17 @@ def site_summary():
             "categories": CATEGORY_PAGES,
             "projects": project_inventory(),
             "project_count": len(project_inventory()),
+            "primary_projects": PRIMARY_PROJECTS,
+            "labs_count": len(project_inventory()) - len(PRIMARY_PROJECTS),
+            "labs_page": "labs.html",
             "evidence_inventory": "project-evidence.json",
         }
     )
+
+
+@app.get("/api/site/config")
+def site_configuration():
+    return jsonify(public_site_config(BASE_DIR))
 
 
 @app.get("/<path:page>")

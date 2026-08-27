@@ -1,4 +1,20 @@
 services:
+  site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
   postgres:
     image: postgres:16-alpine
     environment:
@@ -25,9 +41,39 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
     command: >
       sh -c "alembic -c alembic.ini upgrade head &&
              uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  orbital:
+    build:
+      context: .
+      dockerfile: orbital-data-lab/Dockerfile
+    init: true
+    environment:
+      ORBITAL_DATABASE_PATH: /data/scenarios.db
+    ports:
+      - "8010:8010"
+    volumes:
+      - orbital-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health/ready', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   platform-postgres:
+  orbital-data:

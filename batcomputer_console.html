@@ -3,131 +3,165 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Justin Wimmer — Project Portfolio</title>
-<link rel="stylesheet" href="style.css?v=carbon-fiber">
+<meta name="description" content="Justin Wimmer's full-stack and backend engineering portfolio: FastAPI, Flask, SQLAlchemy, PostgreSQL, JavaScript, and tested Python systems.">
+<title>Justin Wimmer | Full-Stack &amp; Backend Engineer</title>
+<link rel="stylesheet" href="style.css?v=recruiter-ready">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="site-shell hud-resume-page">
+<a class="skip-link" href="#primary-work">Skip to primary work</a>
 <div class="bg-gradient" aria-hidden="true"></div>
-<main class="resume-shell" aria-label="Justin Wimmer HUD resume">
+<main class="resume-shell" aria-label="Justin Wimmer engineering portfolio">
   <header class="hud-header">
     <div class="hud-header-center">
       <div class="skyline-wrap" aria-hidden="true">
-        <img class="skyline header-skyline" src="assets/header-skyline-transparent.png" alt="Neon city skyline" />
+        <img class="skyline header-skyline" src="assets/header-skyline-transparent.png" alt="">
       </div>
+      <p class="alfred-label">[ ALFRED // CANDIDATE BRIEF ]</p>
       <h1 class="hud-name">JUSTIN WIMMER</h1>
-      <p class="hud-title">PYTHON PROTOTYPES • SECURITY LABS • SUPPORT UTILITIES</p>
-      <nav class="resume-nav" aria-label="Resume sections">
-        <button class="hud-btn active" type="button" data-panel="about" aria-controls="about" aria-expanded="true">ABOUT</button>
-        <a class="hud-btn nav-link-btn" href="software_development.html">SOFTWARE &amp; AUTOMATION</a>
-        <a class="hud-btn nav-link-btn" href="cybersecurity.html">CYBER SECURITY</a>
-        <a class="hud-btn nav-link-btn" href="it_support.html">IT SUPPORT</a>
-        <a class="hud-btn nav-link-btn" href="network_software.html">CLOUD &amp; NETWORK</a>
-        <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">CONTACT</button>
+      <p class="hud-title">ENTRY-LEVEL FULL-STACK / BACKEND SOFTWARE ENGINEER</p>
+      <p class="stack-line">Python · FastAPI · Flask · SQLAlchemy · PostgreSQL · JavaScript · Pytest</p>
+      <nav class="resume-nav" aria-label="Primary portfolio navigation">
+        <a class="hud-btn nav-link-btn" href="#primary-work">PRIMARY WORK</a>
+        <a class="hud-btn nav-link-btn" href="labs.html">LABS &amp; PROTOTYPES</a>
+        <a class="hud-btn nav-link-btn" href="project-evidence.json">EVIDENCE</a>
+        <a class="hud-btn nav-link-btn" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">GITHUB</a>
+        <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">APPLICATION</button>
+      </nav>
+      <nav class="category-nav" aria-label="Six project categories">
+        <a href="software_development.html">Software</a>
+        <a href="projects/operations-platform.html">Backend &amp; APIs</a>
+        <a href="projects/orbital-data-lab.html">Data &amp; Simulation</a>
+        <a href="projects/algorithm-quality-lab.html">Algorithms &amp; Quality</a>
+        <a href="cybersecurity.html">Security</a>
+        <a href="network_software.html">Network &amp; Systems</a>
       </nav>
     </div>
   </header>
 
-  <section class="alfred-hero" aria-label="Alfred deterministic portfolio helper">
+  <section class="alfred-hero" aria-labelledby="candidate-summary">
     <div class="alfred-hero-copy">
-      <p class="alfred-label">[ ALFRED ]</p>
-      <h2>Deterministic Portfolio Helper</h2>
-      <p class="alfred-mission">Use text or browser voice input to retrieve predefined guidance about this repository. Alfred does not use an AI model or execute actions.</p>
-      <p class="runtime-summary" id="redesignConsoleStatus">Deterministic helper ready.</p>
+      <p class="eyebrow">Recruiter summary</p>
+      <h2 id="candidate-summary">I build secure, tested Python systems from API to browser.</h2>
+      <p class="alfred-mission">My strongest work combines typed FastAPI services, relational data modeling, authentication and tenant isolation, lightweight JavaScript interfaces, deterministic computation, and automated evidence.</p>
+      <div class="proof-strip" aria-label="Portfolio proof summary">
+        <span><strong>3</strong> primary case studies</span>
+        <span><strong>4</strong> automated test suites</span>
+        <span><strong>20</strong> retained learning prototypes</span>
+      </div>
+      <div class="cta-row">
+        <a class="primary-cta" href="#primary-work">Review flagship work</a>
+        <a class="secondary-cta" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">Inspect source</a>
+      </div>
     </div>
-    <section class="alfred-console" aria-label="Alfred live console">
-      <button class="mic-circle" id="startVoiceInput" type="button" aria-label="Start voice input"><span class="mic-icon" aria-hidden="true">MIC</span></button>
+    <section class="alfred-console" aria-label="Alfred deterministic portfolio helper">
+      <div class="console-heading">
+        <p class="alfred-label">[ ALFRED // LOCAL HELPER ]</p>
+        <p class="runtime-summary" id="redesignConsoleStatus" role="status">Deterministic helper ready.</p>
+      </div>
       <div id="alfred-chatbox">
-        <div id="alfred-chat-log"></div>
+        <div id="alfred-chat-log" aria-live="polite"></div>
+        <label class="sr-only" for="alfred-chat-input">Ask Alfred about the portfolio</label>
         <div id="alfred-chat-input-row">
-          <input class="alfred-input" id="alfred-chat-input" type="text" placeholder="Ask Alfred a question..." />
+          <input class="alfred-input" id="alfred-chat-input" type="text" placeholder="Ask about projects, stack, or evidence">
+          <button class="mic-circle" id="startVoiceInput" type="button" aria-label="Start voice input"><span class="mic-icon" aria-hidden="true">MIC</span></button>
           <button id="alfred-chat-send" type="button">SEND</button>
         </div>
       </div>
+      <p class="helper-disclosure">Predefined responses only. No AI model, account access, or action execution.</p>
     </section>
   </section>
 
-  <section id="about" class="panel">
-    <h3>About Me</h3>
-    <p class="panel-lead">I build small, runnable Python prototypes across software, cybersecurity, IT support, and networking.</p>
-    <p>This repository pairs 20 project pages with compact source implementations. Each page now distinguishes demonstrated behavior from roadmap ideas and documents how to run the code locally.</p>
-    <p>The HUD itself is a Flask-served static portfolio with deterministic helper responses, review-only proposal endpoints, and automated route and link checks.</p>
-    <p><a href="projects/operations-platform.html">Operations platform</a>, <a href="projects/orbital-data-lab.html">orbital data lab</a>, and <a href="projects/algorithm-quality-lab.html">algorithm quality lab</a> now provide deeper executable evidence without changing the homepage into a recruiter landing page.</p>
-  </section>
-
-  <section id="skills" class="panel hidden">
-    <h3>Skills</h3>
-    <div class="category-grid">
-      <article class="category-card">
-        <h4>Software &amp; Automation</h4>
-        <p>Python command-line prototypes, a Flask static-site server, browser UI work, JSON and SQLite examples, and dry-run automation plans.</p>
+  <section id="primary-work" class="portfolio-section" aria-labelledby="primary-heading">
+    <div class="section-heading">
+      <p class="eyebrow">Primary work</p>
+      <h2 id="primary-heading">Three production-style engineering case studies</h2>
+      <p>Each project includes source, architecture decisions, exact run commands, limitations, and executable tests.</p>
+    </div>
+    <div class="flagship-grid">
+      <article class="flagship-card">
+        <p class="card-index">01 // FULL-STACK PLATFORM</p>
+        <h3>Batcomputer Operations Platform</h3>
+        <p>Tenant-isolated operational assets and workflows with FastAPI, SQLAlchemy, Alembic, role checks, immutable audits, and a functional operator UI.</p>
+        <ul class="evidence-list">
+          <li>Auth, RBAC, workspace isolation, CRUD, workflows</li>
+          <li>PostgreSQL production configuration; SQLite tests</li>
+          <li>Health, readiness, structured logs, OpenAPI</li>
+        </ul>
+        <div class="card-actions">
+          <a href="projects/operations-platform.html">Read case study</a>
+          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/platform">Source</a>
+          <a class="optional-site-link" data-demo-link="platform" hidden>Hosted demo</a>
+        </div>
       </article>
-      <article class="category-card">
-        <h4>Cyber Security</h4>
-        <p>Authorized-lab TCP checks, local log parsing, offline advisory matching, training-hash comparison, and controlled reflection checks.</p>
+      <article class="flagship-card">
+        <p class="card-index">02 // DATA &amp; SIMULATION</p>
+        <h3>Orbital Data Lab</h3>
+        <p>A bounded two-body simulation API comparing RK4 and velocity-Verlet, with deterministic storage, lineage, exports, and browser visualization.</p>
+        <ul class="evidence-list">
+          <li>Numerical correctness and energy-drift tests</li>
+          <li>Content-addressed, idempotent SQLite scenarios</li>
+          <li>Validated API inputs and JSON/CSV export</li>
+        </ul>
+        <div class="card-actions">
+          <a href="projects/orbital-data-lab.html">Read case study</a>
+          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/orbital-data-lab">Source</a>
+          <a class="optional-site-link" data-demo-link="orbital" hidden>Hosted demo</a>
+        </div>
       </article>
-      <article class="category-card">
-        <h4>IT Support</h4>
-        <p>Small diagnostic and simulation scripts for workstation health, disk status, DNS and ping checks, messaging fallback, and log-collection planning.</p>
-      </article>
-      <article class="category-card">
-        <h4>Cloud, Network &amp; Platform</h4>
-        <p>Subnet calculations, bounded ping checks, sample telemetry summaries, SQLite inventory sync, and review-only device configuration plans.</p>
+      <article class="flagship-card">
+        <p class="card-index">03 // ALGORITHMS &amp; QUALITY</p>
+        <h3>Algorithms &amp; Quality</h3>
+        <p>Original Python data structures and algorithm strategies backed by deterministic edge-case tests and explicit complexity trade-offs.</p>
+        <ul class="evidence-list">
+          <li>Arrays, maps, trees, graphs, queues</li>
+          <li>Sorting, search, backtracking, dynamic programming</li>
+          <li>Empty, duplicate, invalid, ordering, and mutation cases</li>
+        </ul>
+        <div class="card-actions">
+          <a href="projects/algorithm-quality-lab.html">Read case study</a>
+          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/algorithms-quality">Source</a>
+        </div>
       </article>
     </div>
   </section>
 
-  <section id="projects" class="panel hidden">
-    <h3>Projects</h3>
-    <p class="section-intro">Each category links to runnable prototypes and clearly documented limitations.</p>
-    <div class="category-grid">
-      <a class="category-card category-link" href="software_development.html">
-        <h4>Software &amp; Automation</h4>
-        <p>Deterministic Alfred responses, Flask routing, file-planning utilities, host metrics, data validation, and portfolio inventory tooling.</p>
-      </a>
-      <a class="category-card category-link" href="cybersecurity.html">
-        <h4>Cyber Security</h4>
-        <p>Five authorized-lab or offline security prototypes with bounded scope and no fabricated external integrations.</p>
-      </a>
-      <a class="category-card category-link" href="it_support.html">
-        <h4>IT Support</h4>
-        <p>Five support-oriented command-line prototypes for diagnostics, health summaries, simulations, and dry-run planning.</p>
-      </a>
-      <a class="category-card category-link" href="network_software.html">
-        <h4>Cloud, Network &amp; Platform</h4>
-        <p>Five networking prototypes covering addressing, reachability, sample telemetry, inventory storage, and configuration review.</p>
-      </a>
+  <section class="portfolio-section evidence-band" aria-labelledby="evidence-heading">
+    <div>
+      <p class="eyebrow">Proof, not placeholders</p>
+      <h2 id="evidence-heading">Runnable evidence across every layer</h2>
+      <p>The repository keeps strict Flask route/link tests, platform API and migration tests, orbital numerical/API/storage tests, and algorithm edge-case tests in CI.</p>
+    </div>
+    <div class="evidence-actions">
+      <a href="project-evidence.json">Open evidence inventory</a>
+      <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/actions">View GitHub Actions</a>
     </div>
   </section>
 
-  <section id="experience" class="panel hidden">
-    <h3>Experience</h3>
-    <p>This repository demonstrates iterative project work through compact Python implementations, documentation, a Flask delivery layer, and automated verification.</p>
-    <p>The current implementations are learning prototypes rather than production systems; the evidence inventory records what each one does today.</p>
+  <section class="portfolio-section labs-callout" aria-labelledby="labs-heading">
+    <div>
+      <p class="eyebrow">Learning archive</p>
+      <h2 id="labs-heading">Labs &amp; Prototypes</h2>
+      <p>Twenty smaller, runnable exercises remain available across software, security, IT support, and networking. They are intentionally secondary to the three case studies and retain their original folders and URLs.</p>
+    </div>
+    <a class="secondary-cta" href="labs.html">Browse all 20 labs</a>
   </section>
 
-  <section id="contact" class="panel hidden">
-    <h3>Contact</h3>
-    <p>Review the source and project history on <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">GitHub</a>.</p>
-    <p>No email, LinkedIn, resume download, or hosted-demo contact details are published in this repository.</p>
+  <section id="about" class="panel hidden">
+    <h2>About</h2>
+    <p>I am targeting entry-level full-stack and backend software engineering roles. This portfolio emphasizes practical Python delivery, careful boundaries, readable documentation, and tests that exercise failure cases—not unsupported production claims.</p>
+  </section>
+
+  <section id="contact" class="panel hidden" tabindex="-1">
+    <h2>Application &amp; contact</h2>
+    <p>Review the complete repository and project history on <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">GitHub</a>.</p>
+    <div id="optional-application-links" class="application-links" aria-label="Configured application links"></div>
   </section>
 </main>
 
-<script>
-  // Redirect root-relative links to the live server when this page was opened as a local file.
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
-<script src="app.js?v=3"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

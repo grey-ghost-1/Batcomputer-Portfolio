@@ -21,6 +21,8 @@ python -m uvicorn orbital_lab.api:app --reload --port 8010
 
 Open <http://127.0.0.1:8010>. Tests and lint:
 
+Liveness is available at `/health/live`; `/health/ready` verifies that the SQLite store can answer a query. Set `ORBITAL_DATABASE_PATH` to a writable persistent path on a deployment host.
+
 ```powershell
 Set-Location orbital-data-lab
 python -m pytest tests -q
@@ -33,3 +35,5 @@ python -m ruff check orbital-data-lab
 The equations model one point mass moving in a fixed, spherically symmetric central gravity field. They omit perturbations, finite burns, atmosphere, relativity, body rotation, ephemerides, frame transformations, uncertainty propagation, collision detection, and numerical event handling. Energy-drift tests use one idealized circular Earth orbit; passing them does not validate other regimes.
 
 SQLite is appropriate for this local evidence project, not concurrent distributed ingestion. Scenario lineage records code-level algorithm/schema versions but not a signed build provenance chain.
+
+The root [`DEPLOYMENT.md`](../DEPLOYMENT.md) documents the container, Render persistent-disk option, and multi-service smoke check. No hosted deployment is claimed.

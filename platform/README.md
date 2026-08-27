@@ -35,6 +35,8 @@ docker compose up --build
 
 For a production deployment, set `PLATFORM_ENVIRONMENT=production`, use external secret injection, terminate TLS at a trusted ingress, restrict allowed origins, run migration as a release step, retain PostgreSQL backups, and ship structured stdout logs to centralized storage. Production startup rejects the documented development secret and non-PostgreSQL database URLs.
 
+Provider connection strings beginning with `postgresql://` are normalized to the installed Psycopg 3 driver. Before each migration, verify a restorable managed-database backup. Rotate `PLATFORM_SECRET_KEY` through the provider's secret store; rotation intentionally invalidates outstanding access tokens and requires users to sign in again. Never place the key or database URL in an image, build argument, log, or committed `.env` file. See the root [`DEPLOYMENT.md`](../DEPLOYMENT.md) for the Render blueprint, health checks, and smoke command.
+
 ## Verification
 
 ```powershell

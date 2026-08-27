@@ -2581,3 +2581,438 @@ body,
     filter: none !important;
     opacity: 1 !important;
 }
+
+/* Recruiter-ready HUD layer */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.skip-link {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 100;
+    padding: 10px 14px;
+    color: #000000;
+    background: #ffffff;
+    border-radius: 4px;
+    transform: translateY(-160%);
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.hud-resume-page .resume-shell {
+    width: min(1180px, calc(100% - 32px));
+}
+
+.hud-resume-page .hud-header {
+    padding-bottom: 34px;
+}
+
+.hud-resume-page .hud-header-center {
+    max-width: 1100px;
+}
+
+.hud-resume-page .hud-name {
+    margin-bottom: 8px;
+}
+
+.hud-resume-page .hud-title {
+    color: #ffffff;
+    font-size: clamp(0.84rem, 2vw, 1.08rem);
+    letter-spacing: 0.12em;
+}
+
+.stack-line {
+    margin: 12px auto 0;
+    color: #c8d4da;
+    font-size: 0.88rem;
+    letter-spacing: 0.035em;
+}
+
+.category-nav {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 18px;
+    margin-top: 18px;
+    font-size: 0.78rem;
+}
+
+.category-nav a {
+    color: #b9cbd4;
+    text-underline-offset: 4px;
+}
+
+.category-nav a:hover,
+.category-nav a:focus-visible {
+    color: #ffffff;
+}
+
+.hud-resume-page .alfred-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    gap: 34px;
+    align-items: stretch;
+    min-height: 0;
+    margin-top: 28px;
+    padding: clamp(28px, 5vw, 54px);
+}
+
+.alfred-hero-copy h2,
+.portfolio-section h2 {
+    max-width: 760px;
+    margin: 8px 0 16px;
+    color: #ffffff;
+    font-family: "Orbitron", "Inter", sans-serif;
+    font-size: clamp(1.55rem, 3.4vw, 2.65rem);
+    line-height: 1.18;
+    letter-spacing: 0.02em;
+}
+
+.eyebrow,
+.card-index {
+    margin: 0;
+    color: #72d2ff;
+    font-family: "Orbitron", "Inter", sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+.proof-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.proof-strip span {
+    padding: 9px 12px;
+    color: #dce9ef;
+    background: rgba(255, 255, 255, 0.045);
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.proof-strip strong {
+    color: #ffffff;
+}
+
+.cta-row,
+.card-actions,
+.application-links,
+.evidence-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.cta-row {
+    margin-top: 28px;
+}
+
+.primary-cta,
+.secondary-cta,
+.card-actions a,
+.evidence-actions a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.primary-cta {
+    color: #001018;
+    background: #7bd8ff;
+    border: 1px solid #7bd8ff;
+}
+
+.secondary-cta,
+.card-actions a,
+.evidence-actions a {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(123, 216, 255, 0.55);
+}
+
+.primary-cta:hover,
+.primary-cta:focus-visible,
+.secondary-cta:hover,
+.secondary-cta:focus-visible,
+.card-actions a:hover,
+.card-actions a:focus-visible,
+.evidence-actions a:hover,
+.evidence-actions a:focus-visible {
+    outline: 3px solid rgba(123, 216, 255, 0.4);
+    outline-offset: 3px;
+}
+
+.hud-resume-page .alfred-console {
+    min-width: 0;
+    padding: 22px;
+    border: 1px solid rgba(123, 216, 255, 0.3);
+    background: rgba(0, 0, 0, 0.64);
+}
+
+.console-heading {
+    margin-bottom: 12px;
+}
+
+.helper-disclosure {
+    margin: 12px 0 0;
+    color: #aebdc4;
+    font-size: 0.75rem;
+}
+
+#alfred-chat-input-row {
+    flex-wrap: wrap;
+}
+
+#alfred-chat-input {
+    min-width: 180px;
+}
+
+.portfolio-section {
+    margin: 32px 0;
+    padding: clamp(28px, 4vw, 46px);
+    background: rgba(7, 12, 14, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.26);
+    scroll-margin-top: 20px;
+}
+
+.section-heading > p:last-child,
+.portfolio-section p,
+.flagship-card li {
+    color: #c5d0d5;
+    line-height: 1.7;
+}
+
+.flagship-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.flagship-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 24px;
+    background: linear-gradient(155deg, rgba(17, 27, 31, 0.98), rgba(3, 5, 6, 0.98));
+    border: 1px solid rgba(123, 216, 255, 0.24);
+    border-radius: 8px;
+}
+
+.flagship-card h3 {
+    margin: 12px 0 8px;
+    color: #ffffff;
+    font-size: 1.22rem;
+    line-height: 1.35;
+}
+
+.evidence-list {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.card-actions {
+    margin-top: 16px;
+}
+
+.card-actions a {
+    min-height: 38px;
+    padding: 8px 11px;
+    font-size: 0.78rem;
+}
+
+.evidence-band,
+.labs-callout {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: center;
+}
+
+.evidence-band > div:first-child,
+.labs-callout > div:first-child {
+    max-width: 760px;
+}
+
+.labs-callout {
+    border-left: 4px solid #7bd8ff;
+}
+
+.application-links:empty {
+    display: none;
+}
+
+.optional-site-link[hidden] {
+    display: none;
+}
+
+.detail-shell code,
+.detail-shell a,
+.portfolio-section a {
+    overflow-wrap: anywhere;
+}
+
+.architecture-flow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+}
+
+.architecture-flow li {
+    position: relative;
+    padding: 18px 14px;
+    color: #eef9fd;
+    text-align: center;
+    background: rgba(123, 216, 255, 0.06);
+    border: 1px solid rgba(123, 216, 255, 0.3);
+    border-radius: 6px;
+}
+
+.architecture-flow li:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    top: 50%;
+    right: -18px;
+    z-index: 1;
+    color: #7bd8ff;
+    transform: translateY(-50%);
+}
+
+.case-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.case-meta > div {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.035);
+    border-left: 2px solid #7bd8ff;
+}
+
+.case-meta dt {
+    color: #72d2ff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.case-meta dd {
+    margin: 7px 0 0;
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid #7bd8ff;
+    outline-offset: 3px;
+}
+
+@media (max-width: 940px) {
+    .hud-resume-page .alfred-hero,
+    .flagship-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hud-resume-page .alfred-console {
+        width: auto;
+    }
+
+    .evidence-band,
+    .labs-callout {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 720px) {
+    .hud-resume-page .resume-shell {
+        width: min(100%, calc(100% - 20px));
+    }
+
+    .hud-resume-page .hud-header {
+        padding-inline: 12px;
+    }
+
+    .hud-resume-page .alfred-hero,
+    .portfolio-section {
+        padding: 22px 18px;
+    }
+
+    .resume-nav,
+    .category-nav {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .resume-nav .hud-btn,
+    .category-nav a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .architecture-flow,
+    .case-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .architecture-flow li:not(:last-child)::after {
+        content: "↓";
+        top: auto;
+        right: 50%;
+        bottom: -21px;
+        transform: translateX(50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

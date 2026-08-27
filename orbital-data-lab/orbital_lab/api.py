@@ -17,6 +17,21 @@ app = FastAPI(
 )
 
 
+@app.get("/health/live")
+def liveness():
+    return {"status": "ok", "service": "orbital-data-lab"}
+
+
+@app.get("/health/ready")
+def readiness():
+    connection = store.connect()
+    try:
+        connection.execute("SELECT 1").fetchone()
+    finally:
+        connection.close()
+    return {"status": "ready", "database": "reachable"}
+
+
 @app.get("/", include_in_schema=False)
 def ui():
     return FileResponse(ROOT / "ui" / "index.html")

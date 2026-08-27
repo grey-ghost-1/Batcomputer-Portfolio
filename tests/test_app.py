@@ -1,11 +1,13 @@
 import json
+import tempfile
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
+from unittest.mock import patch
 from urllib.parse import unquote, urlsplit
 
 import app as site
-
+from site_config import REPOSITORY_URL, SOURCE_REF, public_site_config
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -64,12 +66,78 @@ class AppTestCase(unittest.TestCase):
         payload = summary.get_json()
         self.assertEqual(payload["project_count"], 23)
         self.assertEqual(len(payload["projects"]), 23)
+        self.assertEqual(payload["primary_projects"], list(site.PRIMARY_PROJECTS))
+        self.assertEqual(payload["labs_count"], 20)
+        self.assertEqual(payload["labs_page"], "labs.html")
         self.assertEqual(payload["evidence_inventory"], "project-evidence.json")
         self.assertEqual(payload["categories"], site.CATEGORY_PAGES)
+
+    def test_public_site_config_omits_unknown_optional_values(self):
+        with patch.dict(
+            "os.environ",
+            {
+                "SITE_CONTACT_EMAIL": "",
+                "SITE_LINKEDIN_URL": "not-a-url",
+                "SITE_RESUME_PATH": "assets/missing.pdf",
+                "SITE_PLATFORM_DEMO_URL": "http://insecure.example",
+                "SITE_ORBITAL_DEMO_URL": "",
+            },
+            clear=False,
+        ):
+            response = self.client.get("/api/site/config")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.get_json(),
+            {
+                "repository_url": REPOSITORY_URL,
+                "source_ref": SOURCE_REF,
+                "optional_links": [],
+                "demos": {},
+            },
+        )
+
+    def test_public_site_config_accepts_only_safe_existing_values(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            assets = root / "assets"
+            assets.mkdir()
+            (assets / "resume.pdf").write_bytes(b"%PDF-1.4\n")
+            config = public_site_config(
+                root,
+                {
+                    "SITE_CONTACT_EMAIL": "candidate@example.com",
+                    "SITE_LINKEDIN_URL": "https://www.linkedin.com/in/candidate",
+                    "SITE_RESUME_PATH": "assets/resume.pdf",
+                    "SITE_PLATFORM_DEMO_URL": "https://platform.example.com",
+                    "SITE_ORBITAL_DEMO_URL": "javascript:alert(1)",
+                },
+            )
+        self.assertEqual(
+            config["optional_links"],
+            [
+                {
+                    "label": "Email",
+                    "href": "mailto:candidate@example.com",
+                    "kind": "email",
+                },
+                {
+                    "label": "LinkedIn",
+                    "href": "https://www.linkedin.com/in/candidate",
+                    "kind": "linkedin",
+                },
+                {
+                    "label": "Resume",
+                    "href": "assets/resume.pdf",
+                    "kind": "resume",
+                },
+            ],
+        )
+        self.assertEqual(config["demos"], {"platform": "https://platform.example.com"})
 
     def test_static_category_and_project_routes(self):
         self.assertEqual(self.get_status("/"), 200)
         self.assertEqual(self.get_status("/batcomputer_console.html"), 200)
+        self.assertEqual(self.get_status("/labs.html"), 200)
         self.assertEqual(self.get_status("/project-evidence.json"), 200)
 
         for alias, file_name in site.CATEGORY_PAGES.items():
@@ -278,6 +346,141 @@ class StaticContentTestCase(unittest.TestCase):
                     broken.append((html_file.name, link, "missing"))
         self.assertEqual(broken, [])
 
+    def test_homepage_is_recruiter_clear_and_flagship_first(self):
+        parser = TextParser()
+        parser.feed((ROOT / "batcomputer_console.html").read_text(encoding="utf-8"))
+        normalized = " ".join(parser.text.split())
+        for expected in (
+            "ENTRY-LEVEL FULL-STACK / BACKEND SOFTWARE ENGINEER",
+            "Python",
+            "FastAPI",
+            "PostgreSQL",
+            "Batcomputer Operations Platform",
+            "Orbital Data Lab",
+            "Algorithms & Quality",
+            "Labs & Prototypes",
+            "20 retained learning prototypes",
+            "No AI model",
+        ):
+            with self.subTest(expected=expected):
+                self.assertIn(expected, normalized)
+
+        primary_position = normalized.index("Three production-style engineering case studies")
+        labs_position = normalized.index("Learning archive")
+        self.assertLess(primary_position, labs_position)
+
+    def test_homepage_navigation_covers_six_categories_and_application(self):
+        content = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        parser = LinkParser()
+        parser.feed(content)
+        expected_links = {
+            "software_development.html",
+            "projects/operations-platform.html",
+            "projects/orbital-data-lab.html",
+            "projects/algorithm-quality-lab.html",
+            "cybersecurity.html",
+            "network_software.html",
+            "labs.html",
+            "project-evidence.json",
+            REPOSITORY_URL,
+        }
+        self.assertTrue(expected_links.issubset(set(parser.links)))
+        self.assertIn('data-panel="contact"', content)
+
+    def test_flagship_pages_have_complete_case_study_evidence(self):
+        source_urls = {
+            "operations-platform.html": (
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/platform"
+            ),
+            "orbital-data-lab.html": (
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/orbital-data-lab"
+            ),
+            "algorithm-quality-lab.html": (
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality"
+            ),
+        }
+        required_sections = (
+            "Problem and users",
+            "Implemented by me",
+            "Architecture",
+            "Trade-offs",
+            "Run and verify",
+            "Run from repository root",
+            "Current Limitations",
+            "Demo status",
+        )
+        for file_name, source_url in source_urls.items():
+            with self.subTest(file_name=file_name):
+                content = (ROOT / "projects" / file_name).read_text(encoding="utf-8")
+                parser = TextParser()
+                parser.feed(content)
+                for section in required_sections:
+                    self.assertIn(section, parser.text)
+                self.assertIn(source_url, content)
+                self.assertNotIn("fake screenshot", content.lower())
+
+    def test_deployment_configuration_and_smoke_contract(self):
+        render = (ROOT / "render.yaml").read_text(encoding="utf-8")
+        compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+        deployment = (ROOT / "DEPLOYMENT.md").read_text(encoding="utf-8")
+        smoke = (ROOT / "scripts" / "smoke_check.py").read_text(encoding="utf-8")
+
+        for name in (
+            "batcomputer-portfolio",
+            "batcomputer-platform",
+            "batcomputer-orbital",
+        ):
+            self.assertIn(f"name: {name}", render)
+        for health_path in ("/api/health", "/health/live", "/health/ready"):
+            self.assertIn(health_path, smoke)
+        self.assertEqual(render.count("autoDeploy: false"), 3)
+        self.assertIn("python -m alembic -c alembic.ini upgrade head", render)
+        self.assertIn("ORBITAL_DATABASE_PATH", render)
+        self.assertIn("site:", compose)
+        self.assertIn("platform:", compose)
+        self.assertIn("orbital:", compose)
+        self.assertTrue((ROOT / "Dockerfile").is_file())
+        self.assertTrue((ROOT / "platform" / "Dockerfile").is_file())
+        self.assertTrue((ROOT / "orbital-data-lab" / "Dockerfile").is_file())
+        self.assertIn("No service in this repository is claimed as currently deployed", deployment)
+        self.assertIn("GitHub Pages", deployment)
+
+    def test_labs_are_accurately_labeled_and_all_legacy_paths_remain(self):
+        labs = (ROOT / "labs.html").read_text(encoding="utf-8")
+        self.assertIn("Twenty small, runnable exercises", labs)
+        self.assertIn("three primary case studies", labs)
+        legacy_sources = [
+            path
+            for category in ("Cybersecurity", "IT Support", "Network", "Software Automation")
+            for path in (ROOT / category).glob("*/main.py")
+        ]
+        self.assertEqual(len(legacy_sources), 20)
+        legacy_pages = {
+            project["page"]
+            for project in self.evidence["projects"]
+            if project["source_folder"]
+            in {path.parent.relative_to(ROOT).as_posix() for path in legacy_sources}
+        }
+        self.assertEqual(len(legacy_pages), 20)
+        self.assertTrue(all((ROOT / page).is_file() for page in legacy_pages))
+
+    def test_accessibility_and_responsive_contracts_are_present(self):
+        home = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        css = (ROOT / "style.css").read_text(encoding="utf-8")
+        self.assertIn('class="skip-link"', home)
+        self.assertIn('aria-label="Six project categories"', home)
+        self.assertIn('aria-live="polite"', home)
+        self.assertIn("a:focus-visible", css)
+        self.assertIn("@media (prefers-reduced-motion: reduce)", css)
+        self.assertIn("overflow-x: hidden", css)
+        self.assertIn("@media (max-width: 720px)", css)
+
+        html_files = list(ROOT.glob("*.html")) + list((ROOT / "projects").glob("*.html"))
+        for path in html_files:
+            content = path.read_text(encoding="utf-8")
+            if "<img" in content:
+                self.assertNotRegex(content, r"<img(?![^>]*\balt=)[^>]*>")
+
     def test_public_copy_has_no_known_placeholder_or_model_claims(self):
         public_files = (
             list(ROOT.glob("*.html"))
@@ -291,6 +494,9 @@ class StaticContentTestCase(unittest.TestCase):
             "Ollama-backed",
             "Embedded AI Assistant",
             "local-demo",
+            "your email",
+            "your linkedin",
+            "your resume",
         ):
             with self.subTest(unsupported=unsupported):
                 self.assertNotIn(unsupported, content)

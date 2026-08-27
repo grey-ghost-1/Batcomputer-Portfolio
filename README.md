@@ -1,21 +1,54 @@
 # Batcomputer Portfolio
 
-A neon/HUD portfolio with 20 retained compact Python prototypes, one production-style flagship, and two executable supporting evidence projects. Every project page maps to source and records implemented behavior, limitations, and validation status in [`project-evidence.json`](project-evidence.json).
+Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and backend software roles. The strongest evidence is three production-style Python projects backed by runnable tests, exact local commands, explicit security/reliability boundaries, and honest limitations. The original 20 learning projects remain intact as secondary **Labs & Prototypes**.
+
+**Strongest stack:** Python, FastAPI, Flask, Pydantic, SQLAlchemy, Alembic, PostgreSQL, SQLite, JavaScript, Pytest, Ruff, Docker configuration, and GitHub Actions.
+
+[Open the recruiter homepage](batcomputer_console.html) · [Review evidence inventory](project-evidence.json) · [Deployment guide](DEPLOYMENT.md)
+
+> **Sharing status:** GitHub currently reports this repository as private. Source links require authorized access until the owner intentionally makes the repository public or grants a reviewer access.
+
+## Primary project matrix
+
+| Project | Engineering evidence | Tests | Demo status |
+|---|---|---:|---|
+| [Batcomputer Operations Platform](projects/operations-platform.html) | Tenant-isolated FastAPI modular monolith; Argon2 auth, RBAC, workflows, same-transaction audits, Alembic/PostgreSQL, operator UI | 9 | Local only; not claimed as hosted |
+| [Orbital Data Lab](projects/orbital-data-lab.html) | Deterministic RK4/velocity-Verlet API; bounded inputs, energy drift, content-addressed SQLite, lineage, exports, canvas UI | 6 | Local only; educational, not flight grade |
+| [Algorithms & Quality](projects/algorithm-quality-lab.html) | Original data structures and algorithms; complexity trade-offs and deterministic normal/edge behavior | 7 | Source-and-test project; no service |
+| [Labs & Prototypes](labs.html) | 20 retained small exercises across software, security, IT support, and network/systems fundamentals | Covered by site inventory/link tests | Local scripts only |
 
 ## Architecture
 
-- `app.py` is a small Flask server for the static site, health and inventory APIs, deterministic Alfred responses, and review-only proposal state.
-- `batcomputer_console.html`, `style.css`, and `app.js` provide the main HUD.
-- The four category HTML files summarize only behavior demonstrated by the paired source.
-- `projects/` contains 20 evidence-led project pages.
-- `Cybersecurity/`, `IT Support/`, `Network/`, and `Software Automation/` contain the 20 paired Python entry points and project notes.
-- `alfred_agent_console.html` and `alfred_agent.js` expose deterministic preview/review controls. Approval records a decision and returns preview content; it never executes commands or writes files.
-- `tests/` verifies Flask behavior, route boundaries, Alfred semantics, proposal review behavior, evidence mappings, and local-link integrity.
-- `platform/` is an independently served FastAPI operations platform with tenant isolation, RBAC, CRUD/workflows, immutable audit events, Alembic, PostgreSQL configuration, a minimal operator UI, and focused API tests.
-- `orbital-data-lab/` is a deterministic two-body simulation and scenario-data service with RK4/velocity-Verlet comparisons, lineage, visualization, and exports.
-- `algorithms-quality/` contains original data-structure/algorithm implementations, edge-case tests, complexity notes, and a quality report.
+```text
+Recruiter-facing Flask site (:5000)
+├── Neon HUD, primary case studies, labs, evidence, optional application links
+├── Deterministic Alfred helper (no model or action execution)
+└── Route/link/config/accessibility/deployment-contract tests
 
-The static pages can be opened directly or published on GitHub Pages. Flask endpoints and server-backed Alfred responses are available only when `app.py` is running.
+Independent FastAPI services
+├── platform/ (:8000) -> auth/RBAC/workflows/audits -> PostgreSQL (SQLite in tests)
+└── orbital-data-lab/ (:8010) -> simulation/API/exports -> SQLite scenarios
+
+Executable quality evidence
+└── algorithms-quality/ -> dependency-free implementations + Pytest
+```
+
+The Flask site, platform, and Orbital service are separate processes and do not share authentication or process state. `project-evidence.json` maps all 23 project pages to source folders, run commands, implemented behavior, limitations, and validation status.
+
+## Repository map
+
+- `batcomputer_console.html`, `style.css`, `app.js` — visually faithful recruiter homepage and deterministic browser behavior
+- `app.py`, `site_config.py` — Flask delivery, safe routes, health/summary/config APIs, and optional-link omission
+- `projects/` — three primary case studies plus the original 20 detail-page paths
+- `Cybersecurity/`, `IT Support/`, `Network/`, `Software Automation/` — all 20 original prototype source folders
+- `platform/` — independently served operations platform, migration, container, UI, and API tests
+- `orbital-data-lab/` — independently served simulation API, storage, UI, container, and tests
+- `algorithms-quality/` — algorithms, edge-case tests, complexity table, and quality report
+- `render.yaml`, `docker-compose.yml`, `Dockerfile`, `DEPLOYMENT.md` — deployment path and operational boundaries
+- `scripts/smoke_check.py` — non-mutating health/readiness checks for all deployable services
+- `.github/workflows/ci.yml` — all suites, migration, lint, compile, and Compose config validation
+
+Static HTML/CSS/JavaScript and evidence JSON can be published on GitHub Pages. Flask/FastAPI endpoints, environment-driven application links, Alfred server responses, migrations, and databases cannot run on Pages. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact boundary.
 
 ## Local development
 
@@ -32,28 +65,62 @@ Open <http://127.0.0.1:5000>. Useful endpoints:
 
 - `GET /api/health`
 - `GET /api/site/summary`
+- `GET /api/site/config`
 - `POST /alfred` with `{"message": "status"}`
 
-## Tests
+The site configuration API always publishes the known repository URL. Optional email, LinkedIn, resume, platform demo, and Orbital demo values come from the single safe source in `site_config.py`; missing or invalid values are omitted. No resume file is currently included. To add one later, follow [Adding a resume later](DEPLOYMENT.md#adding-a-resume-later).
+
+## Verified commands and counts
+
+The current baseline is **42 passing automated tests** across four suites: 20 Flask/site tests, 9 platform tests, 6 Orbital tests, and 7 algorithm tests.
 
 ```powershell
+# Portfolio: 20
 python -m unittest discover -s tests -v
-Set-Location platform; python -m pytest tests -q; Set-Location ..
-Set-Location orbital-data-lab; python -m pytest tests -q; Set-Location ..
-Set-Location algorithms-quality; python -m pytest tests -q; Set-Location ..
-python -m ruff check platform orbital-data-lab algorithms-quality
+
+# Platform migration + API: 9
+Set-Location platform
+$env:PLATFORM_ENVIRONMENT = "test"
+$env:PLATFORM_DATABASE_URL = "sqlite:///./migration-check.db"
+$env:PLATFORM_SECRET_KEY = "ci-only-secret-that-is-long-enough-for-tests"
+python -m alembic -c alembic.ini upgrade head
+python -m pytest tests -q
+Set-Location ..
+
+# Orbital: 6
+Set-Location orbital-data-lab
+python -m pytest tests -q
+Set-Location ..
+
+# Algorithms: 7
+python -m pytest algorithms-quality\tests -q
+
+# Static checks
+python -m ruff check app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
+python -m compileall -q app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
+docker compose config --quiet
 ```
 
-CI runs every command above, applies the Alembic migration to a clean SQLite database, compiles the new modules, and validates the Docker Compose configuration without ignored failures.
+CI runs this chain and validates Compose structure. Docker is unavailable in the current local environment, so image builds and live Compose startup remain CI/host validation steps rather than claimed local results.
 
-## Current scope
+## Deployment status and limits
 
-- The root site remains a Flask-served static portfolio. The separate `platform/` service is the production-style application evidence.
-- Alfred is a deterministic local helper with predefined responses. It has no language model, retrieval, memory, autonomous tools, or action execution.
-- Coding and homepage proposal endpoints are review-only previews held in process memory. Approve/reject calls do not generate or write content.
-- Most paired projects are dependency-free learning prototypes. Some read local fixture files, two invoke bounded loopback-friendly ping/TCP checks, and one writes a local SQLite database when explicitly run.
-- There is no hosted demo, cloud deployment, resume download, email address, or LinkedIn profile configured in this repository.
-- The root Flask site has no authentication. The separate platform implements authentication but is not hosted and does not claim production deployment.
-- The orbital model is educational and explicitly not flight grade. The algorithm suite is educational evidence, not a standard-library replacement.
+- **Deployment status:** configuration exists; no hosted deployment is claimed.
+- **Source visibility:** the current GitHub repository is private; unauthenticated recruiters cannot inspect linked code until access is changed.
+- The root Flask site has no authentication because it serves public portfolio content and in-memory review-only previews.
+- The platform implements authentication and tenant boundaries, but not MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations.
+- Alfred is deterministic and predefined. It has no language model, retrieval, memory, autonomous tools, or action execution.
+- The Orbital model is educational and omits perturbations, burns, atmosphere, ephemerides, uncertainty, collision handling, and flight validation.
+- Algorithm implementations demonstrate reasoning and tests; they do not replace optimized standard-library or production packages.
+- Most retained labs are intentionally small, dependency-light learning prototypes—not production systems.
 
-Detailed run, architecture, operations, deployment, and limitation notes live in each new project's README.
+## Ownership and contribution
+
+This repository presents Justin Wimmer's portfolio work; project direction and the implementation described in each case study belong to that portfolio. Git history remains the source of individual commit attribution. Proposed outside changes should use focused issues and pull requests, preserve all legacy project paths, include tests, and avoid expanding claims beyond executable behavior.
+
+## Roadmap / issue candidates
+
+1. Add platform refresh-token rotation/revocation, rate limiting, audit export/retention, and a documented backup-restore drill.
+2. Version Orbital storage migrations and add validated perturbation models as separately scoped educational experiments.
+3. Deploy the three web services, record real HTTPS URLs only after smoke checks pass, and add centralized logs/alerts.
+4. Run a browser-assisted accessibility matrix across Chromium/Firefox at mobile and desktop widths and record reproducible findings.

@@ -9,7 +9,7 @@ const alfredChatSendButton = document.getElementById("alfred-chat-send");
 const alfredApiBase = window.location.port === "8080" ? "http://127.0.0.1:5000" : "";
 
 function normalizePanelId(panelId) {
-    return panelIds.has(panelId) ? panelId : "about";
+    return panelIds.has(panelId) ? panelId : null;
 }
 
 function showPanel(panelId, options = {}) {
@@ -17,24 +17,28 @@ function showPanel(panelId, options = {}) {
     const updateHash = options.updateHash !== false;
 
     panels.forEach((panel) => {
-        const isMatch = panel.id === resolvedPanelId;
+        const isMatch = resolvedPanelId !== null && panel.id === resolvedPanelId;
         panel.classList.toggle("hidden", !isMatch);
     });
 
     panelButtons.forEach((button) => {
-        const isActive = button.dataset.panel === resolvedPanelId;
+        const isActive = resolvedPanelId !== null && button.dataset.panel === resolvedPanelId;
         button.classList.toggle("active", isActive);
         button.setAttribute("aria-expanded", isActive ? "true" : "false");
     });
 
-    if (updateHash) {
+    if (updateHash && resolvedPanelId) {
         window.location.hash = resolvedPanelId;
+    }
+
+    if (resolvedPanelId && options.focus) {
+        document.getElementById(resolvedPanelId)?.focus();
     }
 }
 
 panelButtons.forEach((button) => {
     button.addEventListener("click", () => {
-        showPanel(button.dataset.panel || "");
+        showPanel(button.dataset.panel || "", { focus: true });
     });
 });
 
@@ -260,4 +264,48 @@ if (alfredChatLogElement) {
     alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is a deterministic local helper. Ask about this portfolio or use browser voice input; no AI model or action execution is connected.</div>';
 }
 
-showPanel(window.location.hash.slice(1) || "about", { updateHash: false });
+async function loadPublicSiteConfig() {
+    const optionalLinks = document.getElementById("optional-application-links");
+    const demoLinks = Array.from(document.querySelectorAll("[data-demo-link]"));
+    if (!optionalLinks && demoLinks.length === 0) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/site/config", { headers: { Accept: "application/json" } });
+        if (!response.ok) {
+            return;
+        }
+        const config = await response.json();
+
+        if (optionalLinks && Array.isArray(config.optional_links)) {
+            config.optional_links.forEach((link) => {
+                if (!link || typeof link.label !== "string" || typeof link.href !== "string") {
+                    return;
+                }
+                const anchor = document.createElement("a");
+                anchor.className = "secondary-cta";
+                anchor.href = link.href;
+                anchor.textContent = link.label;
+                if (link.href.startsWith("https://")) {
+                    anchor.rel = "noreferrer";
+                }
+                optionalLinks.appendChild(anchor);
+            });
+        }
+
+        demoLinks.forEach((anchor) => {
+            const demoUrl = config.demos?.[anchor.dataset.demoLink];
+            if (typeof demoUrl === "string" && demoUrl.startsWith("https://")) {
+                anchor.href = demoUrl;
+                anchor.rel = "noreferrer";
+                anchor.hidden = false;
+            }
+        });
+    } catch (error) {
+        // Static hosting has no Flask configuration endpoint; optional links remain omitted.
+    }
+}
+
+loadPublicSiteConfig();
+showPanel(window.location.hash.slice(1), { updateHash: false });
