@@ -68,7 +68,11 @@ def test_chat_uses_curated_citations_when_relevant(settings_factory, knowledge_d
     )
     settings = settings_factory()
     orchestrator = _orchestrator(settings, knowledge_dir)
-    result = run_async(orchestrator.chat(ChatRequest(message="tell me about zzyzxtopic")))
+    result = run_async(
+        orchestrator.chat(
+            ChatRequest(message="tell me about zzyzxtopic", mode="website")
+        )
+    )
     assert result["answer_kind"] == "website"
     assert len(result["citations"]) == 1
     assert result["citations"][0]["provenance"] == "curated-website"
@@ -124,6 +128,7 @@ def test_chat_model_mode_uses_provider_and_reports_model_used(settings_factory, 
     assert result["reply"] == "Very good, sir."
     assert result["reasoning_source"] == "model"
     assert result["provider"]["model_used"] is True
+    assert result["provider"]["status"] == "ok"
     assert provider.calls  # the provider was actually invoked
 
 
@@ -148,6 +153,76 @@ def test_safe_general_question_reaches_model_without_curated_match(settings_fact
     assert provider.calls
     assert result["reasoning_source"] == "model"
     assert result["provider"]["model_used"] is True
+    assert result["answer_kind"] == "model"
+    assert result["citations"] == []
+
+
+def test_general_project_planning_does_not_attach_portfolio_citations(settings_factory, knowledge_dir):
+    settings = settings_factory()
+    provider = FakeProvider(
+        available=True,
+        result=CompletionResult(
+            text="Begin with a small milestone and a measurable outcome.",
+            model_used=True,
+            provider="fake",
+            model="fake-model",
+            status="ok",
+        ),
+    )
+    orchestrator = _orchestrator(settings, knowledge_dir, provider=provider)
+    result = run_async(
+        orchestrator.chat(
+            ChatRequest(
+                message="Help me plan a software project with three milestones.",
+                mode="auto",
+            )
+        )
+    )
+    assert result["answer_kind"] == "model"
+    assert result["citations"] == []
+
+
+def test_portfolio_question_still_uses_curated_context_with_model(settings_factory, knowledge_dir):
+    (knowledge_dir / "README.md").write_text(
+        "# Portfolio\n\nThe portfolio includes a typed API project.\n",
+        encoding="utf-8",
+    )
+    settings = settings_factory()
+    provider = FakeProvider(
+        available=True,
+        result=CompletionResult(
+            text="The portfolio includes a typed API project [1].",
+            model_used=True,
+            provider="fake",
+            model="fake-model",
+            status="ok",
+        ),
+    )
+    orchestrator = _orchestrator(settings, knowledge_dir, provider=provider)
+    result = run_async(
+        orchestrator.chat(
+            ChatRequest(message="What does the portfolio demonstrate?", mode="model")
+        )
+    )
+    assert result["answer_kind"] == "website"
+    assert result["citations"]
+    assert result["provider"]["model_used"] is True
+
+
+def test_website_mode_is_explicit_and_does_not_call_model(settings_factory, knowledge_dir):
+    (knowledge_dir / "README.md").write_text(
+        "# Evidence\n\nA zzyzxrecord is present.\n",
+        encoding="utf-8",
+    )
+    settings = settings_factory()
+    provider = FakeProvider(available=True, forbid_call=True)
+    orchestrator = _orchestrator(settings, knowledge_dir, provider=provider)
+    result = run_async(
+        orchestrator.chat(ChatRequest(message="zzyzxrecord", mode="website"))
+    )
+    assert provider.calls == []
+    assert result["answer_kind"] == "website"
+    assert result["citations"]
 
 
 def test_chat_model_output_violating_persona_policy_falls_back_to_deterministic(settings_factory, knowledge_dir):
@@ -205,7 +280,11 @@ def test_citations_never_include_sources_beyond_what_was_retrieved(settings_fact
     )
     settings = settings_factory()
     orchestrator = _orchestrator(settings, knowledge_dir)
-    result = run_async(orchestrator.chat(ChatRequest(message="onlyrealtopic")))
+    result = run_async(
+        orchestrator.chat(
+            ChatRequest(message="onlyrealtopic", mode="website")
+        )
+    )
     for citation in result["citations"]:
         assert citation["source"] == "README.md"
         assert citation["provenance"] == "curated-website"
@@ -223,7 +302,9 @@ def test_indexed_prompt_injection_is_neutralised_and_never_obeyed(settings_facto
     )
     settings = settings_factory()
     orchestrator = _orchestrator(settings, knowledge_dir)
-    result = run_async(orchestrator.chat(ChatRequest(message="zzyzxsafetopic", mode="deterministic")))
+    result = run_async(
+        orchestrator.chat(ChatRequest(message="zzyzxsafetopic", mode="website"))
+    )
     assert "ignore all previous instructions" not in result["reply"].lower()
     assert "[neutralised instruction]" in result["reply"]
     # The persona must never claim to have revealed a secret/token.

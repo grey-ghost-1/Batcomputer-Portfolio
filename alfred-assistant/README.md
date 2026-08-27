@@ -163,6 +163,11 @@ installed or enabled on every machine. `/api/status` reports what is configured,
 and each `/api/chat` response reports `provider.model_used`; a timeout or
 unavailable provider is labeled and falls back deterministically.
 
+Chat defaults to broad model-backed answers when a provider is configured. Curated
+portfolio evidence is attached only for clear portfolio questions or the explicit
+`website` mode, preventing unrelated general answers from receiving irrelevant
+site citations.
+
 ## What Alfred is not
 
 - Not a general browser, crawler, or arbitrary URL fetcher -- web research

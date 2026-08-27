@@ -20,6 +20,23 @@ from .schemas import ChatRequest, ChatTurn, ResearchRequest
 
 CURATED_PROVENANCE = "curated-website"
 WEB_PROVENANCE = "web-retrieval"
+_PORTFOLIO_TERMS = (
+    "portfolio",
+    "your projects",
+    "your project",
+    "primary work",
+    "case study",
+    "project evidence",
+    "justin",
+    "wimmer",
+    "batcomputer",
+    "alfred",
+    "orbital",
+    "operations platform",
+    "resume",
+    "this website",
+    "the website",
+)
 
 
 class Orchestrator:
@@ -58,7 +75,8 @@ class Orchestrator:
             }
 
         small = personality.small_talk(message)
-        curated = self.index.search(message)
+        use_curated = request.mode == "website" or self._requests_portfolio_context(message)
+        curated = self.index.search(message) if use_curated else []
 
         web_result = None
         if request.use_web:
@@ -85,6 +103,15 @@ class Orchestrator:
                 model_used = True
                 reasoning_source = "model"
                 provider_detail = result.detail or provider_detail
+                provider_status = provider_status.__class__(
+                    name=provider_status.name,
+                    model=provider_status.model,
+                    available=provider_status.available,
+                    status=result.status,
+                    timeout_seconds=provider_status.timeout_seconds,
+                    context_chars=provider_status.context_chars,
+                    detail=provider_detail,
+                )
             else:
                 # Model failed or breached persona policy -> deterministic fallback.
                 reply = self._compose_deterministic(message, small, citations, web_used, web_result)
@@ -104,7 +131,15 @@ class Orchestrator:
         else:
             reply = self._compose_deterministic(message, small, citations, web_used, web_result)
 
-        answer_kind = "web" if web_used else ("website" if curated else "deterministic")
+        answer_kind = (
+            "web"
+            if web_used
+            else "website"
+            if curated
+            else "model"
+            if model_used
+            else "deterministic"
+        )
         uncertainty = not citations and not web_used and small is None
 
         return {
@@ -164,6 +199,15 @@ class Orchestrator:
                 )
                 model_used = True
                 reasoning_source = "model"
+                provider_status = provider_status.__class__(
+                    name=provider_status.name,
+                    model=provider_status.model,
+                    available=provider_status.available,
+                    status=completion.status,
+                    timeout_seconds=provider_status.timeout_seconds,
+                    context_chars=provider_status.context_chars,
+                    detail=completion.detail or provider_detail,
+                )
             else:
                 answer = self._compose_research(request.query, result)
                 provider_detail = completion.detail or provider_detail
@@ -300,3 +344,7 @@ class Orchestrator:
             "timeout_seconds": status.timeout_seconds,
             "detail": detail,
         }
+
+    def _requests_portfolio_context(self, message: str) -> bool:
+        normalized = " ".join(message.lower().split())
+        return any(term in normalized for term in _PORTFOLIO_TERMS)

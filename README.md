@@ -78,7 +78,7 @@ Optional email, LinkedIn, resume, platform demo, Orbital demo, and public-source
 
 ## Verified commands and counts
 
-The current baseline is **424 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 26 Flask/site tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 373 Alfred safety/provider/API/UI tests.
+The current baseline is **427 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 26 Flask/site tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 376 Alfred safety/provider/API/UI tests.
 
 ```powershell
 # Portfolio: 26
@@ -101,7 +101,7 @@ Set-Location ..
 # Algorithms: 7
 python -m pytest algorithms-quality\tests -q
 
-# Alfred local assistant: 373 passed, 1 host-dependent symlink skip
+# Alfred local assistant: 376 passed, 1 host-dependent symlink skip
 python -m pytest alfred-assistant\tests -q
 
 # Static checks
