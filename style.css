@@ -2306,6 +2306,70 @@ body,
     position: absolute !important;
 }
 
+/* Supplied layered blue shape background and skyline treatment */
+.hud-resume-page {
+    background: transparent;
+}
+
+.bg-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #021833;
+    background-image:
+        radial-gradient(800px 350px at 12% 18%, rgba(0, 191, 255, 0.06), transparent),
+        radial-gradient(700px 300px at 88% 78%, rgba(0, 87, 217, 0.05), transparent),
+        linear-gradient(180deg, #003a8c 0%, rgba(0, 54, 140, 0.9) 45%, rgba(0, 40, 90, 0.95) 100%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 400' preserveAspectRatio='none'>%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2300bfff' stop-opacity='0.45'/%3E%3Cstop offset='1' stop-color='%230057d9' stop-opacity='0.55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,220 C200,120 400,80 800,170 C1200,260 1400,230 1600,220 L1600,400 L0,400 Z' fill='url(%23g)' opacity='0.18'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: cover;
+    filter: blur(6px) saturate(120%);
+}
+
+.hud-resume-page .skyline.header-skyline {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 160px !important;
+    z-index: 2 !important;
+    mix-blend-mode: screen;
+    opacity: 0.98;
+    pointer-events: none;
+}
+
+.hud-resume-page .skyline.header-skyline svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.hud-resume-page .skyline.header-skyline .glow {
+    transform-origin: center;
+    animation: neonPulse 3.6s ease-in-out infinite;
+    will-change: filter, opacity, transform;
+    opacity: 0.9;
+}
+
+.hud-resume-page .skyline.header-skyline .outline {
+    filter: drop-shadow(0 6px 12px rgba(0, 191, 255, 0.12)) drop-shadow(0 10px 30px rgba(0, 87, 217, 0.08));
+}
+
+@keyframes neonPulse {
+    0% { transform: translateY(0) scaleY(1); opacity: 0.88; filter: blur(6px) saturate(120%); }
+    50% { transform: translateY(-4px) scaleY(1.01); opacity: 1; filter: blur(9px) saturate(140%); }
+    100% { transform: translateY(0) scaleY(1); opacity: 0.88; filter: blur(6px) saturate(120%); }
+}
+
+@media (max-width: 720px) {
+    .hud-resume-page .skyline.header-skyline {
+        display: none !important;
+    }
+}
+
 /* Restored monochrome grid and shape atmosphere */
 .hud-resume-page {
     background-color: #050505;
@@ -2366,4 +2430,48 @@ body,
 .hud-resume-page .skyline-wrap .header-skyline {
     position: relative !important;
     z-index: 1 !important;
+}
+
+/* Supplied blue shape background; intentionally no grid layer. */
+.hud-resume-page,
+.site-shell {
+    background: transparent !important;
+}
+
+.bg-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #021833;
+    background-image:
+        radial-gradient(800px 350px at 12% 18%, rgba(0, 191, 255, 0.06), transparent),
+        radial-gradient(700px 300px at 88% 78%, rgba(0, 87, 217, 0.05), transparent),
+        linear-gradient(180deg, #003a8c 0%, rgba(0, 54, 140, 0.9) 45%, rgba(0, 40, 90, 0.95) 100%),
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 400' preserveAspectRatio='none'>%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%2300bfff' stop-opacity='0.45'/%3E%3Cstop offset='1' stop-color='%230057d9' stop-opacity='0.55'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,220 C200,120 400,80 800,170 C1200,260 1400,230 1600,220 L1600,400 L0,400 Z' fill='url(%23g)' opacity='0.18'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: cover;
+    filter: blur(6px) saturate(120%);
+}
+
+.hud-resume-page::after {
+    display: none;
+}
+
+.hud-resume-page .header-skyline {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 160px !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+@media (max-width: 720px) {
+    .hud-resume-page .header-skyline {
+        display: none !important;
+    }
 }
