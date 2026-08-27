@@ -661,12 +661,7 @@ class StaticContentTestCase(unittest.TestCase):
                 for section in required_sections:
                     self.assertIn(section, parser.text)
                 self.assertIn(f'data-public-source-path="{source_path}"', content)
-                source_ref = (
-                    "grey-ghost-1-public-alfred-showcase"
-                    if source_path == "alfred-assistant"
-                    else SOURCE_REF
-                )
-                self.assertIn(f'href="{REPOSITORY_URL}/tree/{source_ref}/{source_path}"', content)
+                self.assertIn(f'href="{REPOSITORY_URL}/tree/{SOURCE_REF}/{source_path}"', content)
                 self.assertNotIn("fake screenshot", content.lower())
 
     def test_flagship_cards_pair_local_evidence_with_public_source(self):
@@ -686,7 +681,7 @@ class StaticContentTestCase(unittest.TestCase):
             ),
             "View Alfred evidence": (
                 "projects/alfred-ai-assistant.html",
-                f"{REPOSITORY_URL}/tree/grey-ghost-1-public-alfred-showcase/alfred-assistant",
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/alfred-assistant",
             ),
         }
         client = site.app.test_client()

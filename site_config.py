@@ -3,7 +3,7 @@ from pathlib import Path
 from urllib.parse import quote, urlsplit
 
 REPOSITORY_URL = "https://github.com/grey-ghost-1/Batcomputer-Portfolio"
-SOURCE_REF = "grey-ghost-1-recruiter-ready-portfolio"
+SOURCE_REF = "agents/batcomputer-website-query"
 PUBLIC_SOURCE_PATHS = (
     "",
     "platform",

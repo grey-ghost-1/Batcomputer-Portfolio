@@ -39,7 +39,7 @@ class RenderManifestTestCase(unittest.TestCase):
         self.assertEqual(service["type"], "web")
         self.assertEqual(service["name"], "batcomputer-portfolio")
         self.assertEqual(service["runtime"], "python")
-        self.assertEqual(service["branch"], "grey-ghost-1-render-release-config")
+        self.assertEqual(service["branch"], "agents/batcomputer-website-query")
         self.assertEqual(service["healthCheckPath"], "/healthz")
         self.assertEqual(service["autoDeployTrigger"], "off")
         self.assertNotIn("dockerfilePath", service)

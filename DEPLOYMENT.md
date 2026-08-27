@@ -51,8 +51,8 @@ For a local multi-container environment, copy `.env.example` to `.env`, replace 
 
 ### Blueprint setup
 
-1. Push `grey-ghost-1-render-release-config`, sign in to the [Render Dashboard](https://dashboard.render.com/), choose **New > Blueprint**, and connect `grey-ghost-1/Batcomputer-Portfolio`. Repository access and deployment authorization are the remaining owner-controlled steps; no credentials belong in git.
-2. Select the repository-root `render.yaml`, review the `grey-ghost-1-render-release-config` branch and the single `batcomputer-portfolio` service, then apply the Blueprint. Do not add the platform, Orbital, or `alfred-assistant` as linked services.
+1. Merge the release into `agents/batcomputer-website-query`, then open the repository's exact [Deploy to Render activation URL](https://render.com/deploy?repo=https://github.com/grey-ghost-1/Batcomputer-Portfolio). Sign in and authorize repository access in Render; these are the remaining owner-controlled steps, and no credentials belong in git.
+2. Review the repository-root `render.yaml`, the `agents/batcomputer-website-query` production branch, and the single `batcomputer-portfolio` service, then apply the Blueprint. Do not add the platform, Orbital, or `alfred-assistant` as linked services.
 3. Confirm Render generated `SITE_SESSION_SECRET`. Keep `SITE_ENVIRONMENT=production`, `SITE_HOSTED_MODE=true`, and `SITE_PROPOSALS_ENABLED=false`. Hosted startup fails closed if these safety requirements conflict or the managed session secret is absent.
 4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://batcomputer-portfolio.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
 5. Verify `/alfred-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
@@ -128,7 +128,7 @@ python scripts\smoke_check.py `
 For this Render release, verify the portfolio directly:
 
 ```powershell
-Invoke-RestMethod https://batcomputer-portfolio.onrender.com/healthz
+Invoke-RestMethod https://<render-assigned-service-name>.onrender.com/healthz
 ```
 
 Replace the origin if Render assigns a suffixed hostname. The broader smoke script remains available when the independently deployed platform and Orbital services also exist. It checks liveness and database readiness but does not create accounts, mutate operational data, or run a simulation.

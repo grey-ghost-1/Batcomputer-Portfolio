@@ -3,7 +3,7 @@ services:
     name: batcomputer-portfolio
     runtime: python
     plan: free
-    branch: grey-ghost-1-render-release-config
+    branch: agents/batcomputer-website-query
     buildCommand: python -m pip install --disable-pip-version-check --requirement requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --access-logfile - app:app
     healthCheckPath: /healthz
