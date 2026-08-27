@@ -1365,9 +1365,16 @@ body,
 }
 
 .hud-resume-page .hud-header {
-    border: 1px solid rgba(0, 191, 255, 0.72);
+    border: 1px solid rgba(216, 216, 216, 0.72);
     border-radius: 14px;
-    box-shadow: 0 0 18px rgba(0, 191, 255, 0.22), inset 0 0 18px rgba(0, 191, 255, 0.05);
+    box-shadow: 0 0 12px rgba(216, 216, 216, 0.24), inset 0 0 18px rgba(216, 216, 216, 0.05);
+    margin-bottom: 16px;
+    background-color: #050505;
+    background-image:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.045) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.045) 50%, rgba(255, 255, 255, 0.045) 75%, transparent 75%),
+        linear-gradient(315deg, rgba(0, 0, 0, 0.72) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.72) 50%, rgba(0, 0, 0, 0.72) 75%, transparent 75%),
+        linear-gradient(180deg, #111111 0%, #020202 52%, #0d0d0d 100%);
+    background-size: 8px 8px, 8px 8px, cover;
 }
 
 .hud-resume-page .header-skyline,
@@ -2364,6 +2371,21 @@ body,
 .hud-resume-page .visual-metric {
     border-color: rgba(255, 255, 255, 0.18);
     background: rgba(255, 255, 255, 0.06);
+}
+
+/* Unified neon-grey outlines */
+.hud-resume-page :is(.hud-header, .alfred-hero, .panel, .detail-card, .category-card, .runtime-card, .home-link, .visual-metric, .agent-field input, .agent-field textarea, .agent-proposal pre, .chat-entry pre) {
+    border-color: rgba(216, 216, 216, 0.72) !important;
+    box-shadow: 0 0 10px rgba(216, 216, 216, 0.16) !important;
+}
+
+.hud-resume-page :is(.hud-btn, .inline-link, #alfred-chat-input, #alfred-chat-send, .mic-circle) {
+    border-color: rgba(216, 216, 216, 0.72) !important;
+    box-shadow: 0 0 8px rgba(216, 216, 216, 0.14) !important;
+}
+
+.hud-resume-page .resume-nav {
+    border-color: rgba(216, 216, 216, 0.38);
 }
 
 .hud-resume-page .skyline.header-skyline {
