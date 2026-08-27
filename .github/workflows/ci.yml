@@ -28,6 +28,9 @@ jobs:
       - name: Run test suite
         run: python -m unittest discover -s tests -v
 
+      - name: Validate Render Blueprint syntax
+        run: python -c "import pathlib, yaml; yaml.safe_load(pathlib.Path('render.yaml').read_text(encoding='utf-8'))"
+
       - name: Validate flagship migration
         working-directory: platform
         env:

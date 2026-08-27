@@ -37,7 +37,7 @@ For a production deployment, set `PLATFORM_ENVIRONMENT=production`, use external
 
 Compose supplies database host, port, name, user, and password separately. SQLAlchemy assembles and percent-encodes the URL, so passwords containing URI delimiters such as `@:/#` are supported; quote special values in `.env`.
 
-Provider connection strings beginning with `postgresql://` are normalized to the installed Psycopg 3 driver. Before each migration, verify a restorable managed-database backup. Rotate `PLATFORM_SECRET_KEY` through the provider's secret store; rotation intentionally invalidates outstanding access tokens and requires users to sign in again. Never place the key or database URL in an image, build argument, log, or committed `.env` file. See the root [`DEPLOYMENT.md`](../DEPLOYMENT.md) for the Render blueprint, health checks, and smoke command.
+Provider connection strings beginning with `postgresql://` are normalized to the installed Psycopg 3 driver. Before each migration, verify a restorable managed-database backup. Rotate `PLATFORM_SECRET_KEY` through the provider's secret store; rotation intentionally invalidates outstanding access tokens and requires users to sign in again. Never place the key or database URL in an image, build argument, log, or committed `.env` file. The current root [`DEPLOYMENT.md`](../DEPLOYMENT.md) and Render Blueprint deploy only the Flask portfolio; this platform requires a separately reviewed release. Its health checks remain covered by the broader local smoke command.
 
 ## Verification
 

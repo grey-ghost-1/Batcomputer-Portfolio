@@ -37,7 +37,7 @@ class AlfredShowcaseApiTestCase(unittest.TestCase):
             self.assertEqual(page.headers["X-Content-Type-Options"], "nosniff")
             self.assertEqual(page.headers["X-Frame-Options"], "DENY")
             self.assertEqual(page.headers["Referrer-Policy"], "no-referrer")
-            self.assertIn("microphone=(self)", page.headers["Permissions-Policy"])
+            self.assertIn("microphone=()", page.headers["Permissions-Policy"])
         finally:
             page.close()
 

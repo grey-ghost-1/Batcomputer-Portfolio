@@ -1,6 +1,6 @@
 # Deployment guide
 
-No service in this repository is claimed as currently deployed. The configuration below is a repeatable path for a reviewer or owner to deploy three independent public web processes:
+No service in this repository is claimed as currently deployed. This layer provides a repeatable Render release for the Flask portfolio and its controlled Alfred showcase as one public web service. The other repository applications remain independently runnable:
 
 | Service | Runtime | Default port | Persistence | Health |
 |---|---|---:|---|---|
@@ -10,7 +10,7 @@ No service in this repository is claimed as currently deployed. The configuratio
 | Algorithms & Quality | Python tests only | N/A | None | N/A |
 | Alfred local assistant | FastAPI + Uvicorn (native Windows only) | 8020 | Local SQLite audit store | `/health/live`, `/health/ready` |
 
-The public services do not depend on one another at runtime. Deploy them as separate processes and domains so the public portfolio does not share the platform's authentication or database boundary. The portfolio process includes a controlled Alfred showcase backed only by fixed evidence and synthetic per-session state. **The desktop-capable Alfred service is not a fourth public deployment target.** It rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
+The applications do not depend on one another at runtime. This Render release intentionally deploys only the portfolio. It includes a controlled Alfred showcase backed only by fixed evidence and synthetic per-session state. The Operations Platform and Orbital Data Lab are not provisioned by this Blueprint. **The desktop-capable Alfred service is never a public deployment target.** It rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
 
 ## Local production-like startup
 
@@ -47,23 +47,35 @@ For a local multi-container environment, copy `.env.example` to `.env`, replace 
 
 ## Render blueprint
 
-[`render.yaml`](render.yaml) defines the three public web services and a managed PostgreSQL database. Render deployment is intentionally manual (`autoDeploy: false`). Alfred is deliberately excluded because a hosted/container service must never receive access to the user's desktop:
+[`render.yaml`](render.yaml) defines one manually activated Python web service named `batcomputer-portfolio`. It installs the root requirements, starts `app:app` with Gunicorn, binds only the deployment process to `0.0.0.0:$PORT`, and uses `/healthz` for health checks. Local `python app.py` startup remains loopback-only on port 5000. Automatic deploys are off so applying or promoting a release remains an explicit owner decision.
 
-1. Create a Render Blueprint from this repository and review names, regions, and plans before applying it.
-2. Set `PLATFORM_ALLOWED_ORIGINS` to the exact HTTPS origins allowed to call the platform. Do not use `*` with authenticated endpoints.
-3. Confirm `PLATFORM_SECRET_KEY` is generated and stored only in Render's secret environment.
-4. Keep the platform migration in the startup/release command and inspect migration logs before shifting traffic.
-5. Use a plan with a persistent disk for Orbital scenarios, or accept that SQLite data will be ephemeral. The blueprint requests a 1 GB disk.
-6. After deployment, run the smoke command below against the assigned HTTPS URLs.
+### Blueprint setup
 
-The platform accepts Render's `postgresql://` connection string and normalizes it to the installed Psycopg 3 SQLAlchemy driver.
+1. Push `grey-ghost-1-render-release-config`, sign in to the [Render Dashboard](https://dashboard.render.com/), choose **New > Blueprint**, and connect `grey-ghost-1/Batcomputer-Portfolio`. Repository access and deployment authorization are the remaining owner-controlled steps; no credentials belong in git.
+2. Select the repository-root `render.yaml`, review the `grey-ghost-1-render-release-config` branch and the single `batcomputer-portfolio` service, then apply the Blueprint. Do not add the platform, Orbital, or `alfred-assistant` as linked services.
+3. Confirm Render generated `SITE_SESSION_SECRET`. Keep `SITE_ENVIRONMENT=production`, `SITE_HOSTED_MODE=true`, and `SITE_PROPOSALS_ENABLED=false`. Hosted startup fails closed if these safety requirements conflict or the managed session secret is absent.
+4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://batcomputer-portfolio.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
+5. Verify `/alfred-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
 
-The portfolio container uses one Gunicorn worker as a conservative default. Proposal metadata lives in signed client cookies rather than process memory. If the service is scaled to multiple workers or instances, every instance must receive the same strong `SITE_SESSION_SECRET`; the random fallback is intentionally restart-local.
+The hosted process trusts one Render proxy hop for forwarded scheme, client, and host information. Secure cookies, HTTPS URL generation, HSTS, a same-origin CSP, framing denial, MIME-sniffing denial, and a no-referrer policy are enabled in production. Public pages contain no `http://` or localhost links. Port 8020 is not bound, proxied, linked, or configured in the Blueprint.
+
+### Rollback
+
+In the Render service, open **Deploys**, select the last known-good successful deploy, and choose **Rollback**. Confirm `<service-origin>/healthz` returns `{"status":"ok"}` and recheck the controlled showcase. Because this service has no database or durable server state, rollback requires no data migration. Keep automatic deploys off until the rolled-back release is accepted.
+
+### Custom domain follow-up
+
+After the generated `onrender.com` URL passes smoke and security checks, add the custom domain in **Settings > Custom Domains**, create the exact DNS records Render provides, wait for Render's TLS certificate to become valid, and then test the custom-domain `/healthz` and showcase URLs. Do not publish the domain before HTTPS is active. No localhost or port-8020 URL should be added as a redirect, environment value, or public link.
 
 ## Production configuration
 
 | Variable | Service | Secret | Requirement |
 |---|---|---|---|
+| `PYTHON_VERSION` | Portfolio | No | Render default is pinned by the Blueprint to `3.12.11` |
+| `SITE_ENVIRONMENT` | Portfolio | No | `production` in Render; defaults to `development` locally |
+| `SITE_HOSTED_MODE` | Portfolio | No | `true` in Render; defaults to `false` locally and enforces hosted safety invariants |
+| `SITE_PROPOSALS_ENABLED` | Portfolio | No | Must remain `false` in hosted mode; optional local review routes stay available only outside hosted mode |
+| `SITE_SESSION_SECRET` | Portfolio | Yes | Required in hosted mode; generated and retained by Render, never committed |
 | `PLATFORM_ENVIRONMENT` | Platform | No | Must be `production` outside local/test environments |
 | `PLATFORM_DATABASE_URL` | Platform | Yes | PostgreSQL URL; never commit it |
 | `PLATFORM_DATABASE_HOST` | Platform | No | Compose host; activates field-based URL assembly |
@@ -81,16 +93,16 @@ The portfolio container uses one Gunicorn worker as a conservative default. Prop
 | `SITE_PLATFORM_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
 | `SITE_ORBITAL_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
 | `SITE_PUBLIC_SOURCE_URL` | Portfolio | No | Optional public GitHub tree-root override for forks or branch moves |
-| `SITE_PROPOSALS_ENABLED` | Portfolio | No | Disabled by default; enable only for a trusted local review session |
-| `SITE_SESSION_SECRET` | Portfolio | Yes | At least 32 random characters with sufficient variety when proposals are enabled |
+
+Only the first five variables above apply to the Render portfolio service. All contact, LinkedIn, resume, demo, and source-link variables are optional and safely omitted when unset. The platform and Orbital variables are for their separate local or future deployment paths; they are not present in this Blueprint.
 
 Do not put secrets in `.env.example`, Docker build arguments, source files, or client-side JavaScript. Inject them through the deployment provider. Rotating `PLATFORM_SECRET_KEY` invalidates all outstanding access tokens; schedule rotation with a user re-login window. Use managed PostgreSQL backups, take a verified backup before migrations, and practice restore. Because the initial migration has no production data downgrade strategy, restore from backup rather than improvising a destructive downgrade.
 
 Compose passes the PostgreSQL host, port, database, user, and password as separate values. The platform uses SQLAlchemy's `URL.create`, so secure passwords containing URI delimiters such as `@:/#` are encoded correctly rather than interpolated into a connection string. Quote such values in `.env` (for example, `POSTGRES_PASSWORD='secure@:/#value'`) so dotenv parsing preserves every character.
 
-Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size. Keep this feature disabled on the public portfolio.
+Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. Hosted mode rejects startup if that value is enabled. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size.
 
-The Alfred showcase routes are intentionally public and require no account because they have no real adapter or billable provider. They accept only a bounded question string, a fixed scenario ID, or explicit boolean approval/reset fields. Answers come from compiled curated copy and fixed local citation paths. Action results and capped audit entries are synthetic and live only in the signed browser session. Deploy the Flask process without Alfred provider credentials and do not add a proxy, service link, or firewall path to port 8020.
+The Alfred showcase routes are intentionally public and require no account because they have no real adapter or billable provider. They accept only a bounded question string, a fixed scenario ID, or explicit boolean approval/reset fields. Answers come from compiled curated copy and fixed local citation paths. Action results and capped audit entries are synthetic and live only in the signed browser session. The Blueprint includes no Alfred, Ollama, OpenAI-compatible, provider, token, or API-key setting. Do not add credentials, a proxy, a service link, or a firewall path to port 8020.
 
 Recruiter-facing flagship cards pair locally served evidence with the public GitHub source on this branch. `SITE_PUBLIC_SOURCE_URL` is an optional override for a public fork or branch move; it must be a complete GitHub tree root such as `https://github.com/owner/repository/tree/main`. The server validates the root and returns tested, fully constructed project URLs for the browser.
 
@@ -113,7 +125,13 @@ python scripts\smoke_check.py `
   --orbital http://127.0.0.1:8010
 ```
 
-For production, pass the three HTTPS origins. The script checks liveness and database readiness but does not create accounts, mutate operational data, or run a simulation.
+For this Render release, verify the portfolio directly:
+
+```powershell
+Invoke-RestMethod https://batcomputer-portfolio.onrender.com/healthz
+```
+
+Replace the origin if Render assigns a suffixed hostname. The broader smoke script remains available when the independently deployed platform and Orbital services also exist. It checks liveness and database readiness but does not create accounts, mutate operational data, or run a simulation.
 
 ## GitHub Pages boundary
 

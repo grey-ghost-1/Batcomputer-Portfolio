@@ -1,56 +1,21 @@
-databases:
-  - name: batcomputer-platform-db
-    databaseName: batcomputer
-    user: batcomputer
-    plan: free
-
 services:
   - type: web
     name: batcomputer-portfolio
-    runtime: docker
+    runtime: python
     plan: free
-    dockerfilePath: ./Dockerfile
-    healthCheckPath: /api/health
-    autoDeploy: false
+    branch: grey-ghost-1-render-release-config
+    buildCommand: python -m pip install --disable-pip-version-check --requirement requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --access-logfile - app:app
+    healthCheckPath: /healthz
+    autoDeployTrigger: "off"
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.11
       - key: SITE_ENVIRONMENT
         value: production
+      - key: SITE_HOSTED_MODE
+        value: "true"
       - key: SITE_PROPOSALS_ENABLED
         value: "false"
-
-  - type: web
-    name: batcomputer-platform
-    runtime: docker
-    plan: free
-    dockerfilePath: ./platform/Dockerfile
-    dockerCommand: >-
-      sh -c "python -m alembic -c alembic.ini upgrade head &&
-      uvicorn app.main:app --host 0.0.0.0 --port $PORT"
-    healthCheckPath: /health/ready
-    autoDeploy: false
-    envVars:
-      - key: PLATFORM_ENVIRONMENT
-        value: production
-      - key: PLATFORM_DATABASE_URL
-        fromDatabase:
-          name: batcomputer-platform-db
-          property: connectionString
-      - key: PLATFORM_SECRET_KEY
+      - key: SITE_SESSION_SECRET
         generateValue: true
-      - key: PLATFORM_ALLOWED_ORIGINS
-        sync: false
-
-  - type: web
-    name: batcomputer-orbital
-    runtime: docker
-    plan: starter
-    dockerfilePath: ./orbital-data-lab/Dockerfile
-    healthCheckPath: /health/ready
-    autoDeploy: false
-    disk:
-      name: orbital-scenarios
-      mountPath: /data
-      sizeGB: 1
-    envVars:
-      - key: ORBITAL_DATABASE_PATH
-        value: /data/scenarios.db

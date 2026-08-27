@@ -30,7 +30,7 @@ lines.
 - [x] The Operations Platform retains its approval-pending Alfred intent boundary. Those intents
   never generate content or execute actions.
 - [x] A separate typed FastAPI service runs natively on loopback, independently of the public Flask
-  portfolio and Render services.
+  portfolio service deployed by the Render Blueprint.
 - [x] Health, readiness, capabilities, sanitized configuration, provider status, index status,
   chat, inspection, action, and audit APIs are available.
 - [x] Alfred can answer bounded portfolio questions from a curated allowlist of repository

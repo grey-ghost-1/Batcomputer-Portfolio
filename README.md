@@ -52,11 +52,11 @@ The Flask site, platform, Orbital service, and Alfred local service are separate
 - `algorithms-quality/` — algorithms, edge-case tests, complexity table, and quality report
 - `alfred-assistant/` — native local FastAPI assistant, provider/research boundaries, typed desktop actions, SQLite audit state, console, and tests
 - `ALFRED_STATUS.md` — code-grounded implementation checklist, staged roadmap, threat model, and non-goals
-- `render.yaml`, `docker-compose.yml`, `Dockerfile`, `DEPLOYMENT.md` — deployment path and operational boundaries
+- `render.yaml`, `docker-compose.yml`, `Dockerfile`, `DEPLOYMENT.md` — single-service Render release, broader local Compose path, and operational boundaries
 - `scripts/smoke_check.py` — non-mutating health/readiness checks for all deployable services
 - `.github/workflows/ci.yml` — all suites, migration, lint, compile, and Compose config validation
 
-Static HTML/CSS/JavaScript and evidence JSON can be published on GitHub Pages. Flask/FastAPI endpoints, environment-driven application links, Alfred server responses, migrations, and databases cannot run on Pages. Alfred is deliberately excluded from Render and Docker because desktop skills require a trusted native Windows session and loopback-only binding. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact boundary.
+Static HTML/CSS/JavaScript and evidence JSON can be published on GitHub Pages. Flask/FastAPI endpoints, environment-driven application links, Alfred server responses, migrations, and databases cannot run on Pages. The Render Blueprint deploys only the Flask portfolio and its synthetic controlled showcase. The full Alfred service is deliberately excluded from Render and Docker because desktop skills require a trusted native Windows session and loopback-only binding. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact boundary.
 
 ## Local development
 
@@ -83,10 +83,10 @@ Optional email, LinkedIn, resume, platform demo, Orbital demo, and public-source
 
 ## Verified commands and counts
 
-The current baseline is **435 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 34 Flask/site/showcase tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 376 Alfred safety/provider/API/UI tests.
+The current baseline is **443 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 42 Flask/site/showcase/deployment tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 376 Alfred safety/provider/API/UI tests.
 
 ```powershell
-# Portfolio and public showcase: 34
+# Portfolio, public showcase, and Render contract: 42
 python -m unittest discover -s tests -v
 
 # Platform migration + API: 10
@@ -138,5 +138,5 @@ This repository presents Justin Wimmer's portfolio work; project direction and t
 
 1. Add platform refresh-token rotation/revocation, rate limiting, audit export/retention, and a documented backup-restore drill.
 2. Version Orbital storage migrations and add validated perturbation models as separately scoped educational experiments.
-3. Deploy the three web services, record real HTTPS URLs only after smoke checks pass, and add centralized logs/alerts.
+3. Activate the portfolio Blueprint, record its real HTTPS URL only after smoke checks pass, then scope separate platform and Orbital releases with centralized logs and alerts.
 4. Run a browser-assisted accessibility matrix across Chromium/Firefox at mobile and desktop widths and record reproducible findings.

@@ -96,7 +96,7 @@ Copy-Item .env.example .env
 # Optionally set ALFRED_MODEL_PROVIDER=ollama and a locally installed model.
 # Set a generated ALFRED_ACTION_TOKEN and allowlists before using actions.
 .\start.ps1</code></pre>
-    <p>Open <code>http://127.0.0.1:8020</code>. Desktop execution remains disabled until <code>ALFRED_DESKTOP_ACTIONS_ENABLED=true</code> is deliberately configured.</p>
+    <p>After starting the trusted local edition, its owner can open <code>http://127.0.0.1:8020</code> on that same machine. This is not a public link or hosted console. Desktop execution remains disabled until <code>ALFRED_DESKTOP_ACTIONS_ENABLED=true</code> is deliberately configured.</p>
     <pre><code>python -m pytest alfred-assistant\tests -q
 python -m ruff check alfred-assistant
 python -m mypy --check-untyped-defs alfred-assistant\alfred

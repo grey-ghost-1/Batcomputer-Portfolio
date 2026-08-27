@@ -5,6 +5,7 @@ from functools import wraps
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory, session
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from alfred_showcase import (
     MAX_AUDIT_ENTRIES,
@@ -17,7 +18,6 @@ from alfred_showcase import (
 from site_config import public_site_config
 
 BASE_DIR = Path(__file__).resolve().parent
-app = Flask(__name__, static_folder=None)
 
 
 def _enabled(value):
@@ -34,13 +34,34 @@ def _session_secret(environ=None):
     return configured or secrets.token_hex(32)
 
 
+def _runtime_config(environ=None):
+    environment = os.environ if environ is None else environ
+    hosted_mode = _enabled(environment.get("SITE_HOSTED_MODE", "false"))
+    production = environment.get("SITE_ENVIRONMENT", "development") == "production"
+    proposals_enabled = _enabled(environment.get("SITE_PROPOSALS_ENABLED", "false"))
+    if hosted_mode and not production:
+        raise RuntimeError("SITE_HOSTED_MODE requires SITE_ENVIRONMENT=production")
+    if hosted_mode and proposals_enabled:
+        raise RuntimeError("Review-only proposal routes cannot be enabled in hosted mode")
+    if hosted_mode and not environment.get("SITE_SESSION_SECRET", ""):
+        raise RuntimeError("SITE_SESSION_SECRET is required in hosted mode")
+    return {
+        "HOSTED_MODE": hosted_mode,
+        "PREFERRED_URL_SCHEME": "https" if hosted_mode else "http",
+        "PROPOSALS_ENABLED": proposals_enabled and not hosted_mode,
+        "SECRET_KEY": _session_secret(environment),
+        "SESSION_COOKIE_HTTPONLY": True,
+        "SESSION_COOKIE_SAMESITE": "Lax",
+        "SESSION_COOKIE_SECURE": production or hosted_mode,
+    }
+
+
+app = Flask(__name__, static_folder=None)
 app.config.update(
-    SECRET_KEY=_session_secret(),
-    PROPOSALS_ENABLED=_enabled(os.getenv("SITE_PROPOSALS_ENABLED", "false")),
-    SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.getenv("SITE_ENVIRONMENT", "development") == "production",
+    _runtime_config()
 )
+if app.config["HOSTED_MODE"]:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 CODE_PROPOSAL_KEY = "code_proposal"
 HUD_PROPOSAL_KEY = "hud_proposal"
@@ -95,9 +116,9 @@ def apply_security_headers(response):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "no-referrer"
     response.headers["Permissions-Policy"] = (
-        "camera=(), geolocation=(), microphone=(self), payment=(), usb=()"
+        "camera=(), geolocation=(), microphone=(), payment=(), usb=()"
     )
-    if request.path.startswith("/api/"):
+    if request.path.startswith("/api/") or request.path == "/healthz":
         response.headers["Cache-Control"] = "no-store"
     if app.config["SESSION_COOKIE_SECURE"]:
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
@@ -226,6 +247,11 @@ def home():
 @app.get("/api/health")
 def health():
     return jsonify({"status": "ok", "service": "batcomputer-website", "projects": len(project_inventory())})
+
+
+@app.get("/healthz")
+def public_health():
+    return jsonify({"status": "ok"})
 
 
 @app.get("/api/site/summary")

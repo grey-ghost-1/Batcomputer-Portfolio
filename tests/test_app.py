@@ -56,6 +56,11 @@ class AppTestCase(unittest.TestCase):
             response.close()
 
     def test_health_and_site_summary(self):
+        public_health = self.client.get("/healthz")
+        self.assertEqual(public_health.status_code, 200)
+        self.assertEqual(public_health.get_json(), {"status": "ok"})
+        self.assertEqual(public_health.headers["Cache-Control"], "no-store")
+
         health = self.client.get("/api/health")
         self.assertEqual(health.status_code, 200)
         self.assertEqual(
@@ -699,22 +704,12 @@ class StaticContentTestCase(unittest.TestCase):
         self.assertIn("config.public_source_urls", (ROOT / "app.js").read_text(encoding="utf-8"))
 
     def test_deployment_configuration_and_smoke_contract(self):
-        render = (ROOT / "render.yaml").read_text(encoding="utf-8")
         compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
         deployment = (ROOT / "DEPLOYMENT.md").read_text(encoding="utf-8")
         smoke = (ROOT / "scripts" / "smoke_check.py").read_text(encoding="utf-8")
 
-        for name in (
-            "batcomputer-portfolio",
-            "batcomputer-platform",
-            "batcomputer-orbital",
-        ):
-            self.assertIn(f"name: {name}", render)
         for health_path in ("/api/health", "/health/live", "/health/ready"):
             self.assertIn(health_path, smoke)
-        self.assertEqual(render.count("autoDeploy: false"), 3)
-        self.assertIn("python -m alembic -c alembic.ini upgrade head", render)
-        self.assertIn("ORBITAL_DATABASE_PATH", render)
         self.assertIn("site:", compose)
         self.assertIn("platform:", compose)
         self.assertIn("orbital:", compose)

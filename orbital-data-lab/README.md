@@ -36,4 +36,4 @@ The equations model one point mass moving in a fixed, spherically symmetric cent
 
 SQLite is appropriate for this local evidence project, not concurrent distributed ingestion. Scenario lineage records code-level algorithm/schema versions but not a signed build provenance chain.
 
-The root [`DEPLOYMENT.md`](../DEPLOYMENT.md) documents the container, Render persistent-disk option, and multi-service smoke check. No hosted deployment is claimed.
+The root [`DEPLOYMENT.md`](../DEPLOYMENT.md) documents the container and broader local smoke check. The current Render Blueprint deploys only the Flask portfolio; an Orbital release would require a separately reviewed service and persistent-disk plan. No hosted deployment is claimed.
