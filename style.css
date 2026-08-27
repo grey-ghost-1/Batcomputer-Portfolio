@@ -2306,6 +2306,29 @@ body,
     position: absolute !important;
 }
 
+/* Restored monochrome grid and shape atmosphere */
+.hud-resume-page {
+    background-color: #050505;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        radial-gradient(ellipse 70% 45% at 50% 100%, rgba(255, 255, 255, 0.06), transparent 72%);
+    background-size: 44px 44px, 44px 44px, auto;
+}
+
+.hud-resume-page::after {
+    position: fixed;
+    inset: 35% -12% auto;
+    z-index: 0;
+    height: 62vh;
+    background:
+        linear-gradient(166deg, transparent 47%, rgba(255, 255, 255, 0.055) 48%, transparent 49%),
+        linear-gradient(174deg, transparent 61%, rgba(255, 255, 255, 0.035) 62%, transparent 63%),
+        radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.045), transparent 64%);
+    content: "";
+    pointer-events: none;
+}
+
 .hud-resume-page .skyline-wrap {
     position: relative;
     overflow: hidden;
