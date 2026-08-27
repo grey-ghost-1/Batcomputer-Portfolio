@@ -116,7 +116,10 @@ class Settings(BaseSettings):
     web_fetch_max_bytes: int = Field(default=512 * 1024, ge=1024, le=8 * 1024 * 1024)
     web_max_redirects: int = Field(default=3, ge=0, le=10)
     web_max_results: int = Field(default=5, ge=1, le=20)
-    web_user_agent: str = "AlfredAssistant/1.0 (+local research; contact operator)"
+    web_user_agent: str = (
+        "AlfredAssistant/1.0 (local portfolio research; "
+        "https://github.com/grey-ghost-1/Batcomputer-Portfolio)"
+    )
 
     @field_validator("approved_roots", "allowed_executables", "allowed_url_hosts", mode="before")
     @classmethod

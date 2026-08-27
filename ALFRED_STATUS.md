@@ -29,48 +29,48 @@ lines.
   non-reading, and non-writing.
 - [x] The Operations Platform retains its approval-pending Alfred intent boundary. Those intents
   never generate content or execute actions.
-- [ ] A separate typed FastAPI service runs natively on loopback, independently of the public Flask
+- [x] A separate typed FastAPI service runs natively on loopback, independently of the public Flask
   portfolio and Render services.
-- [ ] Health, readiness, capabilities, sanitized configuration, provider status, index status,
+- [x] Health, readiness, capabilities, sanitized configuration, provider status, index status,
   chat, inspection, action, and audit APIs are available.
-- [ ] Alfred can answer bounded portfolio questions from a curated allowlist of repository
+- [x] Alfred can answer bounded portfolio questions from a curated allowlist of repository
   documents and returns repository-relative citations.
-- [ ] Indexed content is treated as untrusted reference text, not as instructions. No arbitrary
+- [x] Indexed content is treated as untrusted reference text, not as instructions. No arbitrary
   path or file-reading request is accepted through chat.
-- [ ] A useful deterministic router and original composed voice work without a language model.
-- [ ] A typed reasoning-provider boundary supports opt-in local Ollama and an optional generic
+- [x] A useful deterministic router and original composed voice work without a language model.
+- [x] A typed reasoning-provider boundary supports opt-in local Ollama and an optional generic
   OpenAI-compatible endpoint. Structured history, prompts, context, responses, and timeouts are
   bounded; provider/model/status are visible; deterministic fallback is explicitly non-AI.
-- [ ] An explicit knowledge pipeline combines curated website evidence, optional reasoning, and
+- [x] An explicit knowledge pipeline combines curated website evidence, optional reasoning, and
   safe web retrieval with provenance labels. Providers may cite only sources retrieved for that
   answer.
-- [ ] Keyless Wikipedia research works without an API key. Optional Brave Search broadens current
+- [x] Keyless Wikipedia research works without an API key. Optional Brave Search broadens current
   web results only when separately configured; its absence is reported honestly.
-- [ ] Research results normalize title, HTTPS URL, source, excerpt, and retrieval time. Concise and
+- [x] Research results normalize title, HTTPS URL, source, excerpt, and retrieval time. Concise and
   deep research modes return numbered citations and disclose whether website, web, model, or
   deterministic knowledge was used.
-- [ ] Web fetches enforce an HTTPS destination policy, DNS/IP and redirect revalidation,
+- [x] Web fetches enforce an HTTPS destination policy, DNS/IP and redirect revalidation,
   nonstandard-port and credential denial, private/metadata destination denial, content-type and
   byte limits, strict timeouts, and result limits.
-- [ ] A versioned persona policy is isolated from user, website, and web content and applies to
+- [x] A versioned persona policy is isolated from user, website, and web content and applies to
   ordinary answers, research, uncertainty, refusals, errors, and action previews.
-- [ ] Read-only inspection covers sanitized OS/Python/service status, configured-root disk usage,
+- [x] Read-only inspection covers sanitized OS/Python/service status, configured-root disk usage,
   metadata-only directory listings, and redacted process summaries.
-- [ ] Typed desktop proposals cover approved-root folder creation, single-file move/rename,
+- [x] Typed desktop proposals cover approved-root folder creation, single-file move/rename,
   bounded extension organization, allowlisted application launch, allowlisted HTTPS URL launch,
   and optional clipboard text.
-- [ ] Every desktop action follows `propose -> exact preview -> approve -> execute once -> audit`.
-- [ ] Approvals use unguessable identifiers, short expiry, canonical payload hashes, authenticated
+- [x] Every desktop action follows `propose -> exact preview -> approve -> execute once -> audit`.
+- [x] Approvals use unguessable identifiers, short expiry, canonical payload hashes, authenticated
   user/session ownership, revalidation, and single-use state transitions.
-- [ ] Paths are canonicalized and confined to configured roots. UNC/device paths, traversal,
+- [x] Paths are canonicalized and confined to configured roots. UNC/device paths, traversal,
   escaping links/reparse points, collisions, overwrites, deletes, and recursive actions are denied.
-- [ ] Desktop execution is disabled by default and configuration rejects public/non-loopback bind.
-- [ ] Action APIs require a high-entropy local token; tokens and sensitive request content are not
+- [x] Desktop execution is disabled by default and configuration rejects public/non-loopback bind.
+- [x] Action APIs require a high-entropy local token; tokens and sensitive request content are not
   placed in audit records.
-- [ ] SQLite schema initialization and retention cleanup are deterministic.
-- [ ] The accessible local console exposes real provider/index/health state, cited chat, typed task
+- [x] SQLite schema initialization and retention cleanup are deterministic.
+- [x] The accessible local console exposes real provider/index/health state, cited chat, typed task
   building, exact previews, approval confirmation, execution state, and immutable audit history.
-- [ ] Tests mock application/URL/clipboard launches and restrict filesystem mutation to temporary
+- [x] Tests mock application/URL/clipboard launches and restrict filesystem mutation to temporary
   approved roots.
 - [x] Alfred is the fourth Primary Work case study; all three existing flagships and all 20 legacy
   prototype folders remain present.
