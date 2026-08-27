@@ -62,6 +62,45 @@
     </ul>
   </section>
 
+  <section id="engineering-overview" class="detail-card">
+    <h2>Software Engineering Portfolio</h2>
+    <p>I am an entry-level full-stack and backend software engineer building tested, security-conscious applications with clear architecture, practical data models, and reliable automation.</p>
+    <h3>Core Technology Stack</h3>
+    <ul>
+      <li>React and TypeScript</li>
+      <li>Python and FastAPI</li>
+      <li>PostgreSQL and SQLAlchemy</li>
+      <li>Alembic database migrations</li>
+      <li>Docker and Docker Compose</li>
+      <li>GitHub Actions CI/CD</li>
+      <li>REST APIs and OpenAPI</li>
+      <li>Pytest, Vitest, Ruff, mypy, and ESLint</li>
+    </ul>
+  </section>
+
+  <section id="engineering-categories" class="detail-card">
+    <h2>Engineering Categories</h2>
+    <article><h3>Software &amp; Automation</h3><p>Backend services, workflow automation, approval-controlled operations, execution records, status tracking, logs, and audit history.</p></article>
+    <article><h3>Defensive Cybersecurity</h3><p>Security findings, severity tracking, remediation workflows, role-based authorization, workspace isolation, input validation, rate limiting, and immutable audit records.</p></article>
+    <article><h3>IT Support</h3><p>Support tickets, priorities, assignments, comments, status changes, troubleshooting records, and resolution history.</p></article>
+    <article><h3>Data Engineering &amp; Analytics</h3><p>Data ingestion, pipeline runs, transformations, validation, data-quality checks, lineage, operational metrics, and reporting.</p></article>
+    <article><h3>Cloud, Network &amp; Platform Engineering</h3><p>Network assets, service dependencies, environments, deployments, health checks, incidents, rollback records, containers, observability, and CI/CD workflows.</p></article>
+    <article><h3>Quality Engineering &amp; Test Automation</h3><p>Unit, integration, authorization, database, component, end-to-end, accessibility, performance, and defensive security testing.</p></article>
+  </section>
+
+  <section id="featured-engineering-projects" class="detail-card">
+    <h2>Featured Engineering Projects</h2>
+    <article id="batcomputer-platform"><h3>Batcomputer Operations Platform</h3><p>A full-stack operations platform connecting six engineering domains through shared users, workspaces, assets, workflow events, and audit records.</p><h4>Architecture</h4><p>React and TypeScript communicate with a versioned FastAPI REST API backed by SQLAlchemy, Alembic, and PostgreSQL.</p><h4>Engineering Features</h4><ul><li>Secure password hashing with Argon2</li><li>Expiring authentication tokens</li><li>Server-side role-based access control</li><li>Workspace ownership and data isolation</li><li>Immutable audit events</li><li>Pagination, filtering, and validation</li><li>Structured logging and request correlation</li><li>Health and readiness endpoints</li><li>Docker-based local environment</li><li>Strict automated CI checks</li></ul><h4>Current Availability</h4><p>The source currently runs locally through Docker Compose. A public GitHub repository and hosted demonstration have not been configured yet.</p></article>
+    <article id="alfred-project"><h3>Alfred AI Integration</h3><p>Alfred is an approval-oriented assistant integration designed around explicit status reporting, workspace safety, and auditable user intent.</p><ul><li>Typed FastAPI status and intent endpoints</li><li>Workspace membership checks</li><li>Rate-limited intent requests</li><li>Explicit approval requirements</li><li>Auditable request metadata</li><li>No fake AI or echo-response fallback</li></ul><p>When Ollama is not configured, Alfred reports that it is unavailable. Requests are never falsely reported as executed.</p></article>
+    <article id="orbital-planner"><h3>Orbital Mission Planner</h3><p>An educational two-dimensional orbital simulator for comparing deterministic numerical integration methods.</p><ul><li>Configurable central body and initial conditions</li><li>Runge-Kutta 4 integration</li><li>Velocity-Verlet integration</li><li>Trajectory visualization</li><li>Energy-error comparison</li><li>Saved and shareable scenarios</li><li>Tests against known circular-orbit behavior</li></ul><p>This project is intended for education and software-engineering demonstration. It is not flight-grade software.</p></article>
+  </section>
+
+  <section id="algorithm-practice" class="detail-card"><h2>Algorithms &amp; Data Structures</h2><p>This collection supports technical interview preparation through original Python implementations, automated tests, and complexity notes.</p><ul><li>Arrays and strings</li><li>Hash maps</li><li>Stacks and queues</li><li>Trees and graphs</li><li>Sorting and searching</li><li>Recursion and backtracking</li><li>Dynamic programming</li></ul></section>
+
+  <section id="verification" class="detail-card"><h2>Engineering Verification</h2><article><h3>Access Control</h3><p>Automated API tests verify role restrictions, authentication failures, and denial of cross-workspace access.</p></article><article><h3>Workflow and Audit Testing</h3><p>Tests cover all six workflow categories, invalid transitions, validation errors, and audit-event immutability.</p></article><article><h3>Database Migrations</h3><p>Continuous integration verifies an Alembic upgrade, downgrade, and second upgrade against a clean database.</p></article><article><h3>Automated Quality Checks</h3><p>The project uses Ruff, mypy, Pytest, ESLint, Vitest, TypeScript checks, frontend production builds, and migration validation.</p></article></section>
+
+  <section id="portfolio-limitations" class="detail-card"><h2>Current Limitations</h2><ul><li>The projects currently run locally.</li><li>A public GitHub repository has not been connected yet.</li><li>A hosted production demonstration is not currently available.</li><li>Alfred does not execute tools or model-generated actions.</li><li>The orbital planner is educational and not flight-grade.</li></ul></section>
+
   <section class="detail-card">
     <h2>Open project in VS Code</h2>
     <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
