@@ -1,93 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alfred AI Assistant | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Alfred is a local-first FastAPI assistant with cited portfolio and web research, optional local reasoning providers, and strictly approval-gated Windows desktop actions.">
+  <title>Alfred AI Assistant | Justin Wimmer</title>
+  <link rel="stylesheet" href="../style.css?v=alfred-local">
 </head>
 <body class="site-shell">
-<main class="detail-shell">
+<a class="skip-link" href="#case-study">Skip to case study</a>
+<main class="detail-shell" id="case-study">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a>
+    <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../alfred-showcase.html">Try controlled showcase</a>
+    <a class="home-link" href="../project-evidence.json">Evidence</a>
+    <a class="home-link" href="../ALFRED_STATUS.md">Status and roadmap</a>
   </nav>
+
   <header class="detail-header">
-    <p class="eyebrow">Software &amp; Automation</p>
+    <p class="eyebrow">Primary Work // Local AI &amp; Desktop Safety</p>
     <h1>Alfred AI Assistant</h1>
-    <p class="detail-focus">Engineered a fully local Python-based AI assistant featuring wake-word detection, speech-to-text, text-to-speech, and a Flask backend. Integrated modular automation functions to execute system tasks, retrieve information, and interact with desktop workflows, demonstrating strong capability in Python automation and AI-driven utility development. The assistant runs entirely on-device, keeping conversation state, memory, and desktop actions local rather than routed through third-party cloud services.</p>
+    <p class="detail-focus">A native, loopback-only household-manager assistant for broad safe conversation, cited evidence and research, and carefully bounded desktop help. An operator can optionally connect Ollama or a compatible model; Alfred cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
+    <div class="case-meta">
+      <span>FastAPI + Pydantic</span>
+      <span>SQLite audit state</span>
+      <span>Typed desktop skills</span>
+      <span>Provider + research boundaries</span>
+    </div>
   </header>
 
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import speech_recognition as sr
-import pyttsx3
-from flask import Flask, request, jsonify
-
-recognizer = sr.Recognizer()
-speaker = pyttsx3.init()
-app = Flask(__name__)
-
-WAKE_WORD = "alfred"
-
-def listen_for_wake_word(source):
-    audio = recognizer.listen(source, phrase_time_limit=3)
-    try:
-        phrase = recognizer.recognize_google(audio).lower()
-        return WAKE_WORD in phrase
-    except sr.UnknownValueError:
-        return False
-
-def speak(text):
-    speaker.say(text)
-    speaker.runAndWait()
-
-@app.route("/alfred", methods=["POST"])
-def handle_message():
-    message = request.json.get("message", "")
-    reply = build_reply(message)
-    speak(reply)
-    return jsonify({"reply": reply})
-</code></pre>
+    <h2>Problem and users</h2>
+    <p>General desktop agents are impressive but often hide the most important details: what they can read, what a model actually supplied, what will change, and whether a conversational phrase counts as permission. Alfred is designed for one local Windows operator who wants useful portfolio knowledge, current research, system summaries, and a small set of desktop conveniences without surrendering control.</p>
   </section>
 
   <section class="detail-card">
-    <h2>Example</h2>
-    <p>A live console exchange after the wake word is detected and the message is routed through the Flask backend:</p>
-    <pre><code>You: Alfred, what's my system status?
-Alfred: All systems nominal, sir. CPU at 12%, memory at 41%, and the network link is stable.
+    <h2>Implemented by me</h2>
+    <ul>
+      <li>A separate typed FastAPI service that rejects public binding and is intentionally excluded from public Render and Docker services</li>
+      <li>An original, versioned British household-manager persona: discreet, concise, candid about uncertainty, gently dry, and safety-first</li>
+      <li>A curated website index over fixed first-party evidence paths, with repository-relative citations and instruction-neutralization</li>
+      <li>Broad general-purpose chat for ordinary safe questions through optional Ollama or generic OpenAI-compatible providers, with bounded structured history, timeouts, visible model status, and explicit deterministic fallback</li>
+      <li>A deterministic refusal gate that stops approval-bypass, destructive execution, credential-theft, and malware requests before any model or web call</li>
+      <li>Keyless Wikipedia research plus optional Brave Search, normalized dated citations, provenance labels, and SSRF-hardened fixed-source HTTP</li>
+      <li>Read-only system, disk, directory-metadata, and process summaries that omit environment dumps, file contents, secrets, and command lines</li>
+      <li>Typed proposals for folder creation, one-file move/rename, bounded extension organization, allowlisted app launch, allowlisted HTTPS URL launch, and optional clipboard text</li>
+      <li>Owner/session isolation, high-entropy bearer authentication, expiring payload-bound approvals, atomic single-use execution, collision denial, path revalidation, and append-only audit events</li>
+      <li>An accessible responsive local console showing provider, web, index, health, citations, exact previews, approval state, expiry, execution result, and audit history</li>
+    </ul>
+  </section>
 
-You: Alfred, open notepad.
-Alfred: Confirm you'd like me to launch Notepad, sir?
-You: Confirmed.
-Alfred: Notepad is now open.</code></pre>
-  </section>
   <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>Alfred combines speech recognition, text-to-speech, a wake-word gate, and a Flask endpoint into a local assistant workflow that can route requests to desktop automation and information services.</p>
-    <ul><li>Speech recognition captures the spoken request.</li><li>Wake-word detection controls when listening is actionable.</li><li>Flask exposes the assistant request endpoint.</li><li>Text-to-speech returns the response through the local speaker.</li></ul>
+    <h2>Architecture</h2>
+    <ol class="architecture-flow">
+      <li>Local console<br><small>typed input + explicit approval</small></li>
+      <li>FastAPI policy layer<br><small>auth, schemas, ownership</small></li>
+      <li>Knowledge / research / actions<br><small>separate bounded tools</small></li>
+      <li>SQLite + Windows APIs<br><small>audit and approved effects</small></li>
+    </ol>
+    <p>The public Flask portfolio implements a separate showcase module over fixed answer and scenario dictionaries. It imports none of the local service, provider, knowledge-index, inspection, proposal-store, or executor modules and never proxies <code>127.0.0.1:8020</code>. Browser state is isolated in a signed session cookie and capped; every public "execution" produces only a synthetic result and session-local audit entry.</p>
+    <p>The full local service still listens only on <code>127.0.0.1:8020</code>. Broad model chat, cited website answers, cited web research, and typed action execution remain separate, so model text cannot become a command or an approval.</p>
   </section>
+
   <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include wake-word detection, speech-to-text, text-to-speech, Flask routing, local execution, and desktop workflow integration. Next additions should include intent routing, conversation history, device permissions, offline speech models, structured tool results, and failure recovery.</p>
-    <p><strong>Visuals:</strong> voice request sequence, assistant capability map, and local-service architecture diagram.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
+    <h2>Safety boundary</h2>
+    <p><strong>Every desktop mutation, application launch, URL launch, or clipboard write follows:</strong> propose → render exact effects and root-relative path diff → approve the canonical payload hash → execute once → record the immutable result. There is no chat shortcut, blanket approval, delete action, recursive operation, overwrite default, raw shell, PowerShell, arbitrary executable, or user-supplied command argument.</p>
+    <p>Paths reject traversal, absolute/UNC/device forms, and links or reparse points that resolve outside configured roots. Execution revalidates paths, filesystem state, URL/app allowlists, ownership, expiry, and stored-payload integrity immediately before claiming the action. Residual local-account and filesystem-race risks are documented in <a href="../ALFRED_STATUS.md">the threat model</a>.</p>
+    <p><strong>Public boundary:</strong> the hosted demo accepts only a bounded question string or one fixed scenario identifier. It has no provider credentials, arbitrary source selection, URL input, repository reader, environment reader, system inspection, clipboard access, process launcher, filesystem adapter, or user-supplied HTML rendering. A strict CSP limits scripts and API connections to the same origin.</p>
   </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add intent classification, permissioned tool routing, conversation state, and voice profiles around the Flask assistant.</p><pre><code>handle_message({"message": "system status"})
-reply=All systems nominal
-speech=spoken response queued</code></pre><p><strong>Simulation:</strong> a wake-word request reached the assistant endpoint and returned a spoken status response; an unrecognized command was kept informational.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Software Automation\alfred-ai-assistant</code></p><p>Run: <code>python main.py status</code></p><p>The current build routes local text requests to assistant responses.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>ALFRED / LOCAL ASSISTANT</span><span class="visual-status">ONLINE</span></div><div class="visual-grid"><div class="visual-metric">Wake word<strong>READY</strong></div><div class="visual-metric">Backend<strong>FLASK</strong></div><div class="visual-metric">Voice<strong>ACTIVE</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>Speech input</span><i style="width:86%"></i><b>READY</b></div><div class="visual-bar"><span>Response output</span><i style="width:92%"></i><b>READY</b></div></div></section>
+
+  <section class="detail-card">
+    <h2>Knowledge and research</h2>
+    <p>Portfolio answers search a bounded index built only from fixed repository evidence sources and return their paths. Research mode consults keyless Wikipedia and, when separately configured, Brave Search. Outbound research permits HTTPS on the standard port, validates DNS and redirects against private, loopback, metadata, reserved, link-local, and multicast destinations, and limits time, bytes, content types, redirects, excerpts, and result counts.</p>
+    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Alfred's persona, action policy, or approval rule. Ordinary safe questions can use the configured model without matching a portfolio keyword, while curated portfolio citations are reserved for clear portfolio questions or an explicit website-evidence mode. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; an unavailable or timed-out provider falls back explicitly and never masquerades as a model answer.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Trade-offs</h2>
+    <ul>
+      <li>Native Windows execution is required for desktop skills; omitting Alfred from containers avoids a misleading or unsafe deployment story.</li>
+      <li>A fixed knowledge manifest and fixed research providers are narrower than arbitrary RAG or browsing, but they make provenance and SSRF controls reviewable.</li>
+      <li>A shared local action token plus per-tab session ownership is intentionally simpler than accounts; it is suitable for one trusted local operator, not a remote multi-user service.</li>
+      <li>Typed actions sacrifice general automation in exchange for inspectable payloads, deterministic validation, and meaningful approval.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Run and verify</h2>
+    <p><strong>Source:</strong> <code>alfred-assistant</code></p>
+    <p><strong>Legacy source retained:</strong> <code>Software Automation\alfred-ai-assistant</code></p>
+    <p><strong>Run from repository root:</strong></p>
+    <pre><code>python -m pip install -r requirements.txt
+Set-Location alfred-assistant
+Copy-Item .env.example .env
+# Optionally set ALFRED_MODEL_PROVIDER=ollama and a locally installed model.
+# Set a generated ALFRED_ACTION_TOKEN and allowlists before using actions.
+.\start.ps1</code></pre>
+    <p>After starting the trusted local edition, its owner can open <code>http://127.0.0.1:8020</code> on that same machine. This is not a public link or hosted console. Desktop execution remains disabled until <code>ALFRED_DESKTOP_ACTIONS_ENABLED=true</code> is deliberately configured.</p>
+    <pre><code>python -m pytest alfred-assistant\tests -q
+python -m ruff check alfred-assistant
+python -m mypy --check-untyped-defs alfred-assistant\alfred
+python -m compileall -q alfred-assistant
+node --check alfred-assistant\ui\console.js</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Tests</h2>
+    <p>The dedicated suite covers configuration and sanitized status, migrations, API/UI contracts, persona behavior, website citations, provider failures and timeouts, web provenance, prompt-injection handling, SSRF and redirect denial, secret/process redaction, traversal/UNC/link escape, collisions, allowlists, approval ownership, expiry, payload tampering, replay, two-client isolation, disabled execution, and mocked launches. Filesystem mutations are limited to temporary approved roots.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Current Limitations</h2>
+    <p>Alfred is local-only and not generally autonomous. Ollama is supported but not assumed to be installed or enabled on another machine. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Next milestones</h2>
+    <p>The staged plan prioritizes Windows reparse/race hardening, token rotation and revocation, transactional skill recovery, citation-faithfulness evaluation, opt-in inspectable memory, push-to-talk before wake words, least-privilege integrations, and a signed native package with no surprise persistence. Completion criteria and non-goals are maintained in <a href="../ALFRED_STATUS.md">ALFRED_STATUS.md</a>.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Demo status</h2>
+    <p>The <a href="../alfred-showcase.html">controlled public showcase</a> provides curated, cited portfolio answers and three synthetic action scenarios. It is not the local service: no model, network research, localhost connection, desktop adapter, or real execution path is present. Desktop capability remains available only in a trusted native user session. Review the local evidence above, then inspect the <a data-public-source-path="alfred-assistant" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/agents/batcomputer-website-query/alfred-assistant">public source on GitHub</a>.</p>
+  </section>
 </main>
+<script src="../app.js?v=alfred-local"></script>
 </body>
 </html>

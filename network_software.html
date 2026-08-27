@@ -5,113 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cloud, Network &amp; Platform Engineering | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
-<script>
-  // Redirect root-relative links to the live server when this page was opened as a local file.
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+<script src="local-links.js"></script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
   <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
+    <a class="home-link" href="batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="labs.html">All labs</a>
+    <a class="home-link" href="project-evidence.json">Evidence</a>
   </nav>
   <header class="detail-header">
-    <p class="eyebrow">Engineering Category</p>
-    <h1>Cloud, Network &amp; Platform Engineering</h1>
-    <p class="detail-focus">I build and operate reliable application environments by combining cloud infrastructure, networking, deployment automation, monitoring, and production-support practices.</p>
+    <p class="eyebrow">Labs &amp; Prototypes // 5 of 20</p>
+    <h1>Network &amp; Systems Labs</h1>
+    <p class="detail-focus">Five dependency-light prototypes demonstrate subnet calculations, bounded reachability checks, sample telemetry summaries, SQLite inventory synchronization, and review-only configuration planning.</p>
   </header>
 
   <section class="detail-card">
-    <h2>Core capabilities</h2>
+    <h2>Demonstrated scope</h2>
     <ul>
-      <li>Network summary and diagnostic workflows</li>
-      <li>Infrastructure-minded automation and scripting</li>
-      <li>Monitoring-oriented interfaces for technical environments</li>
-      <li>Connectivity, latency, and systems-visibility thinking</li>
-      <li>Operator-centered tooling patterns for infrastructure support</li>
+      <li>Standard-library CIDR and address calculations</li>
+      <li>Bounded operating-system ping checks for one target</li>
+      <li>Health classification over built-in sample telemetry</li>
+      <li>JSON device records synchronized into a local SQLite database</li>
+      <li>Configuration commands rendered as a plan without network connections</li>
     </ul>
   </section>
 
   <section class="detail-card">
-    <h2>Implemented work</h2>
-    <ul>
-      <li>Batcomputer system and network summary support within Alfred</li>
-      <li>Network-focused portfolio routing and dedicated category presentation</li>
-      <li>Infrastructure-support framing across the live assistant and HUD</li>
-      <li>Diagnostic-oriented content for connected systems and operations work</li>
-      <li>Automation direction aligned to monitoring, visibility, and support workflows</li>
-    </ul>
+    <h2>Current limitations</h2>
+    <p>There is no cloud platform, SNMP polling, SSH or Netmiko connection, real-time dashboard, API retrieval, managed database, container deployment, or production monitoring. The inventory example is the only project here that persists data, and it uses local SQLite.</p>
   </section>
-
-  <section class="detail-card" id="platform-overview">
-    <h2>Platform overview</h2>
-    <p>This category expands the original networking focus into cloud, DevOps, infrastructure, and platform engineering. It demonstrates how applications are configured, deployed, connected, monitored, and recovered, not only how they are written.</p>
-    <p>The Batcomputer operations platform connects users, workspaces, assets, events, deployments, incidents, and audit records across engineering workflows.</p>
-  </section>
-
-  <section class="detail-card" id="platform-capabilities">
-    <h2>Cloud and platform capabilities</h2>
-    <div class="category-grid">
-      <article class="category-card"><h3>Cloud infrastructure</h3><ul><li>Environment-specific configuration</li><li>Containerized services</li><li>Managed PostgreSQL planning</li><li>Secret management practices</li><li>Health and readiness monitoring</li><li>Backup and recovery planning</li></ul></article>
-      <article class="category-card"><h3>Networking</h3><ul><li>Network asset inventory</li><li>Service dependencies</li><li>Topology relationships</li><li>Reachability observations</li><li>Private database boundaries</li><li>TLS and API routing concepts</li></ul></article>
-      <article class="category-card"><h3>DevOps delivery</h3><ul><li>Docker and Docker Compose</li><li>Continuous integration</li><li>Lint, type, and test gates</li><li>Migration validation</li><li>Deployment verification</li><li>Rollback planning</li></ul></article>
-      <article class="category-card"><h3>Platform operations</h3><ul><li>Environment records</li><li>Deployment status tracking</li><li>Configuration history</li><li>Incident and rollback records</li><li>Structured logging</li><li>Audit history</li></ul></article>
-    </div>
-  </section>
-
-  <section class="detail-card" id="platform-architecture">
-    <h2>Architecture</h2>
-    <div class="category-grid">
-      <article class="category-card"><h3>Frontend</h3><p>React and TypeScript provide the operator interface for environments, assets, service health, deployments, and incidents.</p></article>
-      <article class="category-card"><h3>Backend</h3><p>FastAPI exposes validated REST endpoints and OpenAPI documentation with server-side workspace authorization.</p></article>
-      <article class="category-card"><h3>Database</h3><p>PostgreSQL stores users, workspaces, assets, deployments, incidents, workflow events, and immutable audit events. SQLAlchemy and Alembic provide the data and migration layers.</p></article>
-      <article class="category-card"><h3>Containers and CI</h3><p>Docker Compose reproduces the local web, API, and database environment. GitHub Actions runs quality checks, tests, migration verification, and production builds.</p></article>
-    </div>
-  </section>
-
-  <section class="detail-card" id="platform-reliability">
-    <h2>Reliability and observability</h2>
-    <div class="category-grid">
-      <article class="category-card"><h3>Health</h3><p>Application health, dependency readiness, service observations, and deployment verification checks.</p></article>
-      <article class="category-card"><h3>Logging</h3><p>Structured request logs, correlation identifiers, route status, duration data, and auditable transitions.</p></article>
-      <article class="category-card"><h3>Metrics</h3><p>Request rate, error rate, latency percentiles, database pool usage, readiness failures, and container resource usage.</p></article>
-      <article class="category-card"><h3>Recovery</h3><p>Encrypted backups, restore testing, image rollback procedures, forward migrations, and incident review.</p></article>
-    </div>
-  </section>
-
-  <section class="detail-card" id="platform-evidence">
-    <h2>Engineering evidence</h2>
-    <ul><li>API tests verify authentication, permissions, workspace isolation, validation, audit behavior, and rate limits.</li><li>Migration checks verify Alembic upgrade, downgrade, and second-upgrade paths.</li><li>Frontend checks cover ESLint, Vitest, TypeScript, accessibility-oriented tests, and production builds.</li><li>Dockerfiles and Compose configuration document local environment reproducibility.</li></ul>
-  </section>
-
-  <section class="detail-card" id="platform-tools"><h2>Tools and technologies</h2><ul><li>React and TypeScript</li><li>Python and FastAPI</li><li>PostgreSQL, SQLAlchemy, and Alembic</li><li>Docker and Docker Compose</li><li>GitHub Actions and Nginx</li><li>REST APIs and OpenAPI</li><li>Pytest, Ruff, mypy, Vitest, and ESLint</li></ul></section>
-
-  <section class="detail-card" id="platform-limitations"><h2>Current limitations</h2><ul><li>The platform currently runs locally.</li><li>No public cloud deployment is configured.</li><li>Production would require managed TLS, secrets, monitoring, alerting, backups, and restore testing.</li><li>The network features demonstrate operational workflows and do not replace enterprise monitoring tools.</li></ul></section>
 
   <section class="detail-card">
-    <h2>Featured Projects</h2>
+    <h2>Labs &amp; Prototypes</h2>
     <ul>
-      <li><a href="projects/network-monitoring-dashboard.html"><strong>Network Monitoring Dashboard</strong></a> — Built an SNMP-powered monitoring dashboard that tracks device uptime, latency, bandwidth usage, and alert conditions. Integrated real-time polling and visualizations to support network operations and infrastructure oversight.</li>
-      <li><a href="projects/ping-latency-analyzer.html"><strong>Ping &amp; Latency Analyzer</strong></a> — Developed a multithreaded Python tool that performs continuous ping tests, packet loss detection, and latency analysis across multiple hosts. Useful for diagnosing intermittent network issues and monitoring connection stability.</li>
-      <li><a href="projects/subnet-calculator.html"><strong>Subnet Calculator</strong></a> — Implemented a Python CLI utility that computes CIDR ranges, usable host counts, broadcast addresses, and network boundaries. Designed to support subnet planning, network segmentation, and infrastructure documentation.</li>
-      <li><a href="projects/api-based-network-inventory-tool.html"><strong>API-Based Network Inventory Tool</strong></a> — Built a system that retrieves device information from network APIs and stores it in a structured database. Enables automated inventory tracking, device classification, and infrastructure mapping for network operations.</li>
-      <li><a href="projects/automated-device-configuration-utility.html"><strong>Automated Device Configuration Utility</strong></a> — Created an SSH automation tool that pushes configuration files to routers and switches, validates changes, and logs results. Demonstrates infrastructure scripting skills and supports scalable network configuration management.</li>
+      <li><a href="projects/network-monitoring-dashboard.html"><strong>Telemetry Summary Prototype</strong></a> — Classifies two built-in sample records and prints JSON; it does not poll SNMP or render a live dashboard.</li>
+      <li><a href="projects/ping-latency-analyzer.html"><strong>Ping Reachability Analyzer</strong></a> — Runs a bounded ping for one host and reports reachability; it is not continuous or multihost monitoring.</li>
+      <li><a href="projects/subnet-calculator.html"><strong>Subnet Calculator</strong></a> — Computes network, broadcast, mask, address count, and usable host range for IPv4 CIDR input.</li>
+      <li><a href="projects/api-based-network-inventory-tool.html"><strong>JSON-to-SQLite Inventory</strong></a> — Reads device data from a local JSON file and upserts it into SQLite; it does not call network APIs.</li>
+      <li><a href="projects/automated-device-configuration-utility.html"><strong>Configuration Plan Utility</strong></a> — Generates a reviewable plan from local JSON targets and a command; it does not connect to or configure devices.</li>
     </ul>
   </section>
 
   <section class="detail-card">
-    <h2>Open project in VS Code</h2>
-    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
-    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
-    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
+    <h2>Evidence</h2>
+    <p>See <a href="project-evidence.json">the project evidence inventory</a> for source folders, exact commands, limitations, and validation status.</p>
   </section>
 </main>
 </body>

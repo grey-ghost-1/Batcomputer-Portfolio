@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A controlled, non-executing public demonstration of Alfred's cited portfolio answers and approval-gated desktop safety workflow.">
+  <title>Alfred Public Showcase | Justin Wimmer</title>
+  <link rel="stylesheet" href="style.css?v=alfred-showcase">
+</head>
+<body class="site-shell showcase-page">
+<a class="skip-link" href="#showcase-main">Skip to Alfred showcase</a>
+<div class="bg-gradient" aria-hidden="true"></div>
+<main class="showcase-shell" id="showcase-main">
+  <nav class="detail-nav" aria-label="Showcase navigation">
+    <a class="home-link" href="batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="projects/alfred-ai-assistant.html">Alfred case study</a>
+    <a class="home-link" href="ALFRED_STATUS.md">Status and threat model</a>
+  </nav>
+
+  <header class="showcase-hero">
+    <div>
+      <p class="eyebrow">Alfred // controlled public demonstration</p>
+      <h1>Good day. Shall we review the evidence?</h1>
+      <p class="showcase-lead">Explore bounded portfolio answers and a faithful simulation of Alfred's approval-gated desktop workflow. This is not a live unrestricted AI model.</p>
+    </div>
+    <dl class="showcase-boundary" aria-label="Public demonstration boundary">
+      <div><dt>Knowledge</dt><dd>Curated evidence only</dd></div>
+      <div><dt>Model</dt><dd>None connected</dd></div>
+      <div><dt>Execution</dt><dd>Permanently simulated</dd></div>
+      <div><dt>Network tools</dt><dd>Disabled</dd></div>
+    </dl>
+  </header>
+
+  <section class="showcase-notice" aria-labelledby="boundary-heading">
+    <h2 id="boundary-heading">A deliberately narrow public surface</h2>
+    <p>The hosted showcase cannot reach Alfred's loopback service, Ollama, model providers, the server filesystem, environment values, arbitrary URLs, the clipboard, applications, or desktop adapters. The full local edition can opt into Ollama and real typed adapters, but still requires exact preview and explicit approval.</p>
+  </section>
+
+  <div class="showcase-grid">
+    <section class="showcase-panel" aria-labelledby="qa-heading">
+      <p class="panel-kicker">01 // cited project briefing</p>
+      <h2 id="qa-heading">Ask within the evidence set</h2>
+      <p>Questions are matched to prepared answers. Unsupported topics receive a clear limitation rather than an invented claim.</p>
+      <div class="suggestion-list" id="showcase-suggestions" aria-label="Suggested questions"></div>
+      <form id="showcase-question-form">
+        <label for="showcase-question">Portfolio question</label>
+        <div class="showcase-input-row">
+          <input id="showcase-question" name="question" maxlength="400" autocomplete="off" placeholder="Ask about backend work, safety, testing, or the local edition" required>
+          <button class="primary-cta" type="submit">Ask Alfred</button>
+        </div>
+      </form>
+      <div class="showcase-answer" id="showcase-answer" role="status" aria-live="polite">
+        <p>Select a suggested question to begin.</p>
+      </div>
+      <div id="showcase-citations" aria-label="Answer citations"></div>
+    </section>
+
+    <section class="showcase-panel" aria-labelledby="workflow-heading">
+      <p class="panel-kicker">02 // desktop safety simulation</p>
+      <h2 id="workflow-heading">Preview before approval</h2>
+      <ol class="workflow-steps" aria-label="Simulation workflow">
+        <li data-step="propose">Propose</li>
+        <li data-step="preview">Exact preview</li>
+        <li data-step="approve">Explicit approval</li>
+        <li data-step="result">Simulated result</li>
+        <li data-step="audit">Audit entry</li>
+      </ol>
+      <label for="showcase-scenario">Recruiter scenario</label>
+      <select id="showcase-scenario"></select>
+      <button class="secondary-cta showcase-propose" id="showcase-propose" type="button">Create safe proposal</button>
+      <div class="proposal-preview" id="showcase-preview" aria-live="polite">
+        <p>Choose a scenario, then inspect its exact synthetic effects.</p>
+      </div>
+      <div class="approval-controls" id="showcase-approval-controls" hidden>
+        <label class="approval-confirmation">
+          <input id="showcase-confirm" type="checkbox">
+          I reviewed this exact preview and approve this simulation only.
+        </label>
+        <div class="showcase-actions">
+          <button class="primary-cta" id="showcase-approve" type="button" disabled>Approve simulation</button>
+          <button class="secondary-cta" id="showcase-reject" type="button">Reject</button>
+        </div>
+      </div>
+      <div class="simulation-result" id="showcase-result" role="status" aria-live="polite"></div>
+    </section>
+  </div>
+
+  <section class="showcase-panel audit-panel" aria-labelledby="audit-heading">
+    <div class="audit-heading-row">
+      <div>
+        <p class="panel-kicker">03 // session-local record</p>
+        <h2 id="audit-heading">Simulated audit trail</h2>
+      </div>
+      <button class="secondary-cta" id="showcase-reset" type="button">Reset this demo</button>
+    </div>
+    <p>Entries contain scenario metadata only, are isolated to this browser session, and are capped. They are not durable desktop audit records.</p>
+    <ol class="audit-list" id="showcase-audit"><li>No simulated actions recorded.</li></ol>
+  </section>
+</main>
+<script src="alfred-showcase.js?v=1"></script>
+</body>
+</html>
+

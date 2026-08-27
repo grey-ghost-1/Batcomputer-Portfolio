@@ -1,86 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ping & Latency Analyzer | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ping Reachability Analyzer | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../network_software.html">← Back to Network</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../network_software.html">← Back to Network Software</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Network</p>
+    <p class="eyebrow">Network Diagnostic Prototype</p>
     <h1>Ping &amp; Latency Analyzer</h1>
-    <p class="detail-focus">Developed a multithreaded Python tool that performs continuous ping tests, packet loss detection, and latency analysis across multiple hosts. Useful for diagnosing intermittent network issues and monitoring connection stability.</p>
+    <p class="detail-focus">A sequential wrapper around the operating system's ping command that records reachability and raw command output for supplied hosts.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import subprocess
-import re
-from concurrent.futures import ThreadPoolExecutor
-
-def ping_stats(host, count=10):
-    result = subprocess.run(
-        ["ping", "-n", str(count), host], capture_output=True, text=True
-    )
-    loss_match = re.search(r"\((\d+)% loss\)", result.stdout)
-    latency_match = re.search(r"Average = (\d+)ms", result.stdout)
-    return {
-        "host": host,
-        "packet_loss_percent": int(loss_match.group(1)) if loss_match else None,
-        "avg_latency_ms": int(latency_match.group(1)) if latency_match else None,
-    }
-
-def analyze_hosts(hosts):
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        return list(executor.map(ping_stats, hosts))
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Network\ping-latency-analyzer</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Network\ping-latency-analyzer\main.py" 127.0.0.1</code></p>
+    <p><strong>Validation:</strong> Spawns bounded system ping processes and sends ICMP traffic; the documented target is loopback.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample analysis across four monitored hosts:</p>
-    <pre><code>8.8.8.8      -> loss=0%  avg=14ms
-1.1.1.1      -> loss=0%  avg=11ms
-192.168.1.1  -> loss=20% avg=48ms  (unstable)
-10.0.0.5     -> loss=0%  avg=2ms</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The analyzer runs repeated ping tests across multiple hosts, parses packet loss and average latency from command output, and combines the results into a comparative connectivity report.</p>
-    <ul><li>Subprocess calls collect platform-specific ping output.</li><li>Regex parsing extracts loss and latency metrics.</li><li>ThreadPoolExecutor runs host checks concurrently.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include multi-host testing, packet-loss detection, average latency, concurrency, and structured results. Next additions should include platform adapters, timeout controls, percentile latency, continuous sampling, CSV export, and tests for missing metrics.</p>
-    <p><strong>Visuals:</strong> host comparison table, latency trend chart, and packet-loss heatmap.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card">
-    <h2>Build and simulation</h2>
-    <p><strong>Enhancement:</strong> add platform adapters, percentile latency, continuous sampling, and CSV export around concurrent ping collection.</p>
-    <pre><code>analyze_hosts(["8.8.8.8", "192.168.1.1"])
-8.8.8.8: loss=0%, avg=14ms
-192.168.1.1: loss=20%, avg=48ms</code></pre>
-    <p><strong>Simulation:</strong> one stable host and one unstable host were reported, distinguishing packet loss from normal latency variation.</p>
-  </section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Network\ping-latency-analyzer</code></p><p>Run: <code>python main.py 127.0.0.1</code></p><p>The current build runs bounded ping checks and reports reachability.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>LATENCY ANALYZER / HOST VIEW</span><span class="visual-status">SAMPLING</span></div><div class="visual-grid"><div class="visual-metric">Hosts<strong>2</strong></div><div class="visual-metric">Avg latency<strong>31ms</strong></div><div class="visual-metric">Packet loss<strong>20%</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>8.8.8.8</span><i style="width:94%"></i><b>STABLE</b></div><div class="visual-bar"><span>192.168.1.1</span><i style="width:38%"></i><b>UNSTABLE</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>One bounded two-packet ping per supplied host</li><li>OS-aware ping flag selection</li><li>Reachability boolean and raw stdout output</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>Checks are sequential, not multithreaded or continuous. Packet-loss percentages and latency statistics are not parsed, stored, graphed, or alerted on.</p></section>
 </main>
 </body>
 </html>

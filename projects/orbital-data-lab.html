@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Case study for a deterministic two-body simulation API with RK4, velocity-Verlet, scenario lineage, exports, and numerical tests.">
+  <title>Orbital Data Lab | Case Study</title>
+  <link rel="stylesheet" href="../style.css?v=recruiter-ready">
+</head>
+<body class="site-shell">
+<a class="skip-link" href="#case-study">Skip to case study</a>
+<main class="detail-shell" id="case-study">
+  <nav class="detail-nav" aria-label="Case study navigation">
+    <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../labs.html">Labs &amp; Prototypes</a>
+    <a class="home-link" href="../project-evidence.json">Evidence</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">02 // Data and simulation flagship</p>
+    <h1>Orbital Data Lab</h1>
+    <p class="detail-focus">A deterministic educational two-body simulation service that compares RK4 and velocity-Verlet, preserves scenario lineage, and makes numerical limits explicit. It is not flight grade.</p>
+    <div class="card-actions">
+      <a data-public-source-path="orbital-data-lab" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/agents/batcomputer-website-query/orbital-data-lab">View source on GitHub</a>
+      <a class="optional-site-link" data-demo-link="orbital" hidden>Open configured demo</a>
+    </div>
+  </header>
+
+  <section class="detail-card">
+    <h2>Problem and users</h2>
+    <p>Learners and technical reviewers need a reproducible way to compare numerical integration behavior without confusing an educational model for mission software. Users submit bounded initial conditions, inspect trajectories and energy drift, compare integrators, save content-addressed scenarios, and export results.</p>
+    <dl class="case-meta">
+      <div><dt>Implemented by me</dt><dd>Physics core, Pydantic API, persistence and lineage, exports, canvas UI, tests, and limits documentation.</dd></div>
+      <div><dt>Strongest evidence</dt><dd>Known circular-orbit behavior, energy-drift comparison, deterministic output, idempotent storage, and bounded validation.</dd></div>
+      <div><dt>Demo status</dt><dd>Runs locally. No hosted deployment is claimed; a demo link appears only when an HTTPS URL is configured.</dd></div>
+    </dl>
+  </section>
+
+  <section class="detail-card">
+    <h2>Architecture</h2>
+    <ol class="architecture-flow" aria-label="Orbital data flow">
+      <li>Browser canvas or API client</li>
+      <li>FastAPI + bounded Pydantic scenario</li>
+      <li>RK4 / velocity-Verlet physics core</li>
+      <li>Trajectory response + content-addressed SQLite</li>
+    </ol>
+    <p>Simulation functions are deterministic and isolated from storage. Scenario identifiers derive from normalized content, so repeated writes are idempotent; schema and algorithm versions provide useful lineage without claiming signed build provenance.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Trade-offs and reliability</h2>
+    <ul>
+      <li>Input bounds include a 20,000-step ceiling to constrain memory and response time</li>
+      <li>Tests compare drift and final state across two integrators rather than treating one numerical method as universally superior</li>
+      <li>SQLite keeps the evidence service easy to run and inspect, but it is not intended for concurrent distributed ingestion</li>
+      <li>Full trajectory responses favor transparency and visualization over streaming very large simulations</li>
+      <li>Missing scenarios and invalid parameters return explicit API errors</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Run and verify</h2>
+    <p><strong>Run from repository root:</strong></p>
+    <pre><code>python -m pip install -r requirements.txt
+Set-Location orbital-data-lab
+python -m uvicorn orbital_lab.api:app --reload --port 8010</code></pre>
+    <p>Open <code>http://127.0.0.1:8010</code>. The service exposes a browser visualization and API documentation; liveness is at <code>/health/live</code> and database readiness at <code>/health/ready</code>.</p>
+    <p><strong>Test evidence:</strong></p>
+    <pre><code>Set-Location orbital-data-lab
+python -m pytest tests -q
+Set-Location ..
+python -m ruff check orbital-data-lab</code></pre>
+    <p>The suite covers circular-orbit behavior, energy drift, determinism, bounds, API behavior, content-addressed idempotence, lineage, JSON/CSV exports, and missing records.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Current Limitations</h2>
+    <p>The model is fixed, two-dimensional, point-mass central gravity. It omits perturbations, atmosphere, finite burns, relativity, body rotation, ephemerides, frame transformations, uncertainty, collision detection, and event handling. Passing one idealized circular-orbit test does not validate other regimes, navigation, mission planning, or safety decisions.</p>
+  </section>
+</main>
+<script src="../app.js?v=5"></script>
+</body>
+</html>

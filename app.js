@@ -9,7 +9,7 @@ const alfredChatSendButton = document.getElementById("alfred-chat-send");
 const alfredApiBase = window.location.port === "8080" ? "http://127.0.0.1:5000" : "";
 
 function normalizePanelId(panelId) {
-    return panelIds.has(panelId) ? panelId : "about";
+    return panelIds.has(panelId) ? panelId : null;
 }
 
 function showPanel(panelId, options = {}) {
@@ -17,24 +17,28 @@ function showPanel(panelId, options = {}) {
     const updateHash = options.updateHash !== false;
 
     panels.forEach((panel) => {
-        const isMatch = panel.id === resolvedPanelId;
+        const isMatch = resolvedPanelId !== null && panel.id === resolvedPanelId;
         panel.classList.toggle("hidden", !isMatch);
     });
 
     panelButtons.forEach((button) => {
-        const isActive = button.dataset.panel === resolvedPanelId;
+        const isActive = resolvedPanelId !== null && button.dataset.panel === resolvedPanelId;
         button.classList.toggle("active", isActive);
         button.setAttribute("aria-expanded", isActive ? "true" : "false");
     });
 
-    if (updateHash) {
+    if (updateHash && resolvedPanelId) {
         window.location.hash = resolvedPanelId;
+    }
+
+    if (resolvedPanelId && options.focus) {
+        document.getElementById(resolvedPanelId)?.focus();
     }
 }
 
 panelButtons.forEach((button) => {
     button.addEventListener("click", () => {
-        showPanel(button.dataset.panel || "");
+        showPanel(button.dataset.panel || "", { focus: true });
     });
 });
 
@@ -88,7 +92,7 @@ function appendChatEntry(role, content, preformatted = false) {
     return entry;
 }
 
-function appendPendingAssistantEntry(message = "Alfred is responding…") {
+function appendPendingAssistantEntry(message = "Checking deterministic responses…") {
     return appendChatEntry("assistant", message);
 }
 
@@ -113,22 +117,6 @@ function updateChatEntry(entry, content, preformatted = false) {
     }
 }
 
-function renderProposalObject(proposal) {
-    return JSON.stringify(
-        {
-            target_file: proposal.target_file,
-            explanation: proposal.explanation,
-            full_replacement_content: proposal.full_content,
-        },
-        null,
-        2
-    );
-}
-
-function renderRedesignProposal(proposal) {
-    return proposal && typeof proposal === "object" ? proposal : null;
-}
-
 function speakAssistantResponse(message) {
     if (!("speechSynthesis" in window) || !message) {
         return;
@@ -143,16 +131,16 @@ function speakAssistantResponse(message) {
 function buildLocalAlfredReply(message) {
     const normalized = message.toLowerCase();
     if (normalized.includes("status") || normalized.includes("health")) {
-        return "Standalone mode is online. The HUD is loaded, but the Flask service is not connected.";
+        return "Standalone mode is loaded, but the Flask service is not connected. Alfred remains a deterministic helper.";
     }
     if (normalized.includes("help") || normalized.includes("what can")) {
-        return "I can answer basic status questions in standalone mode. Start the Flask server for live system actions, weather, and coding-agent features.";
+        return "I can return a small set of predefined portfolio and status responses. I do not use a model or perform system actions.";
     }
-    return "I am ready to help. Ask me about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
+    return "This deterministic helper can answer predefined questions about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
 }
 
 async function sendAlfredMessage(message) {
-    setRedesignStatus("Alfred is responding…");
+    setRedesignStatus("Checking deterministic responses…");
     const pendingEntry = appendPendingAssistantEntry();
     try {
         const response = await fetch(`${alfredApiBase}/alfred`, {
@@ -165,8 +153,8 @@ async function sendAlfredMessage(message) {
             throw new Error(payload.error || "Unable to reach Alfred.");
         }
         updateChatEntry(pendingEntry, payload.reply || "Alfred is standing by.");
-        setRedesignStatus("Alfred is live and ready.");
-        speakAssistantResponse(payload.reply || "Alfred is standing by.");
+        setRedesignStatus("Deterministic helper connected. No model or actions are available.");
+        speakAssistantResponse(payload.reply || "The deterministic helper is standing by.");
     } catch (error) {
         const reply = buildLocalAlfredReply(message);
         updateChatEntry(pendingEntry, reply);
@@ -190,9 +178,10 @@ async function submitChatMessage() {
 
     const normalized = message.toLowerCase();
     if (normalized === "approve" || normalized === "reject" || normalized === "refresh" || normalized === "refresh state") {
-        appendChatEntry("assistant", "Website redesign controls now live on the Coding Agent tab, sir. Use that page for proposal approval, rejection, and redesign state.");
-        setRedesignStatus("Use the Coding Agent tab for website redesign proposals.");
-        speakAssistantResponse("Use the Coding Agent tab for website redesign proposals.");
+        const guidance = "The optional local proposal metadata utility is at /alfred_agent_console.html. It is disabled by default and never reads repository files.";
+        appendChatEntry("assistant", guidance);
+        setRedesignStatus("Local proposal metadata is disabled by default.");
+        speakAssistantResponse(guidance);
         return;
     }
 
@@ -217,14 +206,14 @@ function setupVoiceInput() {
     recognition.maxAlternatives = 1;
 
     startVoiceInputButton.addEventListener("click", () => {
-        setRedesignStatus("Listening for HUD redesign request…");
+        setRedesignStatus("Listening for a portfolio question…");
         recognition.start();
     });
 
     recognition.addEventListener("result", (event) => {
         const transcript = event.results[0][0].transcript.trim();
         alfredChatInputElement.value = transcript;
-        setRedesignStatus("Voice input captured. Sending it to Alfred.");
+        setRedesignStatus("Voice input captured. Checking deterministic responses.");
         submitChatMessage().catch((error) => {
             setRedesignStatus(error.message, true);
         });
@@ -257,7 +246,63 @@ if (alfredChatInputElement) {
 setupVoiceInput();
 
 if (alfredChatLogElement) {
-    alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is online. Ask a question, request a HUD redesign, or use voice input for live conversation.</div>';
+    alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is a deterministic local helper. Ask about this portfolio or use browser voice input; no AI model or action execution is connected.</div>';
 }
 
-showPanel(window.location.hash.slice(1) || "about", { updateHash: false });
+async function loadPublicSiteConfig() {
+    const optionalLinks = document.getElementById("optional-application-links");
+    const demoLinks = Array.from(document.querySelectorAll("[data-demo-link]"));
+    const sourceLinks = Array.from(document.querySelectorAll("[data-public-source-path]"));
+    if (!optionalLinks && demoLinks.length === 0 && sourceLinks.length === 0) {
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/site/config", { headers: { Accept: "application/json" } });
+        if (!response.ok) {
+            return;
+        }
+        const config = await response.json();
+
+        if (optionalLinks && Array.isArray(config.optional_links)) {
+            config.optional_links.forEach((link) => {
+                if (!link || typeof link.label !== "string" || typeof link.href !== "string") {
+                    return;
+                }
+                const anchor = document.createElement("a");
+                anchor.className = "secondary-cta";
+                anchor.href = link.href;
+                anchor.textContent = link.label;
+                if (link.href.startsWith("https://")) {
+                    anchor.rel = "noreferrer";
+                }
+                optionalLinks.appendChild(anchor);
+            });
+        }
+
+        demoLinks.forEach((anchor) => {
+            const demoUrl = config.demos?.[anchor.dataset.demoLink];
+            if (typeof demoUrl === "string" && demoUrl.startsWith("https://")) {
+                anchor.href = demoUrl;
+                anchor.rel = "noreferrer";
+                anchor.hidden = false;
+            }
+        });
+
+        if (config.public_source_urls && typeof config.public_source_urls === "object") {
+            sourceLinks.forEach((anchor) => {
+                const sourceUrl = config.public_source_urls[anchor.dataset.publicSourcePath];
+                if (typeof sourceUrl === "string" && sourceUrl.startsWith("https://")) {
+                    anchor.href = sourceUrl;
+                    anchor.rel = "noreferrer";
+                    anchor.hidden = false;
+                }
+            });
+        }
+    } catch (error) {
+        // Static hosting has no Flask configuration endpoint; optional links remain omitted.
+    }
+}
+
+loadPublicSiteConfig();
+showPanel(window.location.hash.slice(1), { updateHash: false });

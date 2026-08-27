@@ -1,13 +1,78 @@
+import os
+import secrets
+from datetime import UTC, datetime
+from functools import wraps
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, session
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from alfred_showcase import (
+    MAX_AUDIT_ENTRIES,
+    MAX_QUESTION_LENGTH,
+    SCENARIOS,
+    SUGGESTED_QUESTIONS,
+    answer_question,
+    public_scenarios,
+)
+from site_config import public_site_config
 
 BASE_DIR = Path(__file__).resolve().parent
-app = Flask(__name__, static_folder=None)
 
-CODE_PROPOSAL = None
-HUD_PROPOSAL = None
-RECENT_EVENTS = []
+
+def _enabled(value):
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _session_secret(environ=None):
+    environment = os.environ if environ is None else environ
+    configured = environment.get("SITE_SESSION_SECRET", "")
+    if configured and (len(configured) < 32 or len(set(configured)) < 8):
+        raise RuntimeError(
+            "SITE_SESSION_SECRET must contain at least 32 characters with sufficient variety"
+        )
+    return configured or secrets.token_hex(32)
+
+
+def _runtime_config(environ=None):
+    environment = os.environ if environ is None else environ
+    hosted_mode = _enabled(environment.get("SITE_HOSTED_MODE", "false"))
+    production = environment.get("SITE_ENVIRONMENT", "development") == "production"
+    proposals_enabled = _enabled(environment.get("SITE_PROPOSALS_ENABLED", "false"))
+    if hosted_mode and not production:
+        raise RuntimeError("SITE_HOSTED_MODE requires SITE_ENVIRONMENT=production")
+    if hosted_mode and proposals_enabled:
+        raise RuntimeError("Review-only proposal routes cannot be enabled in hosted mode")
+    if hosted_mode and not environment.get("SITE_SESSION_SECRET", ""):
+        raise RuntimeError("SITE_SESSION_SECRET is required in hosted mode")
+    return {
+        "HOSTED_MODE": hosted_mode,
+        "PREFERRED_URL_SCHEME": "https" if hosted_mode else "http",
+        "PROPOSALS_ENABLED": proposals_enabled and not hosted_mode,
+        "SECRET_KEY": _session_secret(environment),
+        "SESSION_COOKIE_HTTPONLY": True,
+        "SESSION_COOKIE_SAMESITE": "Lax",
+        "SESSION_COOKIE_SECURE": production or hosted_mode,
+    }
+
+
+app = Flask(__name__, static_folder=None)
+app.config.update(
+    _runtime_config()
+)
+if app.config["HOSTED_MODE"]:
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
+CODE_PROPOSAL_KEY = "code_proposal"
+HUD_PROPOSAL_KEY = "hud_proposal"
+RECENT_EVENTS_KEY = "proposal_events"
+SHOWCASE_PROPOSAL_KEY = "showcase_proposal"
+SHOWCASE_AUDIT_KEY = "showcase_audit"
+SESSION_TASK_LIMIT = 120
+SESSION_PATH_LIMIT = 160
+SESSION_CONTEXT_LIMIT = 3
+SESSION_CONTEXT_PATH_LIMIT = 100
+SESSION_EVENT_LIMIT = 5
 
 CATEGORY_PAGES = {
     "software-development": "software_development.html",
@@ -16,18 +81,86 @@ CATEGORY_PAGES = {
     "network-software": "network_software.html",
     "alfred-agent": "alfred_agent_console.html",
 }
+PRIMARY_PROJECTS = (
+    "operations-platform",
+    "orbital-data-lab",
+    "algorithm-quality-lab",
+    "alfred-ai-assistant",
+)
+ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
+ROOT_PUBLIC_FILES = {"project-evidence.json", "ALFRED_STATUS.md"}
+ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
+PROPOSAL_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
+CONTENT_SECURITY_POLICY = "; ".join(
+    (
+        "default-src 'self'",
+        "base-uri 'none'",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "form-action 'self'",
+        "script-src 'self'",
+        "style-src 'self' https://fonts.googleapis.com",
+        "font-src https://fonts.gstatic.com",
+        "img-src 'self' data:",
+        "connect-src 'self'",
+        "media-src 'none'",
+        "worker-src 'none'",
+    )
+)
+
+
+@app.after_request
+def apply_security_headers(response):
+    response.headers["Content-Security-Policy"] = CONTENT_SECURITY_POLICY
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = (
+        "camera=(), geolocation=(), microphone=(), payment=(), usb=()"
+    )
+    if request.path.startswith("/api/") or request.path == "/healthz":
+        response.headers["Cache-Control"] = "no-store"
+    if app.config["SESSION_COOKIE_SECURE"]:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
+
+def truncate_metadata(value, byte_limit):
+    encoded = value.encode("utf-8")
+    if len(encoded) <= byte_limit:
+        return value
+    return encoded[:byte_limit].decode("utf-8", errors="ignore")
 
 
 def record_event(event_type, task="", file_name=""):
-    RECENT_EVENTS.append({"type": event_type, "task": task, "file": file_name})
-    del RECENT_EVENTS[:-20]
+    events = list(session.get(RECENT_EVENTS_KEY, []))
+    events.append({"type": event_type, "file": truncate_metadata(file_name, 60)})
+    session[RECENT_EVENTS_KEY] = events[-SESSION_EVENT_LIMIT:]
 
 
-def read_preview(file_name):
-    path = (BASE_DIR / file_name).resolve()
-    if BASE_DIR not in path.parents or not path.is_file():
-        return ""
-    return path.read_text(encoding="utf-8")[:4000]
+def resolve_workspace_path(file_name):
+    if not file_name or "\x00" in file_name:
+        return None
+    candidate = Path(file_name)
+    if candidate.is_absolute():
+        return None
+    path = (BASE_DIR / candidate).resolve()
+    try:
+        path.relative_to(BASE_DIR)
+    except ValueError:
+        return None
+    return path
+
+
+def normalize_proposal_path(file_name):
+    if not file_name or "\x00" in file_name or "\\" in file_name or ":" in file_name:
+        return None
+    candidate = Path(file_name)
+    if candidate.is_absolute() or candidate.drive or ".." in candidate.parts:
+        return None
+    if candidate.suffix.lower() not in PROPOSAL_TEXT_SUFFIXES:
+        return None
+    return candidate.as_posix()
 
 
 def project_inventory():
@@ -35,38 +168,75 @@ def project_inventory():
 
 
 def agent_state():
+    pending = session.get(CODE_PROPOSAL_KEY)
     return {
-        "available": True,
-        "model": "local-demo",
-        "host": "Flask server",
-        "workspace_root": str(BASE_DIR),
-        "pending_code_change": CODE_PROPOSAL,
-        "recent_events": RECENT_EVENTS,
+        "available": False,
+        "proposals_enabled": app.config["PROPOSALS_ENABLED"],
+        "model": None,
+        "mode": "deterministic-review-only",
+        "status": "ready",
+        "executes_actions": False,
+        "writes_files": False,
+        "reads_repository_files": False,
+        "pending_code_change": pending if isinstance(pending, dict) else None,
+        "recent_events": session.get(RECENT_EVENTS_KEY, []),
     }
+
+
+def require_proposals(function):
+    @wraps(function)
+    def protected(*args, **kwargs):
+        if not app.config["PROPOSALS_ENABLED"]:
+            return jsonify({"error": "Review-only proposals are disabled."}), 404
+        return function(*args, **kwargs)
+
+    return protected
 
 
 def local_reply(message):
     normalized = " ".join(message.lower().split())
     compact = normalized.replace(" ", "")
     if compact in {"hi", "hii", "hiii", "hello", "hey", "hialfred", "helloalfred", "heyalfred"}:
-        return "Hello. Alfred is online and ready to help."
+        return "Hello. Alfred's deterministic local helper is ready."
     if "status" in normalized or "health" in normalized:
-        return "All systems nominal, sir. The Batcomputer Flask server is online."
+        return "The Batcomputer Flask server is online. Alfred is a deterministic helper, not an AI model."
     if "what can" in normalized or normalized in {"help", "commands", "capabilities"}:
-        return "I can discuss software, cybersecurity, IT support, networking, automation, and this portfolio. I can also guide you to the Coding Agent for approved workspace changes."
+        return "I can return predefined portfolio guidance. Optional local proposal metadata never reads repository files, generates code, executes actions, or writes files."
     if "who are you" in normalized or "what are you" in normalized:
-        return "I am Alfred, the Batcomputer assistant. I help with technical questions, system guidance, and approved workspace tasks."
+        return "I am Alfred, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
     if "website" in normalized or "portfolio" in normalized:
         return "You are viewing Justin Wimmer's Batcomputer portfolio. Use the navigation panel to explore software, cybersecurity, IT support, and network work."
     if "software" in normalized or "automation" in normalized:
-        return "The software and automation section covers Python, Flask, local assistant workflows, dashboards, and repeatable tools for technical work."
+        return "The software section covers deterministic text routing, dry-run file planning, local disk metrics, HTML inventory, item validation, and the root Flask HUD."
     if "cyber" in normalized or "security" in normalized:
-        return "The cybersecurity section covers defensive workflows, approval gates, state boundaries, vulnerability assessment, and authorized lab tooling."
+        return "The cybersecurity section covers bounded TCP checks, failed-login parsing, offline advisory matching, training-hash comparison, and a local reflection check."
     if "network" in normalized:
-        return "The network section covers diagnostics, monitoring, inventory, subnetting, and infrastructure automation."
+        return "The network section covers subnet calculation, bounded ping checks, static telemetry summaries, local SQLite inventory, and review-only configuration plans."
     if "it support" in normalized or "troubleshoot" in normalized:
-        return "The IT Support section focuses on diagnostics, system health, launcher reliability, and practical troubleshooting workflows."
-    return "I am ready to help. Ask me about the portfolio, software, cybersecurity, IT support, networking, automation, or system status."
+        return "The IT Support section covers supplied-metric classification, disk-space status, bounded DNS and ping checks, messaging fallback simulation, and dry-run log planning."
+    return "This deterministic helper can answer predefined questions about the portfolio, software, cybersecurity, IT support, networking, automation, or system status."
+
+
+def _showcase_state():
+    pending = session.get(SHOWCASE_PROPOSAL_KEY)
+    audit = session.get(SHOWCASE_AUDIT_KEY, [])
+    return {
+        "demo": "controlled-public-showcase",
+        "model": None,
+        "network_enabled": False,
+        "real_execution_enabled": False,
+        "suggested_questions": list(SUGGESTED_QUESTIONS),
+        "scenarios": public_scenarios(),
+        "pending_proposal": pending if isinstance(pending, dict) else None,
+        "audit": audit if isinstance(audit, list) else [],
+    }
+
+
+def _json_payload():
+    if not request.is_json:
+        return None
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
 
 
 @app.get("/")
@@ -79,9 +249,29 @@ def health():
     return jsonify({"status": "ok", "service": "batcomputer-website", "projects": len(project_inventory())})
 
 
+@app.get("/healthz")
+def public_health():
+    return jsonify({"status": "ok"})
+
+
 @app.get("/api/site/summary")
 def site_summary():
-    return jsonify({"categories": CATEGORY_PAGES, "projects": project_inventory()})
+    return jsonify(
+        {
+            "categories": CATEGORY_PAGES,
+            "projects": project_inventory(),
+            "project_count": len(project_inventory()),
+            "primary_projects": PRIMARY_PROJECTS,
+            "labs_count": len(project_inventory()) - len(PRIMARY_PROJECTS),
+            "labs_page": "labs.html",
+            "evidence_inventory": "project-evidence.json",
+        }
+    )
+
+
+@app.get("/api/site/config")
+def site_configuration():
+    return jsonify(public_site_config(BASE_DIR))
 
 
 @app.get("/<path:page>")
@@ -90,110 +280,307 @@ def static_page(page):
         page = CATEGORY_PAGES[page]
     if page.startswith("projects/") and "." not in Path(page).name:
         page = f"{page}.html"
-    path = (BASE_DIR / page).resolve()
-    if BASE_DIR not in path.parents or not path.is_file():
+    if "\\" in page:
         return jsonify({"error": "Page not found."}), 404
-    if path.suffix in {".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg"}:
-        return send_from_directory(BASE_DIR, page)
-    return send_from_directory(BASE_DIR, page)
+    path = resolve_workspace_path(page)
+    if path is None or not path.is_file():
+        return jsonify({"error": "Page not found."}), 404
+    relative = path.relative_to(BASE_DIR)
+    is_root_public = len(relative.parts) == 1 and (
+        path.suffix.lower() in ROOT_PUBLIC_SUFFIXES or relative.name in ROOT_PUBLIC_FILES
+    )
+    is_project_page = (
+        len(relative.parts) == 2
+        and relative.parts[0] == "projects"
+        and path.suffix.lower() == ".html"
+    )
+    is_asset = (
+        len(relative.parts) >= 2
+        and relative.parts[0] in {"assets", "images"}
+        and path.suffix.lower() in ASSET_PUBLIC_SUFFIXES
+    )
+    if not (is_root_public or is_project_page or is_asset):
+        return jsonify({"error": "Page not found."}), 404
+    return send_from_directory(BASE_DIR, relative.as_posix())
 
 
 @app.post("/alfred")
 def alfred():
     payload = request.get_json(silent=True) or {}
-    message = str(payload.get("message", "")).strip()
+    raw_message = payload.get("message", "")
+    if not isinstance(raw_message, str):
+        return jsonify({"error": "Message must be a string."}), 400
+    message = raw_message.strip()
     if not message:
         return jsonify({"error": "Message is required."}), 400
-    return jsonify({"reply": local_reply(message)})
+    return jsonify(
+        {
+            "reply": local_reply(message),
+            "mode": "deterministic",
+            "model": None,
+            "executes_actions": False,
+        }
+    )
+
+
+@app.get("/api/alfred-showcase/state")
+def alfred_showcase_state():
+    return jsonify(_showcase_state())
+
+
+@app.post("/api/alfred-showcase/ask")
+def ask_alfred_showcase():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    question = payload.get("question")
+    if not isinstance(question, str):
+        return jsonify({"error": "Question must be a string."}), 400
+    question = question.strip()
+    if not question:
+        return jsonify({"error": "Question is required."}), 400
+    if len(question) > MAX_QUESTION_LENGTH:
+        return jsonify({"error": f"Question must be {MAX_QUESTION_LENGTH} characters or fewer."}), 400
+    return jsonify(answer_question(question))
+
+
+@app.post("/api/alfred-showcase/proposals")
+def create_alfred_showcase_proposal():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    scenario_id = payload.get("scenario_id")
+    if not isinstance(scenario_id, str) or scenario_id not in SCENARIOS:
+        return jsonify({"error": "Choose one of the fixed showcase scenarios."}), 400
+    scenario = SCENARIOS[scenario_id]
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "scenario_id": scenario_id,
+        "title": scenario["title"],
+        "action_type": scenario["action_type"],
+        "preview": scenario["preview"],
+        "simulation_only": True,
+        "approved": False,
+    }
+    session[SHOWCASE_PROPOSAL_KEY] = proposal
+    return jsonify({"proposal": proposal, "real_execution_enabled": False})
+
+
+@app.post("/api/alfred-showcase/proposals/<proposal_id>/approve")
+def approve_alfred_showcase_proposal(proposal_id):
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("approved") is not True:
+        return jsonify({"error": "Explicit approval of this exact simulation is required."}), 400
+    proposal = session.get(SHOWCASE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this browser session."}), 404
+    scenario = SCENARIOS.get(str(proposal.get("scenario_id", "")))
+    if scenario is None:
+        session.pop(SHOWCASE_PROPOSAL_KEY, None)
+        return jsonify({"error": "The fixed scenario is no longer available."}), 409
+    entry = {
+        "event_id": secrets.token_urlsafe(12),
+        "scenario_id": proposal["scenario_id"],
+        "title": scenario["title"],
+        "action_type": scenario["action_type"],
+        "outcome": "simulated-success",
+        "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "real_execution": False,
+    }
+    audit = list(session.get(SHOWCASE_AUDIT_KEY, []))
+    audit.append(entry)
+    session[SHOWCASE_AUDIT_KEY] = audit[-MAX_AUDIT_ENTRIES:]
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    return jsonify(
+        {
+            "result": scenario["result"],
+            "audit": session[SHOWCASE_AUDIT_KEY],
+            "real_execution": False,
+            "network_used": False,
+        }
+    )
+
+
+@app.post("/api/alfred-showcase/proposals/<proposal_id>/reject")
+def reject_alfred_showcase_proposal(proposal_id):
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("rejected") is not True:
+        return jsonify({"error": "Explicit rejection is required."}), 400
+    proposal = session.get(SHOWCASE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this browser session."}), 404
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    return jsonify({"result": "Proposal rejected. Nothing was simulated or recorded."})
+
+
+@app.post("/api/alfred-showcase/reset")
+def reset_alfred_showcase():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("reset") is not True:
+        return jsonify({"error": "Explicit reset confirmation is required."}), 400
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    session.pop(SHOWCASE_AUDIT_KEY, None)
+    return jsonify(_showcase_state())
 
 
 @app.get("/api/coding-agent/state")
+@require_proposals
 def coding_agent_state():
     return jsonify(agent_state())
 
 
 @app.post("/api/coding-agent/proposals")
+@require_proposals
 def create_code_proposal():
-    global CODE_PROPOSAL
     payload = request.get_json(silent=True) or {}
-    task = str(payload.get("task", "")).strip()
-    target_file = str(payload.get("target_file", "")).strip()
+    raw_task = payload.get("task", "")
+    raw_target_file = payload.get("target_file", "")
     context_files = payload.get("context_files", [])
+    if not isinstance(raw_task, str) or not isinstance(raw_target_file, str):
+        return jsonify({"error": "Task and target_file must be strings."}), 400
+    task = raw_task.strip()
+    target_file = raw_target_file.strip()
     if not task or not target_file:
         return jsonify({"error": "Task and target_file are required."}), 400
     if len(task) > 2000 or len(target_file) > 240:
         return jsonify({"error": "Task or target_file is too long."}), 400
     if not isinstance(context_files, list):
-        context_files = []
-    old_preview = read_preview(target_file)
-    CODE_PROPOSAL = {
-        "task": task,
-        "target_file": target_file,
-        "context_files": [str(item) for item in context_files],
-        "model": "local-demo",
-        "workspace_root": str(BASE_DIR),
-        "plan_steps": ["Review the requested target and context files", "Prepare a proposed change for explicit approval"],
-        "proposal": {
-            "old_preview": old_preview,
-            "new_preview": old_preview or "New file content will be prepared here.",
-        },
+        return jsonify({"error": "context_files must be a list."}), 400
+    if len(context_files) > 20:
+        return jsonify({"error": "No more than 20 context files are allowed."}), 400
+    normalized_target = normalize_proposal_path(target_file)
+    if normalized_target is None:
+        return jsonify({"error": "target_file must be a safe relative text-file path."}), 400
+    normalized_context = []
+    for item in context_files:
+        normalized_item = normalize_proposal_path(item) if isinstance(item, str) else None
+        if normalized_item is None or len(item) > 240:
+            return jsonify({"error": "Each context file must be a safe relative path."}), 400
+        normalized_context.append(normalized_item)
+    stored_task = truncate_metadata(task, SESSION_TASK_LIMIT)
+    stored_target = truncate_metadata(normalized_target, SESSION_PATH_LIMIT)
+    stored_context = [
+        truncate_metadata(item, SESSION_CONTEXT_PATH_LIMIT)
+        for item in normalized_context[:SESSION_CONTEXT_LIMIT]
+    ]
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "task": stored_task,
+        "target_file": stored_target,
+        "context_files": stored_context,
+        "context_file_count": len(normalized_context),
+        "metadata_truncated": (
+            stored_task != task
+            or stored_target != normalized_target
+            or len(normalized_context) > SESSION_CONTEXT_LIMIT
+            or stored_context != normalized_context
+        ),
+        "mode": "deterministic-review-only",
+        "executes_actions": False,
+        "writes_files": False,
+        "reads_repository_files": False,
+        "plan_steps": [
+            "Record the requested target and context file names",
+            "Require a separate authenticated development workflow for any source review",
+        ],
     }
-    record_event("proposal-created", task, target_file)
-    return jsonify({"reply": "Coding proposal ready for review.", "coding_agent": agent_state()})
+    session[CODE_PROPOSAL_KEY] = proposal
+    record_event("proposal-created", task, normalized_target)
+    return jsonify(
+        {
+            "reply": "Review-only metadata recorded. No repository file was read or returned.",
+            "coding_agent": agent_state(),
+        }
+    )
 
 
-@app.post("/api/coding-agent/proposals/<decision>")
-def decide_code_proposal(decision):
-    global CODE_PROPOSAL
+@app.post("/api/coding-agent/proposals/<proposal_id>/<decision>")
+@require_proposals
+def decide_code_proposal(proposal_id, decision):
     if decision not in {"approve", "reject"}:
         return jsonify({"error": "Unknown proposal decision."}), 404
-    if CODE_PROPOSAL is None:
-        return jsonify({"error": "There is no pending coding proposal."}), 409
-    proposal = CODE_PROPOSAL
+    proposal = session.get(CODE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this session."}), 404
     record_event(f"proposal-{decision}d", proposal["task"], proposal["target_file"])
-    CODE_PROPOSAL = None
-    return jsonify({"reply": f"Coding proposal {decision}d.", "coding_agent": agent_state()})
+    session.pop(CODE_PROPOSAL_KEY, None)
+    return jsonify(
+        {
+            "reply": f"Review-only proposal {decision}d. No file was read or written and no command was executed.",
+            "coding_agent": agent_state(),
+        }
+    )
 
 
 @app.get("/api/hud-redesign/state")
+@require_proposals
 def hud_state():
-    return jsonify({"pending_hud_redesign": HUD_PROPOSAL})
+    proposal = session.get(HUD_PROPOSAL_KEY)
+    return jsonify({"pending_hud_redesign": proposal if isinstance(proposal, dict) else None})
 
 
 @app.post("/api/hud-redesign/proposals")
+@require_proposals
 def create_hud_proposal():
-    global HUD_PROPOSAL
     payload = request.get_json(silent=True) or {}
-    task = str(payload.get("task", "")).strip()
+    raw_task = payload.get("task", "")
+    if not isinstance(raw_task, str):
+        return jsonify({"error": "Task must be a string."}), 400
+    task = raw_task.strip()
     if not task:
         return jsonify({"error": "Task is required."}), 400
+    if len(task) > 2000:
+        return jsonify({"error": "Task is too long."}), 400
     target_file = "batcomputer_console.html"
-    HUD_PROPOSAL = {
-        "task": task,
+    stored_task = truncate_metadata(task, SESSION_TASK_LIMIT)
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "task": stored_task,
         "target_file": target_file,
-        "explanation": "A local preview proposal was created for explicit review.",
-        "old_preview": read_preview(target_file),
-        "new_preview": read_preview(target_file),
-        "full_content": read_preview(target_file),
+        "explanation": "Review-only metadata. No homepage source was read, generated, or returned.",
+        "metadata_truncated": stored_task != task,
+        "reads_repository_files": False,
+        "writes_files": False,
     }
+    session[HUD_PROPOSAL_KEY] = proposal
     record_event("hud-proposal-created", task, target_file)
-    return jsonify({"reply": "Website redesign proposal ready for review.", "pending_hud_redesign": HUD_PROPOSAL})
+    return jsonify(
+        {
+            "reply": "Review-only homepage metadata recorded. No repository file was read or returned.",
+            "pending_hud_redesign": proposal,
+        }
+    )
 
 
-@app.post("/api/hud-redesign/proposals/<decision>")
-def decide_hud_proposal(decision):
-    global HUD_PROPOSAL
+@app.post("/api/hud-redesign/proposals/<proposal_id>/<decision>")
+@require_proposals
+def decide_hud_proposal(proposal_id, decision):
     if decision not in {"approve", "reject"}:
         return jsonify({"error": "Unknown proposal decision."}), 404
-    if HUD_PROPOSAL is None:
-        return jsonify({"error": "There is no pending website redesign proposal."}), 409
-    proposal = HUD_PROPOSAL
+    proposal = session.get(HUD_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this session."}), 404
     record_event(f"hud-proposal-{decision}d", proposal["task"], proposal["target_file"])
-    HUD_PROPOSAL = None
-    response = {"reply": f"Website redesign proposal {decision}d."}
-    if decision == "approve":
-        response["final_content"] = proposal["full_content"]
-    return jsonify(response)
+    session.pop(HUD_PROPOSAL_KEY, None)
+    return jsonify(
+        {
+            "reply": f"Review-only homepage proposal {decision}d. No file was read or written and no command was executed."
+        }
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Case study for a tenant-isolated FastAPI operations platform with authentication, RBAC, audits, migrations, and an operator UI.">
+  <title>Batcomputer Operations Platform | Case Study</title>
+  <link rel="stylesheet" href="../style.css?v=recruiter-ready">
+</head>
+<body class="site-shell">
+<a class="skip-link" href="#case-study">Skip to case study</a>
+<main class="detail-shell" id="case-study">
+  <nav class="detail-nav" aria-label="Case study navigation">
+    <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../labs.html">Labs &amp; Prototypes</a>
+    <a class="home-link" href="../project-evidence.json">Evidence</a>
+  </nav>
+  <header class="detail-header">
+    <p class="eyebrow">01 // Full-stack flagship</p>
+    <h1>Batcomputer Operations Platform</h1>
+    <p class="detail-focus">A separate FastAPI modular monolith for tenant-isolated operational assets, workflows, immutable audit evidence, and approval-pending Alfred intents.</p>
+    <div class="card-actions">
+      <a data-public-source-path="platform" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/agents/batcomputer-website-query/platform">View source on GitHub</a>
+      <a class="optional-site-link" data-demo-link="platform" hidden>Open configured demo</a>
+    </div>
+  </header>
+
+  <section class="detail-card">
+    <h2>Problem and users</h2>
+    <p>Small internal operations teams need one accountable place to track assets and work across software automation, defensive security, IT support, data, network/platform, and quality engineering. Admins manage workspaces and users; operators create and advance work; viewers receive read-only access. The project demonstrates those boundaries without claiming enterprise identity or integration features that do not exist.</p>
+    <dl class="case-meta">
+      <div><dt>Implemented by me</dt><dd>API, schemas, persistence, migration, security boundaries, audit behavior, operator UI, tests, and operations documentation.</dd></div>
+      <div><dt>Strongest evidence</dt><dd>Cross-workspace denial, role enforcement, guarded state transitions, and same-transaction audit records.</dd></div>
+      <div><dt>Demo status</dt><dd>Runs locally. No hosted deployment is claimed; a demo link appears only when an HTTPS URL is configured.</dd></div>
+    </dl>
+  </section>
+
+  <section class="detail-card">
+    <h2>Architecture</h2>
+    <ol class="architecture-flow" aria-label="Platform request flow">
+      <li>Operator browser UI</li>
+      <li>FastAPI routes and Pydantic validation</li>
+      <li>Auth, RBAC, workspace scope, workflow rules</li>
+      <li>SQLAlchemy + PostgreSQL or local SQLite</li>
+    </ol>
+    <p>Mutations and their audit events commit in the same database transaction. The modular-monolith choice keeps authorization, tenant scope, and audit rules visible and testable instead of introducing distributed-service boundaries before they are needed.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Security and reliability</h2>
+    <ul>
+      <li>Argon2 password hashes and expiring signed access tokens</li>
+      <li>Server-side admin/operator/viewer checks and workspace filters on domain reads and mutations</li>
+      <li>Bounded pagination, typed validation envelopes, correlation IDs, JSON request logs, liveness, and readiness</li>
+      <li>Production startup rejects the documented development secret and non-PostgreSQL database URLs</li>
+      <li>Alfred intents remain approval-pending with <code>executed=false</code>; there is no provider call or execution path</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Trade-offs</h2>
+    <p>Short-lived bearer tokens keep the first implementation understandable but cannot be revoked before expiry. Synchronous request handling and a single relational service favor consistency and traceability over independent scaling. SQLite supports fast local evidence; PostgreSQL is required by production configuration for concurrency and operational safeguards.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Run and verify</h2>
+    <p><strong>Run from repository root:</strong></p>
+    <pre><code>python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+Set-Location platform
+python -m alembic -c alembic.ini upgrade head
+python -m uvicorn app.main:app --reload</code></pre>
+    <p>Open <code>http://127.0.0.1:8000</code>; OpenAPI is at <code>/docs</code>, liveness at <code>/health/live</code>, and dependency readiness at <code>/health/ready</code>.</p>
+    <p><strong>Test evidence:</strong></p>
+    <pre><code>Set-Location platform
+$env:PLATFORM_ENVIRONMENT = "test"
+$env:PLATFORM_DATABASE_URL = "sqlite:///./migration-check.db"
+python -m alembic -c alembic.ini upgrade head
+python -m pytest tests -q
+Set-Location ..
+python -m ruff check platform</code></pre>
+    <p>The API suite covers authentication, RBAC, tenant isolation, CRUD, workflow rules, immutable audit access, input validation, health/readiness, OpenAPI, and Alfred non-execution.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Current Limitations</h2>
+    <p>There is no hosted deployment, password reset, refresh-token revocation, MFA, SSO, rate limiting, background execution, external integration, audit retention/export job, object storage, or generated/executed Alfred content. These are explicit backlog items rather than current capabilities.</p>
+  </section>
+</main>
+<script src="../app.js?v=5"></script>
+</body>
+</html>

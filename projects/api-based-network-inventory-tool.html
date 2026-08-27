@@ -1,90 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>API-Based Network Inventory Tool | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON-to-SQLite Network Inventory | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../network_software.html">← Back to Network</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../network_software.html">← Back to Network Software</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Network</p>
+    <p class="eyebrow">Network Data Prototype</p>
     <h1>API-Based Network Inventory Tool</h1>
-    <p class="detail-focus">Built a system that retrieves device information from network APIs and stores it in a structured database. Enables automated inventory tracking, device classification, and infrastructure mapping for network operations.</p>
+    <p class="detail-focus">A local JSON-to-SQLite synchronization prototype for storing simple device inventory records.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import sqlite3
-import requests
-
-def fetch_devices(api_url, token):
-    headers = {"Authorization": f"Bearer {token}"}
-    response = requests.get(api_url, headers=headers, timeout=10)
-    return response.json()["devices"]
-
-def store_inventory(devices, db_path="inventory.db"):
-    conn = sqlite3.connect(db_path)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS devices (
-            id TEXT PRIMARY KEY, name TEXT, ip TEXT, type TEXT, last_seen TEXT
-        )
-    """)
-    for device in devices:
-        conn.execute(
-            "INSERT OR REPLACE INTO devices VALUES (?, ?, ?, ?, ?)",
-            (device["id"], device["name"], device["ip"], device["type"], device["last_seen"]),
-        )
-    conn.commit()
-    conn.close()
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Network\api-based-network-inventory-tool</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Network\api-based-network-inventory-tool\main.py" path\to\inventory.json</code></p>
+    <p><strong>Validation:</strong> Requires a user-supplied JSON file and creates or updates <code>inventory.db</code> in the working directory.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample inventory sync run:</p>
-    <pre><code>$ python inventory_tool.py --sync
-Fetched 46 devices from network API
-Stored/updated 46 records in inventory.db
-New devices detected: 2 (switch-14, ap-09)</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The inventory tool retrieves device records from a network API, maps the returned fields into a SQLite schema, and upserts records so repeated syncs keep the inventory current.</p>
-    <ul><li>Bearer-token requests retrieve remote device data.</li><li>SQLite stores identity, name, IP, type, and last-seen fields.</li><li>Insert-or-replace behavior supports repeatable synchronization.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include authenticated API retrieval, structured device records, SQLite persistence, inventory updates, and new-device detection. Next additions should include pagination, retries, schema validation, change history, token redaction, and export formats.</p>
-    <p><strong>Visuals:</strong> API-to-database pipeline, device inventory table, and new-device change report.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card">
-    <h2>Build and simulation</h2>
-    <p><strong>Enhancement:</strong> add pagination, schema validation, retries, change history, and token redaction around API-to-SQLite synchronization.</p>
-    <pre><code>store_inventory([{"id": "sw-01", "name": "switch-01", "ip": "192.0.2.10"}])
-Fetched 1 device
-Stored/updated 1 record
-New devices: 1</code></pre>
-    <p><strong>Simulation:</strong> one new device was inserted, while a second sync updated the existing record instead of duplicating it.</p>
-  </section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Network\api-based-network-inventory-tool</code></p><p>Run: <code>python main.py inventory.json</code></p><p>The current build synchronizes JSON device records into SQLite.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>INVENTORY SYNC / SQLITE STORE</span><span class="visual-status">SYNCED</span></div><div class="visual-grid"><div class="visual-metric">Devices<strong>46</strong></div><div class="visual-metric">Updated<strong>44</strong></div><div class="visual-metric">New<strong>2</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>API retrieval</span><i style="width:96%"></i><b>OK</b></div><div class="visual-bar"><span>Database sync</span><i style="width:86%"></i><b>OK</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>Local JSON device loading</li><li>SQLite table creation and upsert behavior</li><li>Structured output of stored inventory rows</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>No network API retrieval, authentication, discovery, topology mapping, remote database, scheduler, or change notification is implemented.</p></section>
 </main>
 </body>
 </html>

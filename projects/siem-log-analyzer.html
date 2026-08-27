@@ -1,77 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SIEM Log Analyzer | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Failed-Login Log Analyzer | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../cybersecurity.html">← Back to Cyber Security</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../cybersecurity.html">← Back to Cyber Security</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Cyber Security</p>
+    <p class="eyebrow">Cyber Security Prototype</p>
     <h1>SIEM Log Analyzer</h1>
-    <p class="detail-focus">Built a simulated SIEM ingestion pipeline that parses logs, identifies anomalies, and flags suspicious patterns. Developed regex-based detection, timestamp correlation, and event categorization to mirror real-world Blue Team log analysis workflows.</p>
+    <p class="detail-focus">A focused parser that counts failed-password log lines by user and IP address and filters them by a supplied threshold.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import re
-from collections import defaultdict
-
-FAILED_LOGIN = re.compile(r"Failed password for (\S+) from (\d+\.\d+\.\d+\.\d+)")
-
-def analyze_log(path, threshold=5):
-    attempts = defaultdict(int)
-    with open(path) as log_file:
-        for line in log_file:
-            match = FAILED_LOGIN.search(line)
-            if match:
-                user, ip = match.groups()
-                attempts[(user, ip)] += 1
-
-    flagged = {key: count for key, count in attempts.items() if count >= threshold}
-    return flagged
-</code></pre>
-  </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Running the analyzer against a sample auth log:</p>
-    <pre><code>$ python siem_analyzer.py auth.log --threshold 5
-FLAGGED: user=admin ip=203.0.113.44 attempts=12 (possible brute force)
-FLAGGED: user=root ip=198.51.100.9 attempts=8 (possible brute force)</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Cybersecurity\siem-log-analyzer</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Cybersecurity\siem-log-analyzer\main.py" path\to\auth.log --threshold 3</code></p>
+    <p><strong>Validation:</strong> Read-only, but requires a user-supplied log file; no sample log is bundled.</p>
   </section>
   <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The analyzer reads an authentication log, extracts failed-login identities and source addresses with a compiled pattern, aggregates repeated attempts, and returns entries that meet the configured threshold.</p>
-    <ul><li>Regex extraction identifies user and source IP fields.</li><li>Defaultdict aggregation groups repeated events.</li><li>Threshold filtering creates actionable findings.</li></ul>
+    <h2>Implemented</h2>
+    <ul>
+      <li>Regex matching for <code>Failed password for USER from IP</code> lines</li>
+      <li>Counts matching user/IP pairs</li>
+      <li>Returns pairs that meet the threshold</li>
+    </ul>
   </section>
   <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include Python file processing, user/IP correlation, configurable thresholds, and structured flagged-event output. Next additions should include multiple log formats, timestamp windows, severity levels, JSON export, parser fixtures, and searchable investigation history.</p>
-    <p><strong>Visuals:</strong> ingestion-to-alert flow, failed-login timeline, and user/IP correlation table.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
+    <h2>Limitations</h2>
+    <p>This is not a SIEM pipeline. It does not ingest multiple formats, parse timestamps, correlate events, categorize event types, detect broader anomalies, or persist findings.</p>
   </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add timestamp windows, severity classification, and JSON export around failed-login aggregation.</p><pre><code>analyze_log("auth.log", threshold=3)
-flagged=("admin", "203.0.113.44"): attempts=5
-below threshold: omitted</code></pre><p><strong>Simulation:</strong> repeated failed logins crossed the threshold and generated one brute-force finding.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Cybersecurity\siem-log-analyzer</code></p><p>Run: <code>python main.py auth.log --threshold 3</code></p><p>The current build parses failed-login events and reports user/IP pairs above the threshold.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>SIEM EVENT STREAM / AUTH LOG</span><span class="visual-status">MONITORING</span></div><div class="visual-grid"><div class="visual-metric">Events<strong>18</strong></div><div class="visual-metric">Flagged<strong>2</strong></div><div class="visual-metric">Threshold<strong>5</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>admin / source A</span><i style="width:92%"></i><b>12</b></div><div class="visual-bar"><span>root / source B</span><i style="width:68%"></i><b>8</b></div></div></section>
 </main>
 </body>
 </html>

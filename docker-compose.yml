@@ -1,0 +1,93 @@
+services:
+  site:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true
+    environment:
+      SITE_ENVIRONMENT: ${SITE_ENVIRONMENT:-development}
+      SITE_PROPOSALS_ENABLED: ${SITE_PROPOSALS_ENABLED:-false}
+      SITE_SESSION_SECRET: ${SITE_SESSION_SECRET:-}
+      SITE_CONTACT_EMAIL: ${SITE_CONTACT_EMAIL:-}
+      SITE_LINKEDIN_URL: ${SITE_LINKEDIN_URL:-}
+      SITE_RESUME_PATH: ${SITE_RESUME_PATH:-}
+      SITE_PLATFORM_DEMO_URL: ${SITE_PLATFORM_DEMO_URL:-}
+      SITE_ORBITAL_DEMO_URL: ${SITE_ORBITAL_DEMO_URL:-}
+      SITE_PUBLIC_SOURCE_URL: ${SITE_PUBLIC_SOURCE_URL:-}
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/api/health', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: batcomputer
+      POSTGRES_USER: batcomputer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U batcomputer -d batcomputer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - platform-postgres:/var/lib/postgresql/data
+  platform:
+    build:
+      context: .
+      dockerfile: platform/Dockerfile
+    environment:
+      PLATFORM_ENVIRONMENT: ${PLATFORM_ENVIRONMENT:-development}
+      PLATFORM_DATABASE_HOST: postgres
+      PLATFORM_DATABASE_PORT: "5432"
+      PLATFORM_DATABASE_NAME: batcomputer
+      PLATFORM_DATABASE_USER: batcomputer
+      PLATFORM_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+      PLATFORM_SECRET_KEY: ${PLATFORM_SECRET_KEY:-development-only-change-before-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    command: >
+      sh -c "alembic -c alembic.ini upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+  orbital:
+    build:
+      context: .
+      dockerfile: orbital-data-lab/Dockerfile
+    init: true
+    environment:
+      ORBITAL_DATABASE_PATH: /data/scenarios.db
+    ports:
+      - "8010:8010"
+    volumes:
+      - orbital-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8010/health/ready', timeout=3)"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  platform-postgres:
+  orbital-data:

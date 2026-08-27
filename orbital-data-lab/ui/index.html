@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Interactive educational two-body orbit simulation comparing RK4 and velocity-Verlet integration.">
+  <title>Orbital Data Lab</title>
+  <link rel="stylesheet" href="/orbital.css">
+</head>
+<body>
+  <a class="skip-link" href="#simulator">Skip to simulator</a>
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Deterministic simulation workspace</p>
+        <h1>Orbital Data Lab</h1>
+        <p class="hero-copy">Compare RK4 and velocity-Verlet on a bounded two-body scenario, inspect energy drift, and export a reproducible saved run.</p>
+      </div>
+      <p class="disclosure"><strong>Educational model.</strong> Not flight grade and not suitable for mission planning, navigation, collision assessment, or safety decisions.</p>
+    </header>
+
+    <section class="simulator-grid" id="simulator" aria-label="Orbit simulator">
+      <aside class="control-panel">
+        <div class="section-heading">
+          <p class="step-label">01 / Configure</p>
+          <h2>Scenario inputs</h2>
+          <p>Defaults model an idealized low Earth circular orbit. Adjust the values, then run and save the scenario.</p>
+        </div>
+        <form id="simulation" novalidate>
+          <label>
+            <span>Central body</span>
+            <input id="centralBody" name="centralBody" type="text" value="Earth" minlength="1" maxlength="80" required>
+          </label>
+          <div class="field-pair">
+            <label>
+              <span>Initial radius <small>km</small></span>
+              <input id="radiusKm" name="radiusKm" type="number" value="7000" min="1" max="10000000" step="1" required>
+            </label>
+            <label>
+              <span>Tangential speed <small>km/s</small></span>
+              <input id="speedKmS" name="speedKmS" type="number" value="7.546053" min="0" max="10000" step="0.000001" required>
+            </label>
+          </div>
+          <div class="field-pair">
+            <label>
+              <span>Duration <small>seconds</small></span>
+              <input id="durationSeconds" name="durationSeconds" type="number" value="5828.516637686015" min="0.001" max="2592000" step="any" required>
+            </label>
+            <label>
+              <span>Step size <small>seconds</small></span>
+              <input id="stepSeconds" name="stepSeconds" type="number" value="10" min="0.001" max="3600" step="any" required>
+            </label>
+          </div>
+          <p class="input-help">Duration / step size must stay at or below 20,000 integration steps.</p>
+          <button class="run-button" id="runSimulation" type="submit" data-state="idle" aria-describedby="runStatus" aria-busy="false">
+            <span class="button-indicator" aria-hidden="true"></span>
+            <span id="runButtonLabel">Run simulation</span>
+          </button>
+        </form>
+        <p class="run-status" id="runStatus" role="status" aria-live="polite">Ready to run the default circular-orbit scenario.</p>
+      </aside>
+
+      <section class="visual-panel" aria-labelledby="visual-heading">
+        <div class="visual-toolbar">
+          <div>
+            <p class="step-label">02 / Visualize</p>
+            <h2 id="visual-heading">Trajectory view</h2>
+          </div>
+          <div class="playback-controls" aria-label="Trajectory playback">
+            <button id="pauseAnimation" type="button" disabled>Pause</button>
+            <button id="replayAnimation" type="button" disabled>Replay</button>
+          </div>
+        </div>
+        <figure class="orbit-stage">
+          <canvas id="orbitCanvas" width="960" height="600" aria-label="Orbital trajectory plot with axes, central body, RK4 path, velocity-Verlet path, and spacecraft marker">
+            Your browser does not support canvas. Run the simulation to review numerical metrics and exports below.
+          </canvas>
+          <figcaption>
+            <span><i class="legend-line rk4"></i>RK4 trajectory</span>
+            <span><i class="legend-line verlet"></i>Velocity-Verlet</span>
+            <span><i class="legend-dot"></i>Spacecraft</span>
+          </figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <section class="results-panel" id="resultsPanel" aria-labelledby="results-heading">
+      <div class="section-heading">
+        <p class="step-label">03 / Inspect</p>
+        <h2 id="results-heading">Run evidence</h2>
+        <p id="resultsHint">Run a scenario to populate deterministic metrics and export links.</p>
+      </div>
+      <dl class="metrics-grid">
+        <div><dt>Scenario ID</dt><dd id="scenarioMetric">—</dd></div>
+        <div><dt>RK4 samples</dt><dd id="sampleMetric">—</dd></div>
+        <div><dt>RK4 max energy drift</dt><dd id="rk4DriftMetric">—</dd></div>
+        <div><dt>Verlet max energy drift</dt><dd id="verletDriftMetric">—</dd></div>
+        <div><dt>Final position delta</dt><dd id="positionDeltaMetric">—</dd></div>
+        <div><dt>Duration / step</dt><dd id="timeMetric">—</dd></div>
+      </dl>
+      <nav class="result-links" id="resultLinks" aria-label="Scenario result links" hidden>
+        <a id="jsonLink" href="#" download>Download JSON</a>
+        <a id="csvLink" href="#" download>Download CSV</a>
+        <a id="shareLink" href="#">Open share link</a>
+      </nav>
+    </section>
+  </main>
+  <script src="/orbital.js"></script>
+</body>
+</html>

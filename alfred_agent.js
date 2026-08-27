@@ -14,8 +14,8 @@ const refreshHudStateButton = document.getElementById("refreshHudState");
 const hudProposalStateElement = document.getElementById("hudProposalState");
 const approveHudProposalButton = document.getElementById("approveHudProposal");
 const rejectHudProposalButton = document.getElementById("rejectHudProposal");
-const hudFinalOutputWrapElement = document.getElementById("hudFinalOutputWrap");
-const hudFinalOutputElement = document.getElementById("hudFinalOutput");
+let codeProposalId = null;
+let hudProposalId = null;
 
 function escapeHtml(value) {
     return String(value)
@@ -51,23 +51,28 @@ function renderEvents(events) {
 
 function renderPendingProposal(pendingChange) {
     const hasPending = pendingChange && typeof pendingChange === "object";
+    codeProposalId = hasPending ? pendingChange.proposal_id : null;
     approveProposalButton.disabled = !hasPending;
     rejectProposalButton.disabled = !hasPending;
 
     if (!hasPending) {
-        proposalStateElement.innerHTML = '<div class="agent-empty">No pending proposal.</div>';
+        proposalStateElement.innerHTML = '<div class="agent-empty">No pending review.</div>';
         return;
     }
 
     const planSteps = Array.isArray(pendingChange.plan_steps) ? pendingChange.plan_steps : [];
     const contextFiles = Array.isArray(pendingChange.context_files) ? pendingChange.context_files : [];
-    const proposal = pendingChange.proposal || {};
+    const omittedContextCount = Math.max(
+        0,
+        Number(pendingChange.context_file_count || contextFiles.length) - contextFiles.length
+    );
     proposalStateElement.innerHTML = `
         <div class="agent-proposal">
+            <p><strong>Proposal ID:</strong> ${escapeHtml(pendingChange.proposal_id || "")}</p>
             <p><strong>Task:</strong> ${escapeHtml(pendingChange.task || "")}</p>
             <p><strong>Target file:</strong> ${escapeHtml(pendingChange.target_file || "")}</p>
-            <p><strong>Model:</strong> ${escapeHtml(pendingChange.model || "unknown")}</p>
-            <p><strong>Workspace:</strong> ${escapeHtml(pendingChange.workspace_root || "")}</p>
+            <p><strong>Mode:</strong> ${escapeHtml(pendingChange.mode || "deterministic-review-only")}</p>
+            <p><strong>Boundary:</strong> Metadata only; no repository reads, commands, or file writes.</p>
             <div class="agent-split">
                 <div>
                     <h3>Plan</h3>
@@ -79,17 +84,8 @@ function renderPendingProposal(pendingChange) {
                     <h3>Context</h3>
                     <ul class="panel-list">
                         ${contextFiles.map((file) => `<li>${escapeHtml(file)}</li>`).join("") || "<li>No context files.</li>"}
+                        ${omittedContextCount ? `<li>${omittedContextCount} additional path(s) not retained in the session cookie.</li>` : ""}
                     </ul>
-                </div>
-            </div>
-            <div class="agent-split">
-                <div>
-                    <h3>Current preview</h3>
-                    <pre>${escapeHtml(proposal.old_preview || "")}</pre>
-                </div>
-                <div>
-                    <h3>Proposed preview</h3>
-                    <pre>${escapeHtml(proposal.new_preview || "")}</pre>
                 </div>
             </div>
         </div>
@@ -98,48 +94,29 @@ function renderPendingProposal(pendingChange) {
 
 function renderHudProposal(pendingProposal) {
     const hasPending = pendingProposal && typeof pendingProposal === "object";
+    hudProposalId = hasPending ? pendingProposal.proposal_id : null;
     approveHudProposalButton.disabled = !hasPending;
     rejectHudProposalButton.disabled = !hasPending;
 
     if (!hasPending) {
-        hudProposalStateElement.innerHTML = '<div class="agent-empty">No pending website redesign proposal.</div>';
+        hudProposalStateElement.innerHTML = '<div class="agent-empty">No pending homepage review.</div>';
         return;
     }
 
     hudProposalStateElement.innerHTML = `
         <div class="agent-proposal">
+            <p><strong>Proposal ID:</strong> ${escapeHtml(pendingProposal.proposal_id || "")}</p>
             <p><strong>Explanation:</strong> ${escapeHtml(pendingProposal.explanation || "")}</p>
             <p><strong>Target file:</strong> ${escapeHtml(pendingProposal.target_file || "")}</p>
-            <div class="agent-split">
-                <div>
-                    <h3>Current preview</h3>
-                    <pre>${escapeHtml(pendingProposal.old_preview || "")}</pre>
-                </div>
-                <div>
-                    <h3>Proposed preview</h3>
-                    <pre>${escapeHtml(pendingProposal.new_preview || "")}</pre>
-                </div>
-            </div>
         </div>
     `;
 }
 
-function clearHudFinalOutput() {
-    hudFinalOutputWrapElement.classList.add("hidden");
-    hudFinalOutputElement.textContent = "";
-}
-
-function showHudFinalOutput(content) {
-    hudFinalOutputElement.textContent = content;
-    hudFinalOutputWrapElement.classList.remove("hidden");
-}
-
 function renderState(state) {
-    const available = Boolean(state.available);
-    const message = available
-        ? `Model ${state.model} is available at ${state.host}. Workspace: ${state.workspace_root}.`
-        : `Coding agent unavailable. ${state.error || "The local model service is not ready."}`;
-    setStatusMessage(message, !available);
+    const message = state.status === "ready"
+        ? "Local review metadata utility ready. No repository reads, AI model, command execution, or file writes are available."
+        : "Deterministic review utility is unavailable.";
+    setStatusMessage(message, state.status !== "ready");
     renderPendingProposal(state.pending_code_change);
     renderEvents(state.recent_events);
 }
@@ -172,7 +149,7 @@ function parseContextFiles(value) {
 
 async function createProposal(event) {
     event.preventDefault();
-    setStatusMessage("Generating proposal…");
+    setStatusMessage("Recording session-owned review metadata…");
 
     const response = await fetch("/api/coding-agent/proposals", {
         method: "POST",
@@ -185,9 +162,9 @@ async function createProposal(event) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || "Unable to generate proposal.");
+        throw new Error(payload.error || "Unable to record review metadata.");
     }
-    setStatusMessage(payload.reply || "Proposal ready.");
+    setStatusMessage(payload.reply || "Review metadata ready.");
     renderState(payload.coding_agent || payload);
 }
 
@@ -206,8 +183,7 @@ async function decideProposal(url, successMessage) {
 
 async function createHudProposal(event) {
     event.preventDefault();
-    clearHudFinalOutput();
-    setStatusMessage("Generating website redesign proposal…");
+    setStatusMessage("Recording session-owned homepage review metadata…");
     const response = await fetch("/api/hud-redesign/proposals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -217,9 +193,9 @@ async function createHudProposal(event) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || "Unable to generate website redesign proposal.");
+        throw new Error(payload.error || "Unable to record the homepage review.");
     }
-    setStatusMessage(payload.reply || "Website redesign proposal ready.");
+    setStatusMessage(payload.reply || "Homepage review metadata ready.");
     renderHudProposal(payload.pending_hud_redesign || payload.proposal);
 }
 
@@ -230,7 +206,7 @@ async function decideHudProposal(url, successMessage) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || payload.reply || "Unable to update website redesign proposal.");
+        throw new Error(payload.error || payload.reply || "Unable to update the homepage review.");
     }
     setStatusMessage(payload.reply || successMessage);
     return payload;
@@ -249,13 +225,13 @@ refreshAgentStateButton.addEventListener("click", () => {
 });
 
 approveProposalButton.addEventListener("click", () => {
-    decideProposal("/api/coding-agent/proposals/approve", "Proposal approved.").catch((error) => {
+    decideProposal(`/api/coding-agent/proposals/${encodeURIComponent(codeProposalId)}/approve`, "Approval recorded; no file was read or written.").catch((error) => {
         setStatusMessage(error.message, true);
     });
 });
 
 rejectProposalButton.addEventListener("click", () => {
-    decideProposal("/api/coding-agent/proposals/reject", "Proposal rejected.").catch((error) => {
+    decideProposal(`/api/coding-agent/proposals/${encodeURIComponent(codeProposalId)}/reject`, "Rejection recorded; no file was read or written.").catch((error) => {
         setStatusMessage(error.message, true);
     });
 });
@@ -273,10 +249,9 @@ refreshHudStateButton.addEventListener("click", () => {
 });
 
 approveHudProposalButton.addEventListener("click", () => {
-    decideHudProposal("/api/hud-redesign/proposals/approve", "Website redesign proposal approved.")
-        .then((payload) => {
+    decideHudProposal(`/api/hud-redesign/proposals/${encodeURIComponent(hudProposalId)}/approve`, "Homepage review approved; no file was read or written.")
+        .then(() => {
             renderHudProposal(null);
-            showHudFinalOutput(payload.final_content || "");
         })
         .catch((error) => {
             setStatusMessage(error.message, true);
@@ -284,9 +259,8 @@ approveHudProposalButton.addEventListener("click", () => {
 });
 
 rejectHudProposalButton.addEventListener("click", () => {
-    decideHudProposal("/api/hud-redesign/proposals/reject", "Website redesign proposal rejected.")
+    decideHudProposal(`/api/hud-redesign/proposals/${encodeURIComponent(hudProposalId)}/reject`, "Homepage review rejected; no file was read or written.")
         .then(() => {
-            clearHudFinalOutput();
             renderHudProposal(null);
         })
         .catch((error) => {
