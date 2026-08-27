@@ -158,5 +158,7 @@ Write-Host ""
 
 # --- Launch in the foreground. No background job, no scheduled task, no ----
 # --- service registration: closing this window stops Alfred completely. ----
-& $PythonExe -m uvicorn alfred.main:app --host $BindHost --port $Port
-exit $LASTEXITCODE
+$server = Start-Process -FilePath $PythonExe `
+    -ArgumentList @("-m", "uvicorn", "alfred.main:app", "--host", $BindHost, "--port", $Port) `
+    -NoNewWindow -Wait -PassThru
+exit $server.ExitCode

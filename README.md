@@ -15,7 +15,7 @@ Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and b
 | [Batcomputer Operations Platform](projects/operations-platform.html) | Tenant-isolated FastAPI modular monolith; Argon2 auth, RBAC, workflows, same-transaction audits, Alembic/PostgreSQL, operator UI | 9 | Local only; not claimed as hosted |
 | [Orbital Data Lab](projects/orbital-data-lab.html) | Deterministic RK4/velocity-Verlet API; bounded inputs, energy drift, content-addressed SQLite, lineage, exports, interactive canvas UI | 8 | Local only; educational, not flight grade |
 | [Algorithms & Quality](projects/algorithm-quality-lab.html) | Original data structures and algorithms; complexity trade-offs and deterministic normal/edge behavior | 7 | Source-and-test project; no service |
-| [Alfred AI Assistant](projects/alfred-ai-assistant.html) | Loopback-only FastAPI; cited website and web knowledge; optional local/compatible reasoning; redacted inspection; typed owner-bound, expiring, approval-gated Windows actions | Dedicated safety, provider, research, API, and UI suite | Native local service only; desktop execution off by default |
+| [Alfred AI Assistant](projects/alfred-ai-assistant.html) | Loopback-only FastAPI; broad safe chat through optional Ollama/compatible models; cited website/web knowledge; deterministic fallback/refusals; redacted inspection; typed owner-bound, expiring, approval-gated Windows actions | Dedicated safety, provider, research, API, and UI suite | Native local service only; model optional and desktop execution off by default |
 | [Labs & Prototypes](labs.html) | 19 secondary exercises across software, security, IT support, and network/systems fundamentals; all 20 legacy folders retained | Covered by site inventory/link tests | Local scripts only |
 
 ## Architecture
@@ -30,7 +30,7 @@ Independent FastAPI services
 ├── platform/ (:8000) -> auth/RBAC/workflows/audits -> PostgreSQL (SQLite in tests)
 ├── orbital-data-lab/ (:8010) -> simulation/API/exports -> SQLite scenarios
 └── alfred-assistant/ (:8020, loopback only)
-    ├── cited site/web knowledge + optional bounded reasoning providers
+    ├── broad safe chat + cited site/web knowledge + optional bounded reasoning providers
     └── authenticated preview/approval/execution -> local SQLite audit state
 
 Executable quality evidence
@@ -78,7 +78,7 @@ Optional email, LinkedIn, resume, platform demo, Orbital demo, and public-source
 
 ## Verified commands and counts
 
-The current baseline is **412 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 26 Flask/site tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 361 Alfred safety/provider/API/UI tests.
+The current baseline is **424 passing automated tests** across five suites, with one platform-dependent Alfred symlink test skipped where the host cannot create links: 26 Flask/site tests, 10 platform tests, 8 Orbital tests, 7 algorithm tests, and 373 Alfred safety/provider/API/UI tests.
 
 ```powershell
 # Portfolio: 26
@@ -101,7 +101,7 @@ Set-Location ..
 # Algorithms: 7
 python -m pytest algorithms-quality\tests -q
 
-# Alfred local assistant: 361 passed, 1 host-dependent symlink skip
+# Alfred local assistant: 373 passed, 1 host-dependent symlink skip
 python -m pytest alfred-assistant\tests -q
 
 # Static checks
@@ -120,7 +120,7 @@ CI runs this chain and validates Compose structure. Docker is unavailable in the
 - **Source visibility:** the GitHub repository is public; each flagship retains both local evidence and a clearly labeled source CTA.
 - The root Flask site has no user accounts because it serves public portfolio content. Local proposal metadata is disabled by default, session-owned when enabled, and never reads repository files.
 - The platform implements authentication and tenant boundaries, but not MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations.
-- The homepage Alfred helper remains deterministic and non-executing. The separate local Alfred service has cited curated/web retrieval and optional reasoning providers. It is not generally autonomous: desktop actions are typed, disabled by default, and require exact preview plus explicit per-action approval.
+- The homepage Alfred helper remains deterministic and non-executing. The separate local Alfred service can send ordinary safe questions to a deliberately configured Ollama or compatible provider, with bounded conversation history and an explicit deterministic fallback when unavailable. Website and web research remain cited modes. It is not generally autonomous: harmful/disallowed requests are refused before provider/tool use, while desktop actions are typed, disabled by default, and require exact preview plus explicit per-action approval.
 - The Orbital model is educational and omits perturbations, burns, atmosphere, ephemerides, uncertainty, collision handling, and flight validation.
 - Algorithm implementations demonstrate reasoning and tests; they do not replace optimized standard-library or production packages.
 - Most retained labs are intentionally small, dependency-light learning prototypes—not production systems.

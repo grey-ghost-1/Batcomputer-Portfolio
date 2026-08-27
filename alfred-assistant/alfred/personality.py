@@ -12,6 +12,8 @@ biography. All strings are fixed so responses stay deterministic and testable.
 
 from __future__ import annotations
 
+import re
+
 PERSONA_POLICY_VERSION = "1.0.0"
 
 PERSONA_NAME = "Alfred"
@@ -60,6 +62,29 @@ GOLDEN_LINES = {
     "refusal_prefix": "I must respectfully decline:",
     "acknowledgement": ACKNOWLEDGEMENT,
 }
+
+_DISALLOWED_REQUESTS = (
+    (
+        re.compile(r"\b(bypass|skip|disable|evade)\b.{0,40}\b(approval|audit|allowlist|safety)\b", re.I),
+        "I cannot bypass approval, audit, allow-list, or safety controls.",
+    ),
+    (
+        re.compile(r"\b(steal|exfiltrate|reveal|dump)\b.{0,40}\b(password|credential|token|secret)s?\b", re.I),
+        "I cannot help obtain or disclose credentials, tokens, passwords, or secrets.",
+    ),
+    (
+        re.compile(r"\b(build|create|write|deploy)\b.{0,40}\b(malware|ransomware|keylogger|rootkit)\b", re.I),
+        "I cannot assist in creating or deploying malicious software.",
+    ),
+    (
+        re.compile(r"\b(run|execute)\b.{0,30}\b(shell|powershell|cmd|command)\b", re.I),
+        "I cannot execute arbitrary shell, PowerShell, command-prompt, or script instructions.",
+    ),
+    (
+        re.compile(r"\b(delete|wipe|erase|format)\b.{0,40}\b(file|folder|directory|drive|disk)s?\b", re.I),
+        "I cannot delete, wipe, erase, or format files, folders, or storage.",
+    ),
+)
 
 
 def _tidy(body: str) -> str:
@@ -110,6 +135,15 @@ def frame_preview(summary: str) -> str:
         f"{_tidy(summary)} I have prepared it for your review; nothing will happen "
         "until you approve. Shall I proceed?"
     )
+
+
+def disallowed_request_reason(message: str) -> str | None:
+    """Return a narrow safety refusal for requests outside Alfred's allowed boundary."""
+
+    for pattern, reason in _DISALLOWED_REQUESTS:
+        if pattern.search(message):
+            return reason
+    return None
 
 
 def small_talk(message: str) -> str | None:

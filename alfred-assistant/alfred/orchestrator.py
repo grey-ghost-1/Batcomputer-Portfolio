@@ -39,6 +39,23 @@ class Orchestrator:
 
     async def chat(self, request: ChatRequest) -> dict:
         message = request.message.strip()
+        refusal = personality.disallowed_request_reason(message)
+        if refusal:
+            provider_status = self.provider.describe()
+            return {
+                "reply": personality.frame_refusal(refusal),
+                "persona": personality.persona_descriptor(),
+                "policy_version": personality.PERSONA_POLICY_VERSION,
+                "mode": request.mode,
+                "answer_kind": "deterministic",
+                "reasoning_source": "safety-policy",
+                "citations": [],
+                "web_used": False,
+                "web_status": self.settings.web_status(),
+                "uncertainty": False,
+                "provider": self._provider_info(provider_status, False, "request refused before provider use"),
+                "safety": personality.SAFETY_NOTE,
+            }
 
         small = personality.small_talk(message)
         curated = self.index.search(message)
@@ -106,6 +123,24 @@ class Orchestrator:
         }
 
     async def research_answer(self, request: ResearchRequest) -> dict:
+        refusal = personality.disallowed_request_reason(request.query)
+        if refusal:
+            provider_status = self.provider.describe()
+            return {
+                "query": request.query,
+                "answer": personality.frame_refusal(refusal),
+                "persona": personality.persona_descriptor(),
+                "policy_version": personality.PERSONA_POLICY_VERSION,
+                "used_web": False,
+                "reasoning_source": "safety-policy",
+                "providers_used": [],
+                "retrieved_at": None,
+                "citations": [],
+                "limitations": ["request refused before web or model use"],
+                "provider": self._provider_info(
+                    provider_status, False, "request refused before provider use"
+                ),
+            }
         result = await self.research.run(request.query, depth=request.depth)
         citations = self._build_citations([], result)
         provider_status = self.provider.describe()

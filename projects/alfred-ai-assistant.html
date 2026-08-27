@@ -19,7 +19,7 @@
   <header class="detail-header">
     <p class="eyebrow">Primary Work // Local AI &amp; Desktop Safety</p>
     <h1>Alfred AI Assistant</h1>
-    <p class="detail-focus">A native, loopback-only household-manager assistant that answers with cited evidence, can optionally use local or compatible reasoning providers, and cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
+    <p class="detail-focus">A native, loopback-only household-manager assistant for broad safe conversation, cited evidence and research, and carefully bounded desktop help. An operator can optionally connect Ollama or a compatible model; Alfred cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
     <div class="case-meta">
       <span>FastAPI + Pydantic</span>
       <span>SQLite audit state</span>
@@ -39,7 +39,8 @@
       <li>A separate typed FastAPI service that rejects public binding and is intentionally excluded from public Render and Docker services</li>
       <li>An original, versioned British household-manager persona: discreet, concise, candid about uncertainty, gently dry, and safety-first</li>
       <li>A curated website index over fixed first-party evidence paths, with repository-relative citations and instruction-neutralization</li>
-      <li>Optional Ollama and generic OpenAI-compatible reasoning providers with bounded structured messages, timeouts, visible model status, and explicit deterministic fallback</li>
+      <li>Broad general-purpose chat for ordinary safe questions through optional Ollama or generic OpenAI-compatible providers, with bounded structured history, timeouts, visible model status, and explicit deterministic fallback</li>
+      <li>A deterministic refusal gate that stops approval-bypass, destructive execution, credential-theft, and malware requests before any model or web call</li>
       <li>Keyless Wikipedia research plus optional Brave Search, normalized dated citations, provenance labels, and SSRF-hardened fixed-source HTTP</li>
       <li>Read-only system, disk, directory-metadata, and process summaries that omit environment dumps, file contents, secrets, and command lines</li>
       <li>Typed proposals for folder creation, one-file move/rename, bounded extension organization, allowlisted app launch, allowlisted HTTPS URL launch, and optional clipboard text</li>
@@ -56,7 +57,7 @@
       <li>Knowledge / research / actions<br><small>separate bounded tools</small></li>
       <li>SQLite + Windows APIs<br><small>audit and approved effects</small></li>
     </ol>
-    <p>The public Flask portfolio only showcases Alfred. It does not proxy or expose the desktop-control API. The local service listens on <code>127.0.0.1:8020</code>; chat and research orchestration remain separate from typed action execution, so model text cannot become a command.</p>
+    <p>The public Flask portfolio only showcases Alfred. It does not proxy or expose the desktop-control API. The local service listens on <code>127.0.0.1:8020</code>; broad model chat, cited website answers, and cited web research remain separate from typed action execution, so model text cannot become a command or an approval.</p>
   </section>
 
   <section class="detail-card">
@@ -68,7 +69,7 @@
   <section class="detail-card">
     <h2>Knowledge and research</h2>
     <p>Portfolio answers search a bounded index built only from fixed repository evidence sources and return their paths. Research mode consults keyless Wikipedia and, when separately configured, Brave Search. Outbound research permits HTTPS on the standard port, validates DNS and redirects against private, loopback, metadata, reserved, link-local, and multicast destinations, and limits time, bytes, content types, redirects, excerpts, and result counts.</p>
-    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Alfred's persona, action policy, or approval rule. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; provider failure never masquerades as an AI answer.</p>
+    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Alfred's persona, action policy, or approval rule. Ordinary safe questions can use the configured model without matching a portfolio keyword. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; an unavailable or timed-out provider falls back explicitly and never masquerades as a model answer.</p>
   </section>
 
   <section class="detail-card">
@@ -89,7 +90,8 @@
     <pre><code>python -m pip install -r requirements.txt
 Set-Location alfred-assistant
 Copy-Item .env.example .env
-# Set a generated ALFRED_ACTION_TOKEN and optional allowlists in .env.
+# Optionally set ALFRED_MODEL_PROVIDER=ollama and a locally installed model.
+# Set a generated ALFRED_ACTION_TOKEN and allowlists before using actions.
 .\start.ps1</code></pre>
     <p>Open <code>http://127.0.0.1:8020</code>. Desktop execution remains disabled until <code>ALFRED_DESKTOP_ACTIONS_ENABLED=true</code> is deliberately configured.</p>
     <pre><code>python -m pytest alfred-assistant\tests -q
@@ -106,7 +108,7 @@ node --check alfred-assistant\ui\console.js</code></pre>
 
   <section class="detail-card">
     <h2>Current Limitations</h2>
-    <p>Alfred is local-only and not generally autonomous. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
+    <p>Alfred is local-only and not generally autonomous. Ollama is supported but not assumed to be installed or enabled on another machine. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
   </section>
 
   <section class="detail-card">

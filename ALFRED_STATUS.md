@@ -38,6 +38,9 @@ lines.
 - [x] Indexed content is treated as untrusted reference text, not as instructions. No arbitrary
   path or file-reading request is accepted through chat.
 - [x] A useful deterministic router and original composed voice work without a language model.
+- [x] Ordinary safe questions outside portfolio keywords route to a configured reasoning provider;
+  approval-bypass, destructive execution, credential-theft, and malware requests are refused before
+  model or web use.
 - [x] A typed reasoning-provider boundary supports opt-in local Ollama and an optional generic
   OpenAI-compatible endpoint. Structured history, prompts, context, responses, and timeouts are
   bounded; provider/model/status are visible; deterministic fallback is explicitly non-AI.
@@ -78,7 +81,7 @@ lines.
 ### Partial
 
 - [~] **Model-assisted conversation:** Ollama or a compatible endpoint can add bounded reasoning
-  when deliberately configured, but Alfred is not a general autonomous agent and typed,
+  and broad safe conversation when deliberately configured, but Alfred is not a general autonomous agent and typed,
   deterministic validation remains the safety source of truth.
 - [~] **Web research:** keyless reference lookup and optional broad search are available, but this
   is not an unrestricted browser, crawler, paywalled-content reader, or guarantee of freshness or

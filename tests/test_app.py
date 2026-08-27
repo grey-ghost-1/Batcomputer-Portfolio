@@ -795,7 +795,7 @@ class StaticContentTestCase(unittest.TestCase):
         for unsupported in (
             "repository link placeholder",
             "Desktop\\Batcomputer",
-            "Ollama-backed",
+            "Ollama is enabled on every machine",
             "Embedded AI Assistant",
             "local-demo",
             "your email",

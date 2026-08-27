@@ -1,8 +1,9 @@
 # Alfred Assistant
 
-A local-first, typed FastAPI household-manager service. It answers questions from
-this repository's own curated evidence, optionally reasons with a local model,
-optionally researches the public web, and can prepare a small set of typed
+A local-first, typed FastAPI household-manager service. It can hold broad,
+general-purpose conversations through an explicitly configured Ollama or
+OpenAI-compatible model, answer from this repository's curated evidence,
+optionally research the public web, and prepare a small set of typed
 desktop actions -- but **every desktop action requires its own explicit
 preview, approval, and execution step.** Nothing runs automatically.
 
@@ -35,6 +36,10 @@ characterization from any copyrighted work.
 - **Optional integrations are off unless you turn them on.** No local model
   is called unless you configure Ollama or an OpenAI-compatible endpoint. No
   web request is ever made unless you set `ALFRED_WEB_RESEARCH_ENABLED=true`.
+- **General chat does not grant tools.** Ordinary safe questions reach the
+  configured model even when they do not match a portfolio keyword. Requests
+  to bypass approvals, execute arbitrary commands, destroy data, steal
+  credentials, or create malware are refused before model or web use.
 
 See [`ALFRED_STATUS.md`](../ALFRED_STATUS.md) at the repository root for the
 full implementation checklist and threat model.
@@ -142,6 +147,21 @@ Every filesystem action is confined to the resolved, real paths under
 and symlink/reparse escapes are all rejected. `open_app`/`open_url` only ever
 launch an exact entry from `ALFRED_ALLOWED_EXECUTABLES`/`ALFRED_ALLOWED_URL_HOSTS`
 (HTTPS, standard port, no embedded credentials).
+
+For local Ollama general chat, install and start Ollama separately, make sure
+the chosen model is present, then set values such as these in the ignored
+`.env`:
+
+```dotenv
+ALFRED_MODEL_PROVIDER=ollama
+ALFRED_OLLAMA_URL=http://127.0.0.1:11434
+ALFRED_OLLAMA_MODEL=llama3.1:latest
+```
+
+Those are supported configuration examples, not a claim that Ollama is
+installed or enabled on every machine. `/api/status` reports what is configured,
+and each `/api/chat` response reports `provider.model_used`; a timeout or
+unavailable provider is labeled and falls back deterministically.
 
 ## What Alfred is not
 
