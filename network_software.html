@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network | Justin Wimmer HUD</title>
+<title>Cloud, Network &amp; Platform Engineering | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
 <script>
   // Redirect root-relative links to the live server when this page was opened as a local file.
@@ -24,9 +24,9 @@
     <a class="home-link" href="batcomputer_console.html">← Back to HUD Home</a>
   </nav>
   <header class="detail-header">
-    <p class="eyebrow">Network</p>
-    <h1>Network</h1>
-    <p class="detail-focus">This category reflects the network-oriented functionality already represented in Alfred: infrastructure-aware summaries, diagnostic thinking, and tooling patterns built for connected systems and operational visibility.</p>
+    <p class="eyebrow">Engineering Category</p>
+    <h1>Cloud, Network &amp; Platform Engineering</h1>
+    <p class="detail-focus">I build and operate reliable application environments by combining cloud infrastructure, networking, deployment automation, monitoring, and production-support practices.</p>
   </header>
 
   <section class="detail-card">
@@ -50,6 +50,51 @@
       <li>Automation direction aligned to monitoring, visibility, and support workflows</li>
     </ul>
   </section>
+
+  <section class="detail-card" id="platform-overview">
+    <h2>Platform overview</h2>
+    <p>This category expands the original networking focus into cloud, DevOps, infrastructure, and platform engineering. It demonstrates how applications are configured, deployed, connected, monitored, and recovered, not only how they are written.</p>
+    <p>The Batcomputer operations platform connects users, workspaces, assets, events, deployments, incidents, and audit records across engineering workflows.</p>
+  </section>
+
+  <section class="detail-card" id="platform-capabilities">
+    <h2>Cloud and platform capabilities</h2>
+    <div class="category-grid">
+      <article class="category-card"><h3>Cloud infrastructure</h3><ul><li>Environment-specific configuration</li><li>Containerized services</li><li>Managed PostgreSQL planning</li><li>Secret management practices</li><li>Health and readiness monitoring</li><li>Backup and recovery planning</li></ul></article>
+      <article class="category-card"><h3>Networking</h3><ul><li>Network asset inventory</li><li>Service dependencies</li><li>Topology relationships</li><li>Reachability observations</li><li>Private database boundaries</li><li>TLS and API routing concepts</li></ul></article>
+      <article class="category-card"><h3>DevOps delivery</h3><ul><li>Docker and Docker Compose</li><li>Continuous integration</li><li>Lint, type, and test gates</li><li>Migration validation</li><li>Deployment verification</li><li>Rollback planning</li></ul></article>
+      <article class="category-card"><h3>Platform operations</h3><ul><li>Environment records</li><li>Deployment status tracking</li><li>Configuration history</li><li>Incident and rollback records</li><li>Structured logging</li><li>Audit history</li></ul></article>
+    </div>
+  </section>
+
+  <section class="detail-card" id="platform-architecture">
+    <h2>Architecture</h2>
+    <div class="category-grid">
+      <article class="category-card"><h3>Frontend</h3><p>React and TypeScript provide the operator interface for environments, assets, service health, deployments, and incidents.</p></article>
+      <article class="category-card"><h3>Backend</h3><p>FastAPI exposes validated REST endpoints and OpenAPI documentation with server-side workspace authorization.</p></article>
+      <article class="category-card"><h3>Database</h3><p>PostgreSQL stores users, workspaces, assets, deployments, incidents, workflow events, and immutable audit events. SQLAlchemy and Alembic provide the data and migration layers.</p></article>
+      <article class="category-card"><h3>Containers and CI</h3><p>Docker Compose reproduces the local web, API, and database environment. GitHub Actions runs quality checks, tests, migration verification, and production builds.</p></article>
+    </div>
+  </section>
+
+  <section class="detail-card" id="platform-reliability">
+    <h2>Reliability and observability</h2>
+    <div class="category-grid">
+      <article class="category-card"><h3>Health</h3><p>Application health, dependency readiness, service observations, and deployment verification checks.</p></article>
+      <article class="category-card"><h3>Logging</h3><p>Structured request logs, correlation identifiers, route status, duration data, and auditable transitions.</p></article>
+      <article class="category-card"><h3>Metrics</h3><p>Request rate, error rate, latency percentiles, database pool usage, readiness failures, and container resource usage.</p></article>
+      <article class="category-card"><h3>Recovery</h3><p>Encrypted backups, restore testing, image rollback procedures, forward migrations, and incident review.</p></article>
+    </div>
+  </section>
+
+  <section class="detail-card" id="platform-evidence">
+    <h2>Engineering evidence</h2>
+    <ul><li>API tests verify authentication, permissions, workspace isolation, validation, audit behavior, and rate limits.</li><li>Migration checks verify Alembic upgrade, downgrade, and second-upgrade paths.</li><li>Frontend checks cover ESLint, Vitest, TypeScript, accessibility-oriented tests, and production builds.</li><li>Dockerfiles and Compose configuration document local environment reproducibility.</li></ul>
+  </section>
+
+  <section class="detail-card" id="platform-tools"><h2>Tools and technologies</h2><ul><li>React and TypeScript</li><li>Python and FastAPI</li><li>PostgreSQL, SQLAlchemy, and Alembic</li><li>Docker and Docker Compose</li><li>GitHub Actions and Nginx</li><li>REST APIs and OpenAPI</li><li>Pytest, Ruff, mypy, Vitest, and ESLint</li></ul></section>
+
+  <section class="detail-card" id="platform-limitations"><h2>Current limitations</h2><ul><li>The platform currently runs locally.</li><li>No public cloud deployment is configured.</li><li>Production would require managed TLS, secrets, monitoring, alerting, backups, and restore testing.</li><li>The network features demonstrate operational workflows and do not replace enterprise monitoring tools.</li></ul></section>
 
   <section class="detail-card">
     <h2>Featured Projects</h2>
