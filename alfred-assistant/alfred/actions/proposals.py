@@ -115,14 +115,18 @@ class ProposalStore:
             raise ProposalError(409, "payload hash mismatch; approval refers to different content")
 
         approved_at = iso_now()
-        updated = self._execute_write(
+        updated = self._execute_write_with_audit(
             "UPDATE action_proposals SET status = 'approved', approved_at = ? "
             "WHERE id = ? AND status = 'proposed'",
             (approved_at, proposal_id),
+            principal,
+            proposal_id,
+            row["action_type"],
+            "approved",
+            {},
         )
         if updated != 1:
             raise ProposalError(409, "proposal was already decided")
-        self._audit(principal, proposal_id, row["action_type"], "approved", {})
         return self.get(principal, proposal_id)
 
     def execute(self, principal: Principal, proposal_id: str) -> dict:
@@ -187,14 +191,18 @@ class ProposalStore:
         row = self._owned_row(principal, proposal_id)
         if row["status"] in {"executed", "failed"}:
             raise ProposalError(409, f"proposal cannot be rejected from status '{row['status']}'")
-        updated = self._execute_write(
+        updated = self._execute_write_with_audit(
             "UPDATE action_proposals SET status = 'rejected' WHERE id = ? AND status IN "
             "('proposed', 'approved')",
             (proposal_id,),
+            principal,
+            proposal_id,
+            row["action_type"],
+            "rejected",
+            {},
         )
         if updated != 1:
             raise ProposalError(409, "proposal was already decided")
-        self._audit(principal, proposal_id, row["action_type"], "rejected", {})
         return self.get(principal, proposal_id)
 
     # -- reads -------------------------------------------------------------
@@ -302,24 +310,71 @@ class ProposalStore:
         except sqlite3.OperationalError as exc:
             raise ProposalError(409, f"proposal store is temporarily busy; please retry ({exc})") from exc
 
+    def _execute_write_with_audit(
+        self,
+        sql: str,
+        params: tuple,
+        principal: Principal,
+        proposal_id: str,
+        action_type: str,
+        event: str,
+        detail: dict,
+    ) -> int:
+        """Commit a state transition and its audit event in one transaction."""
+
+        try:
+            with closing(self.db.connect()) as connection:
+                rowcount = connection.execute(sql, params).rowcount
+                if rowcount == 1:
+                    self._insert_audit(
+                        connection,
+                        principal,
+                        proposal_id,
+                        action_type,
+                        event,
+                        detail,
+                    )
+                connection.commit()
+                return rowcount
+        except sqlite3.OperationalError as exc:
+            raise ProposalError(409, f"proposal store is temporarily busy; please retry ({exc})") from exc
+
     def _audit(
         self, principal: Principal, proposal_id: str, action_type: str, event: str, detail: dict
     ) -> None:
         with closing(self.db.connect()) as connection:
-            connection.execute(
-                "INSERT INTO action_audit (proposal_id, action_type, user_id, session_id, event, "
-                "detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (
-                    proposal_id,
-                    action_type,
-                    principal.user_id,
-                    principal.session_id,
-                    event,
-                    json.dumps(detail, sort_keys=True),
-                    iso_now(),
-                ),
+            self._insert_audit(
+                connection,
+                principal,
+                proposal_id,
+                action_type,
+                event,
+                detail,
             )
             connection.commit()
+
+    @staticmethod
+    def _insert_audit(
+        connection: sqlite3.Connection,
+        principal: Principal,
+        proposal_id: str,
+        action_type: str,
+        event: str,
+        detail: dict,
+    ) -> None:
+        connection.execute(
+            "INSERT INTO action_audit (proposal_id, action_type, user_id, session_id, event, "
+            "detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (
+                proposal_id,
+                action_type,
+                principal.user_id,
+                principal.session_id,
+                event,
+                json.dumps(detail, sort_keys=True),
+                iso_now(),
+            ),
+        )
 
     def _maintenance(self) -> None:
         self.db.purge_expired_and_old(self.settings.audit_retention_days)
