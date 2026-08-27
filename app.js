@@ -117,22 +117,6 @@ function updateChatEntry(entry, content, preformatted = false) {
     }
 }
 
-function renderProposalObject(proposal) {
-    return JSON.stringify(
-        {
-            target_file: proposal.target_file,
-            explanation: proposal.explanation,
-            full_replacement_content: proposal.full_content,
-        },
-        null,
-        2
-    );
-}
-
-function renderRedesignProposal(proposal) {
-    return proposal && typeof proposal === "object" ? proposal : null;
-}
-
 function speakAssistantResponse(message) {
     if (!("speechSynthesis" in window) || !message) {
         return;
@@ -194,9 +178,10 @@ async function submitChatMessage() {
 
     const normalized = message.toLowerCase();
     if (normalized === "approve" || normalized === "reject" || normalized === "refresh" || normalized === "refresh state") {
-        appendChatEntry("assistant", "Review-only preview controls are on the Proposal Review tab. Approval records a decision but does not write files.");
-        setRedesignStatus("Use Proposal Review for non-executing previews.");
-        speakAssistantResponse("Use Proposal Review for non-executing previews.");
+        const guidance = "The optional local proposal metadata utility is at /alfred_agent_console.html. It is disabled by default and never reads repository files.";
+        appendChatEntry("assistant", guidance);
+        setRedesignStatus("Local proposal metadata is disabled by default.");
+        speakAssistantResponse(guidance);
         return;
     }
 

@@ -40,10 +40,12 @@ class TextParser(HTMLParser):
 
 class AppTestCase(unittest.TestCase):
     def setUp(self):
-        site.app.config.update(TESTING=True)
-        site.CODE_PROPOSAL = None
-        site.HUD_PROPOSAL = None
-        site.RECENT_EVENTS.clear()
+        site.app.config.update(
+            TESTING=True,
+            PROPOSALS_ENABLED=True,
+            SECRET_KEY="test-session-secret-with-at-least-32-characters",
+            SESSION_COOKIE_SECURE=False,
+        )
         self.client = site.app.test_client()
 
     def get_status(self, path):
@@ -196,6 +198,33 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(state["mode"], "deterministic-review-only")
         self.assertFalse(state["executes_actions"])
         self.assertFalse(state["writes_files"])
+        self.assertFalse(state["reads_repository_files"])
+        self.assertNotIn("workspace_root", state)
+
+    def test_proposals_are_disabled_by_default_and_require_strong_sessions(self):
+        self.assertGreaterEqual(len(site.app.secret_key), 32)
+        with self.assertRaisesRegex(RuntimeError, "at least 32"):
+            site._session_secret({"SITE_SESSION_SECRET": "too-short"})
+        with self.assertRaisesRegex(RuntimeError, "sufficient variety"):
+            site._session_secret({"SITE_SESSION_SECRET": "x" * 64})
+
+        site.app.config["PROPOSALS_ENABLED"] = False
+        try:
+            for method, path in (
+                ("get", "/api/coding-agent/state"),
+                ("post", "/api/coding-agent/proposals"),
+                ("get", "/api/hud-redesign/state"),
+                ("post", "/api/hud-redesign/proposals"),
+            ):
+                with self.subTest(path=path):
+                    response = getattr(self.client, method)(path, json={})
+                    self.assertEqual(response.status_code, 404)
+                    self.assertEqual(
+                        response.get_json(),
+                        {"error": "Review-only proposals are disabled."},
+                    )
+        finally:
+            site.app.config["PROPOSALS_ENABLED"] = True
 
     def test_code_proposal_validation(self):
         invalid_payloads = (
@@ -224,23 +253,83 @@ class AppTestCase(unittest.TestCase):
         }
         created = self.client.post("/api/coding-agent/proposals", json=payload)
         self.assertEqual(created.status_code, 200)
-        self.assertIn("No code was generated", created.get_json()["reply"])
+        self.assertIn("No repository file was read", created.get_json()["reply"])
         pending = created.get_json()["coding_agent"]["pending_code_change"]
         self.assertFalse(pending["executes_actions"])
         self.assertFalse(pending["writes_files"])
+        self.assertFalse(pending["reads_repository_files"])
+        proposal_id = pending["proposal_id"]
 
-        approved = self.client.post("/api/coding-agent/proposals/approve")
+        self.assertEqual(self.client.post("/api/coding-agent/proposals/approve").status_code, 405)
+        approved = self.client.post(f"/api/coding-agent/proposals/{proposal_id}/approve")
         self.assertEqual(approved.status_code, 200)
-        self.assertIn("No file was written", approved.get_json()["reply"])
+        self.assertIn("No file was read or written", approved.get_json()["reply"])
         self.assertEqual((ROOT / "app.py").read_bytes(), original)
         self.assertIsNone(approved.get_json()["coding_agent"]["pending_code_change"])
 
-        self.client.post("/api/coding-agent/proposals", json=payload)
-        rejected = self.client.post("/api/coding-agent/proposals/reject")
+        created = self.client.post("/api/coding-agent/proposals", json=payload)
+        proposal_id = created.get_json()["coding_agent"]["pending_code_change"]["proposal_id"]
+        rejected = self.client.post(f"/api/coding-agent/proposals/{proposal_id}/reject")
         self.assertEqual(rejected.status_code, 200)
-        self.assertIn("No file was written", rejected.get_json()["reply"])
+        self.assertIn("No file was read or written", rejected.get_json()["reply"])
         self.assertEqual((ROOT / "app.py").read_bytes(), original)
-        self.assertEqual(self.client.post("/api/coding-agent/proposals/approve").status_code, 409)
+        self.assertEqual(
+            self.client.post(f"/api/coding-agent/proposals/{proposal_id}/approve").status_code,
+            404,
+        )
+
+    def test_proposal_apis_never_disclose_repository_files(self):
+        cases = {
+            "app.py": "from flask import Flask",
+            "README.md": "# Batcomputer Portfolio",
+            "render.yaml": "batcomputer-platform-db",
+            "site_config.py": "REPOSITORY_URL =",
+            "platform/app/config.py": "DEVELOPMENT_SECRET =",
+        }
+        for target_file, private_marker in cases.items():
+            with self.subTest(target_file=target_file):
+                response = self.client.post(
+                    "/api/coding-agent/proposals",
+                    json={
+                        "task": "Record a local review request",
+                        "target_file": target_file,
+                    },
+                )
+                self.assertEqual(response.status_code, 200)
+                serialized = json.dumps(response.get_json())
+                self.assertNotIn(private_marker, serialized)
+                for forbidden_key in (
+                    "old_preview",
+                    "new_preview",
+                    "full_content",
+                    "workspace_root",
+                ):
+                    self.assertNotIn(forbidden_key, serialized)
+
+        for blocked_path in (
+            ".env",
+            ".env.example",
+            "../app.py",
+            "platform/../app.py",
+            "C:/repo/app.py",
+            "projects\\..\\app.py",
+        ):
+            with self.subTest(blocked_path=blocked_path):
+                response = self.client.post(
+                    "/api/coding-agent/proposals",
+                    json={"task": "Read a file", "target_file": blocked_path},
+                )
+                self.assertEqual(response.status_code, 400)
+
+        hud_response = self.client.post(
+            "/api/hud-redesign/proposals",
+            json={"task": "Record a homepage review request"},
+        )
+        self.assertEqual(hud_response.status_code, 200)
+        serialized_hud = json.dumps(hud_response.get_json())
+        self.assertNotIn("JUSTIN WIMMER", serialized_hud)
+        for forbidden_key in ("old_preview", "new_preview", "full_content", "workspace_root"):
+            self.assertNotIn(forbidden_key, serialized_hud)
 
     def test_hud_preview_approval_and_rejection_do_not_write(self):
         home = ROOT / "batcomputer_console.html"
@@ -264,23 +353,142 @@ class AppTestCase(unittest.TestCase):
             json={"task": "Review the homepage heading"},
         )
         self.assertEqual(created.status_code, 200)
-        self.assertIn("No redesign was generated", created.get_json()["reply"])
+        self.assertIn("No repository file was read", created.get_json()["reply"])
+        proposal_id = created.get_json()["pending_hud_redesign"]["proposal_id"]
 
-        approved = self.client.post("/api/hud-redesign/proposals/approve")
+        self.assertEqual(self.client.post("/api/hud-redesign/proposals/approve").status_code, 405)
+        approved = self.client.post(f"/api/hud-redesign/proposals/{proposal_id}/approve")
         self.assertEqual(approved.status_code, 200)
-        self.assertIn("No file was written", approved.get_json()["reply"])
-        self.assertIn("final_content", approved.get_json())
+        self.assertIn("No file was read or written", approved.get_json()["reply"])
+        self.assertNotIn("final_content", approved.get_json())
         self.assertEqual(home.read_bytes(), original)
 
-        self.client.post(
+        created = self.client.post(
             "/api/hud-redesign/proposals",
             json={"task": "Review the homepage heading"},
         )
-        rejected = self.client.post("/api/hud-redesign/proposals/reject")
+        proposal_id = created.get_json()["pending_hud_redesign"]["proposal_id"]
+        rejected = self.client.post(f"/api/hud-redesign/proposals/{proposal_id}/reject")
         self.assertEqual(rejected.status_code, 200)
         self.assertNotIn("final_content", rejected.get_json())
         self.assertEqual(home.read_bytes(), original)
-        self.assertEqual(self.client.post("/api/hud-redesign/proposals/reject").status_code, 409)
+        self.assertEqual(
+            self.client.post(f"/api/hud-redesign/proposals/{proposal_id}/reject").status_code,
+            404,
+        )
+
+    def test_proposals_are_isolated_between_clients(self):
+        client_a = site.app.test_client()
+        client_b = site.app.test_client()
+        code_payload = {
+            "task": "Client A code review",
+            "target_file": "app.py",
+            "context_files": ["README.md"],
+        }
+        code_a = client_a.post("/api/coding-agent/proposals", json=code_payload)
+        code_a_id = code_a.get_json()["coding_agent"]["pending_code_change"]["proposal_id"]
+        self.assertIsNone(
+            client_b.get("/api/coding-agent/state").get_json()["pending_code_change"]
+        )
+
+        code_b = client_b.post(
+            "/api/coding-agent/proposals",
+            json={**code_payload, "task": "Client B code review"},
+        )
+        code_b_id = code_b.get_json()["coding_agent"]["pending_code_change"]["proposal_id"]
+        self.assertNotEqual(code_a_id, code_b_id)
+        self.assertEqual(
+            client_a.get("/api/coding-agent/state")
+            .get_json()["pending_code_change"]["proposal_id"],
+            code_a_id,
+        )
+        self.assertEqual(
+            client_b.post(f"/api/coding-agent/proposals/{code_a_id}/reject").status_code,
+            404,
+        )
+        self.assertEqual(
+            client_a.get("/api/coding-agent/state")
+            .get_json()["pending_code_change"]["proposal_id"],
+            code_a_id,
+        )
+        self.assertEqual(
+            client_a.post(f"/api/coding-agent/proposals/{code_a_id}/approve").status_code,
+            200,
+        )
+        self.assertEqual(
+            client_b.get("/api/coding-agent/state")
+            .get_json()["pending_code_change"]["proposal_id"],
+            code_b_id,
+        )
+
+        hud_a = client_a.post(
+            "/api/hud-redesign/proposals", json={"task": "Client A homepage review"}
+        )
+        hud_a_id = hud_a.get_json()["pending_hud_redesign"]["proposal_id"]
+        self.assertIsNone(client_b.get("/api/hud-redesign/state").get_json()["pending_hud_redesign"])
+        hud_b = client_b.post(
+            "/api/hud-redesign/proposals", json={"task": "Client B homepage review"}
+        )
+        hud_b_id = hud_b.get_json()["pending_hud_redesign"]["proposal_id"]
+        self.assertNotEqual(hud_a_id, hud_b_id)
+        self.assertEqual(
+            client_b.post(f"/api/hud-redesign/proposals/{hud_a_id}/approve").status_code,
+            404,
+        )
+        self.assertEqual(
+            client_a.get("/api/hud-redesign/state")
+            .get_json()["pending_hud_redesign"]["proposal_id"],
+            hud_a_id,
+        )
+        self.assertEqual(
+            client_a.post(f"/api/hud-redesign/proposals/{hud_a_id}/reject").status_code,
+            200,
+        )
+        self.assertEqual(
+            client_b.get("/api/hud-redesign/state")
+            .get_json()["pending_hud_redesign"]["proposal_id"],
+            hud_b_id,
+        )
+
+    def test_maximum_proposal_metadata_stays_within_cookie_limit(self):
+        high_entropy_unicode = "".join(chr(0x4E00 + index) for index in range(2000))
+        long_target = f"targets/{high_entropy_unicode[:220]}.py"
+        contexts = [
+            f"context/{index}/{high_entropy_unicode[index : index + 190]}.py"
+            for index in range(20)
+        ]
+        cookie_lengths = []
+        for _index in range(6):
+            code_response = self.client.post(
+                "/api/coding-agent/proposals",
+                json={
+                    "task": high_entropy_unicode,
+                    "target_file": long_target,
+                    "context_files": contexts,
+                },
+            )
+            self.assertEqual(code_response.status_code, 200)
+            cookie_lengths.append(len(code_response.headers["Set-Cookie"]))
+            pending = code_response.get_json()["coding_agent"]["pending_code_change"]
+            self.assertTrue(pending["metadata_truncated"])
+            self.assertEqual(pending["context_file_count"], 20)
+            self.assertEqual(len(pending["context_files"]), site.SESSION_CONTEXT_LIMIT)
+
+            hud_response = self.client.post(
+                "/api/hud-redesign/proposals",
+                json={"task": high_entropy_unicode},
+            )
+            self.assertEqual(hud_response.status_code, 200)
+            cookie_lengths.append(len(hud_response.headers["Set-Cookie"]))
+
+        self.assertLess(
+            max(cookie_lengths),
+            min(site.app.config["MAX_COOKIE_SIZE"], 3500),
+        )
+        code_state = self.client.get("/api/coding-agent/state").get_json()
+        hud_state = self.client.get("/api/hud-redesign/state").get_json()
+        self.assertIsNotNone(code_state["pending_code_change"])
+        self.assertIsNotNone(hud_state["pending_hud_redesign"])
 
 
 class StaticContentTestCase(unittest.TestCase):
@@ -439,6 +647,28 @@ class StaticContentTestCase(unittest.TestCase):
         self.assertIn("site:", compose)
         self.assertIn("platform:", compose)
         self.assertIn("orbital:", compose)
+        for field in (
+            "PLATFORM_DATABASE_HOST",
+            "PLATFORM_DATABASE_PORT",
+            "PLATFORM_DATABASE_NAME",
+            "PLATFORM_DATABASE_USER",
+            "PLATFORM_DATABASE_PASSWORD",
+        ):
+            self.assertIn(field, compose)
+        self.assertNotIn(
+            "PLATFORM_DATABASE_URL: postgresql+psycopg://", compose
+        )
+        for site_setting in (
+            "SITE_ENVIRONMENT",
+            "SITE_PROPOSALS_ENABLED",
+            "SITE_SESSION_SECRET",
+            "SITE_CONTACT_EMAIL",
+            "SITE_LINKEDIN_URL",
+            "SITE_RESUME_PATH",
+            "SITE_PLATFORM_DEMO_URL",
+            "SITE_ORBITAL_DEMO_URL",
+        ):
+            self.assertIn(site_setting, compose)
         self.assertTrue((ROOT / "Dockerfile").is_file())
         self.assertTrue((ROOT / "platform" / "Dockerfile").is_file())
         self.assertTrue((ROOT / "orbital-data-lab" / "Dockerfile").is_file())
@@ -485,7 +715,7 @@ class StaticContentTestCase(unittest.TestCase):
         public_files = (
             list(ROOT.glob("*.html"))
             + list((ROOT / "projects").glob("*.html"))
-            + [ROOT / "README.md"]
+            + [ROOT / "README.md", ROOT / "app.js", ROOT / "alfred_agent.js"]
         )
         content = "\n".join(path.read_text(encoding="utf-8") for path in public_files)
         for unsupported in (
@@ -497,6 +727,9 @@ class StaticContentTestCase(unittest.TestCase):
             "your email",
             "your linkedin",
             "your resume",
+            "Load existing file previews",
+            "Proposal Review tab",
+            "review-only previews",
         ):
             with self.subTest(unsupported=unsupported):
                 self.assertNotIn(unsupported, content)

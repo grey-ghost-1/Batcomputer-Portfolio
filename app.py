@@ -1,15 +1,46 @@
+import os
+import secrets
+from functools import wraps
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, session
 
 from site_config import public_site_config
 
 BASE_DIR = Path(__file__).resolve().parent
 app = Flask(__name__, static_folder=None)
 
-CODE_PROPOSAL = None
-HUD_PROPOSAL = None
-RECENT_EVENTS = []
+
+def _enabled(value):
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _session_secret(environ=None):
+    environment = os.environ if environ is None else environ
+    configured = environment.get("SITE_SESSION_SECRET", "")
+    if configured and (len(configured) < 32 or len(set(configured)) < 8):
+        raise RuntimeError(
+            "SITE_SESSION_SECRET must contain at least 32 characters with sufficient variety"
+        )
+    return configured or secrets.token_hex(32)
+
+
+app.config.update(
+    SECRET_KEY=_session_secret(),
+    PROPOSALS_ENABLED=_enabled(os.getenv("SITE_PROPOSALS_ENABLED", "false")),
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=os.getenv("SITE_ENVIRONMENT", "development") == "production",
+)
+
+CODE_PROPOSAL_KEY = "code_proposal"
+HUD_PROPOSAL_KEY = "hud_proposal"
+RECENT_EVENTS_KEY = "proposal_events"
+SESSION_TASK_LIMIT = 120
+SESSION_PATH_LIMIT = 160
+SESSION_CONTEXT_LIMIT = 3
+SESSION_CONTEXT_PATH_LIMIT = 100
+SESSION_EVENT_LIMIT = 5
 
 CATEGORY_PAGES = {
     "software-development": "software_development.html",
@@ -26,12 +57,20 @@ PRIMARY_PROJECTS = (
 ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
 ROOT_PUBLIC_FILES = {"project-evidence.json"}
 ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
-PREVIEW_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
+PROPOSAL_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
+
+
+def truncate_metadata(value, byte_limit):
+    encoded = value.encode("utf-8")
+    if len(encoded) <= byte_limit:
+        return value
+    return encoded[:byte_limit].decode("utf-8", errors="ignore")
 
 
 def record_event(event_type, task="", file_name=""):
-    RECENT_EVENTS.append({"type": event_type, "task": task, "file": file_name})
-    del RECENT_EVENTS[:-20]
+    events = list(session.get(RECENT_EVENTS_KEY, []))
+    events.append({"type": event_type, "file": truncate_metadata(file_name, 60)})
+    session[RECENT_EVENTS_KEY] = events[-SESSION_EVENT_LIMIT:]
 
 
 def resolve_workspace_path(file_name):
@@ -48,11 +87,15 @@ def resolve_workspace_path(file_name):
     return path
 
 
-def read_preview(file_name):
-    path = resolve_workspace_path(file_name)
-    if path is None or not path.is_file():
-        return ""
-    return path.read_text(encoding="utf-8")[:4000]
+def normalize_proposal_path(file_name):
+    if not file_name or "\x00" in file_name or "\\" in file_name:
+        return None
+    candidate = Path(file_name)
+    if candidate.is_absolute() or candidate.drive or ".." in candidate.parts:
+        return None
+    if candidate.suffix.lower() not in PROPOSAL_TEXT_SUFFIXES:
+        return None
+    return candidate.as_posix()
 
 
 def project_inventory():
@@ -60,17 +103,29 @@ def project_inventory():
 
 
 def agent_state():
+    pending = session.get(CODE_PROPOSAL_KEY)
     return {
         "available": False,
+        "proposals_enabled": app.config["PROPOSALS_ENABLED"],
         "model": None,
         "mode": "deterministic-review-only",
         "status": "ready",
         "executes_actions": False,
         "writes_files": False,
-        "workspace_root": str(BASE_DIR),
-        "pending_code_change": CODE_PROPOSAL,
-        "recent_events": RECENT_EVENTS,
+        "reads_repository_files": False,
+        "pending_code_change": pending if isinstance(pending, dict) else None,
+        "recent_events": session.get(RECENT_EVENTS_KEY, []),
     }
+
+
+def require_proposals(function):
+    @wraps(function)
+    def protected(*args, **kwargs):
+        if not app.config["PROPOSALS_ENABLED"]:
+            return jsonify({"error": "Review-only proposals are disabled."}), 404
+        return function(*args, **kwargs)
+
+    return protected
 
 
 def local_reply(message):
@@ -81,7 +136,7 @@ def local_reply(message):
     if "status" in normalized or "health" in normalized:
         return "The Batcomputer Flask server is online. Alfred is a deterministic helper, not an AI model."
     if "what can" in normalized or normalized in {"help", "commands", "capabilities"}:
-        return "I can return predefined guidance about this portfolio and create review-only previews. I do not use an AI model, execute actions, or write files."
+        return "I can return predefined portfolio guidance. Optional local proposal metadata never reads repository files, generates code, executes actions, or writes files."
     if "who are you" in normalized or "what are you" in normalized:
         return "I am Alfred, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
     if "website" in normalized or "portfolio" in normalized:
@@ -177,13 +232,14 @@ def alfred():
 
 
 @app.get("/api/coding-agent/state")
+@require_proposals
 def coding_agent_state():
     return jsonify(agent_state())
 
 
 @app.post("/api/coding-agent/proposals")
+@require_proposals
 def create_code_proposal():
-    global CODE_PROPOSAL
     payload = request.get_json(silent=True) or {}
     raw_task = payload.get("task", "")
     raw_target_file = payload.get("target_file", "")
@@ -200,72 +256,82 @@ def create_code_proposal():
         return jsonify({"error": "context_files must be a list."}), 400
     if len(context_files) > 20:
         return jsonify({"error": "No more than 20 context files are allowed."}), 400
-    target_path = resolve_workspace_path(target_file)
-    if (
-        target_path is None
-        or target_path == BASE_DIR
-        or target_path.is_dir()
-        or target_path.suffix.lower() not in PREVIEW_TEXT_SUFFIXES
-    ):
+    normalized_target = normalize_proposal_path(target_file)
+    if normalized_target is None:
         return jsonify({"error": "target_file must be a safe relative text-file path."}), 400
     normalized_context = []
     for item in context_files:
-        if not isinstance(item, str) or len(item) > 240 or resolve_workspace_path(item) is None:
+        normalized_item = normalize_proposal_path(item) if isinstance(item, str) else None
+        if normalized_item is None or len(item) > 240:
             return jsonify({"error": "Each context file must be a safe relative path."}), 400
-        normalized_context.append(item)
-    old_preview = read_preview(target_file)
-    CODE_PROPOSAL = {
-        "task": task,
-        "target_file": target_file,
-        "context_files": normalized_context,
+        normalized_context.append(normalized_item)
+    stored_task = truncate_metadata(task, SESSION_TASK_LIMIT)
+    stored_target = truncate_metadata(normalized_target, SESSION_PATH_LIMIT)
+    stored_context = [
+        truncate_metadata(item, SESSION_CONTEXT_PATH_LIMIT)
+        for item in normalized_context[:SESSION_CONTEXT_LIMIT]
+    ]
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "task": stored_task,
+        "target_file": stored_target,
+        "context_files": stored_context,
+        "context_file_count": len(normalized_context),
+        "metadata_truncated": (
+            stored_task != task
+            or stored_target != normalized_target
+            or len(normalized_context) > SESSION_CONTEXT_LIMIT
+            or stored_context != normalized_context
+        ),
         "mode": "deterministic-review-only",
         "executes_actions": False,
         "writes_files": False,
-        "workspace_root": str(BASE_DIR),
+        "reads_repository_files": False,
         "plan_steps": [
-            "Review the requested target and context file names",
-            "Inspect the current target preview without modifying it",
+            "Record the requested target and context file names",
+            "Require a separate authenticated development workflow for any source review",
         ],
-        "proposal": {
-            "old_preview": old_preview,
-            "new_preview": old_preview or "No existing file content is available to preview.",
-        },
     }
-    record_event("proposal-created", task, target_file)
+    session[CODE_PROPOSAL_KEY] = proposal
+    record_event("proposal-created", task, normalized_target)
     return jsonify(
         {
-            "reply": "Review-only preview created. No code was generated and no file was changed.",
+            "reply": "Review-only metadata recorded. No repository file was read or returned.",
             "coding_agent": agent_state(),
         }
     )
 
 
-@app.post("/api/coding-agent/proposals/<decision>")
-def decide_code_proposal(decision):
-    global CODE_PROPOSAL
+@app.post("/api/coding-agent/proposals/<proposal_id>/<decision>")
+@require_proposals
+def decide_code_proposal(proposal_id, decision):
     if decision not in {"approve", "reject"}:
         return jsonify({"error": "Unknown proposal decision."}), 404
-    if CODE_PROPOSAL is None:
-        return jsonify({"error": "There is no pending coding proposal."}), 409
-    proposal = CODE_PROPOSAL
+    proposal = session.get(CODE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this session."}), 404
     record_event(f"proposal-{decision}d", proposal["task"], proposal["target_file"])
-    CODE_PROPOSAL = None
+    session.pop(CODE_PROPOSAL_KEY, None)
     return jsonify(
         {
-            "reply": f"Review-only coding preview {decision}d. No file was written and no command was executed.",
+            "reply": f"Review-only proposal {decision}d. No file was read or written and no command was executed.",
             "coding_agent": agent_state(),
         }
     )
 
 
 @app.get("/api/hud-redesign/state")
+@require_proposals
 def hud_state():
-    return jsonify({"pending_hud_redesign": HUD_PROPOSAL})
+    proposal = session.get(HUD_PROPOSAL_KEY)
+    return jsonify({"pending_hud_redesign": proposal if isinstance(proposal, dict) else None})
 
 
 @app.post("/api/hud-redesign/proposals")
+@require_proposals
 def create_hud_proposal():
-    global HUD_PROPOSAL
     payload = request.get_json(silent=True) or {}
     raw_task = payload.get("task", "")
     if not isinstance(raw_task, str):
@@ -276,40 +342,43 @@ def create_hud_proposal():
     if len(task) > 2000:
         return jsonify({"error": "Task is too long."}), 400
     target_file = "batcomputer_console.html"
-    current_preview = read_preview(target_file)
-    HUD_PROPOSAL = {
-        "task": task,
+    stored_task = truncate_metadata(task, SESSION_TASK_LIMIT)
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "task": stored_task,
         "target_file": target_file,
-        "explanation": "A deterministic copy of the current homepage was loaded for review. No redesign was generated.",
-        "old_preview": current_preview,
-        "new_preview": current_preview,
-        "full_content": current_preview,
+        "explanation": "Review-only metadata. No homepage source was read, generated, or returned.",
+        "metadata_truncated": stored_task != task,
+        "reads_repository_files": False,
+        "writes_files": False,
     }
+    session[HUD_PROPOSAL_KEY] = proposal
     record_event("hud-proposal-created", task, target_file)
     return jsonify(
         {
-            "reply": "Review-only homepage preview created. No redesign was generated and no file was changed.",
-            "pending_hud_redesign": HUD_PROPOSAL,
+            "reply": "Review-only homepage metadata recorded. No repository file was read or returned.",
+            "pending_hud_redesign": proposal,
         }
     )
 
 
-@app.post("/api/hud-redesign/proposals/<decision>")
-def decide_hud_proposal(decision):
-    global HUD_PROPOSAL
+@app.post("/api/hud-redesign/proposals/<proposal_id>/<decision>")
+@require_proposals
+def decide_hud_proposal(proposal_id, decision):
     if decision not in {"approve", "reject"}:
         return jsonify({"error": "Unknown proposal decision."}), 404
-    if HUD_PROPOSAL is None:
-        return jsonify({"error": "There is no pending website redesign proposal."}), 409
-    proposal = HUD_PROPOSAL
+    proposal = session.get(HUD_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this session."}), 404
     record_event(f"hud-proposal-{decision}d", proposal["task"], proposal["target_file"])
-    HUD_PROPOSAL = None
-    response = {
-        "reply": f"Review-only homepage preview {decision}d. No file was written and no command was executed."
-    }
-    if decision == "approve":
-        response["final_content"] = proposal["full_content"]
-    return jsonify(response)
+    session.pop(HUD_PROPOSAL_KEY, None)
+    return jsonify(
+        {
+            "reply": f"Review-only homepage proposal {decision}d. No file was read or written and no command was executed."
+        }
+    )
 
 
 if __name__ == "__main__":

@@ -5,9 +5,11 @@ from pathlib import Path
 
 import jwt
 import pytest
+from alembic.config import Config
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 from sqlalchemy import select
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 
 PLATFORM_ROOT = Path(__file__).resolve().parents[1]
@@ -106,6 +108,31 @@ def test_production_configuration_guards():
         secret_key="unique-production-secret-with-at-least-32-characters",
     )
     assert render_style.database_url == "postgresql+psycopg://db/app"
+
+
+def test_database_fields_encode_uri_special_password_characters():
+    special_password = "secure@:/#password"
+    settings = Settings(
+        environment="production",
+        database_host="postgres",
+        database_port=5432,
+        database_name="batcomputer",
+        database_user="batcomputer",
+        database_password=special_password,
+        secret_key="unique-production-secret-with-at-least-32-characters",
+    )
+    parsed = make_url(settings.database_url)
+    assert parsed.drivername == "postgresql+psycopg"
+    assert parsed.username == "batcomputer"
+    assert parsed.password == special_password
+    assert parsed.host == "postgres"
+    assert parsed.database == "batcomputer"
+    assert "%40%3A%2F%23" in settings.database_url
+    alembic_config = Config()
+    alembic_config.set_main_option(
+        "sqlalchemy.url", settings.database_url.replace("%", "%%")
+    )
+    assert alembic_config.get_main_option("sqlalchemy.url") == settings.database_url
 
 
 def test_password_auth_and_rbac(client: TestClient):

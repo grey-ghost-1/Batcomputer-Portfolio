@@ -12,6 +12,11 @@ services:
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/health
     autoDeploy: false
+    envVars:
+      - key: SITE_ENVIRONMENT
+        value: production
+      - key: SITE_PROPOSALS_ENABLED
+        value: "false"
 
   - type: web
     name: batcomputer-platform

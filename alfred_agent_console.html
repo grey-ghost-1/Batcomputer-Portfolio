@@ -27,7 +27,7 @@
   <header class="detail-header">
     <p class="eyebrow">Deterministic Review Utility</p>
     <h1>Alfred Proposal Review</h1>
-    <p class="detail-focus">Load existing file previews and record approve or reject decisions. This utility does not use an AI model, generate code, execute commands, or write changes.</p>
+    <p class="detail-focus">Record session-owned review metadata and approve or reject it without reading repository files. This local utility is disabled by default and does not use an AI model, generate code, execute commands, or write changes.</p>
   </header>
 
   <section class="detail-card">
@@ -36,7 +36,7 @@
   </section>
 
   <section class="detail-card">
-    <h2>Create review-only preview</h2>
+    <h2>Create review-only metadata</h2>
     <form id="proposalForm" class="agent-form">
       <label class="agent-field">
         <span>Task</span>
@@ -51,7 +51,7 @@
         <input id="contextFilesInput" type="text" placeholder="project/module.py, project/tests/test_module.py">
       </label>
       <div class="panel-actions">
-        <button class="hud-btn" type="submit">Load preview</button>
+        <button class="hud-btn" type="submit">Record metadata</button>
         <button class="hud-btn" type="button" id="refreshAgentState">Refresh status</button>
       </div>
     </form>
@@ -72,15 +72,15 @@
   </section>
 
   <section class="detail-card">
-    <h2>Homepage review preview</h2>
-    <p class="detail-focus">This control copies the current homepage into a preview for review. Approval returns that same preview; it does not generate a redesign or modify the file.</p>
+    <h2>Homepage review metadata</h2>
+    <p class="detail-focus">This control records a request identifier for the current browser session. It does not read or return the homepage source, generate a redesign, or modify a file.</p>
     <form id="hudProposalForm" class="agent-form">
       <label class="agent-field">
         <span>Website redesign request</span>
         <textarea id="hudTaskInput" rows="5" placeholder="Describe a homepage change to review." required></textarea>
       </label>
       <div class="panel-actions">
-        <button class="hud-btn" type="submit">Load homepage preview</button>
+        <button class="hud-btn" type="submit">Record homepage request</button>
         <button class="hud-btn" type="button" id="refreshHudState">Refresh website state</button>
       </div>
     </form>
@@ -88,10 +88,6 @@
     <div class="panel-actions">
       <button class="hud-btn" type="button" id="approveHudProposal">Record approval</button>
       <button class="hud-btn" type="button" id="rejectHudProposal">Record rejection</button>
-    </div>
-    <div class="agent-final-output hidden" id="hudFinalOutputWrap">
-      <h3>Approved review copy (not written)</h3>
-      <pre id="hudFinalOutput"></pre>
     </div>
   </section>
 </main>

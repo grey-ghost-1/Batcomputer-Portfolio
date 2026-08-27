@@ -38,7 +38,7 @@ Set-Location orbital-data-lab
 python -m uvicorn orbital_lab.api:app --host 0.0.0.0 --port 8010
 ```
 
-For a local multi-container environment, copy `.env.example` to `.env`, replace both documented development secrets, and run `docker compose up --build`. The Compose file starts the portfolio, PostgreSQL, the migrated platform, and the Orbital service with health checks. Docker was not available in the layer-3 local environment; CI performs `docker compose config --quiet`, and an environment with Docker must perform the image build and live Compose check.
+For a local multi-container environment, copy `.env.example` to `.env`, replace both documented development secrets, and run `docker compose up --build`. Compose explicitly maps the `SITE_*` values from `.env` into the portfolio container; `.env` is not copied into any image. The Compose file starts the portfolio, PostgreSQL, the migrated platform, and the Orbital service with health checks. Docker was not available in the layer-3 local environment; CI performs `docker compose config --quiet`, and an environment with Docker must perform the image build and live Compose check.
 
 ## Render blueprint
 
@@ -53,7 +53,7 @@ For a local multi-container environment, copy `.env.example` to `.env`, replace 
 
 The platform accepts Render's `postgresql://` connection string and normalizes it to the installed Psycopg 3 SQLAlchemy driver.
 
-The portfolio uses one Gunicorn worker because its review-only proposal state is deliberately process-local. Scaling it to multiple workers requires moving that transient state to a shared store first. Threads share the state within the single worker.
+The portfolio container uses one Gunicorn worker as a conservative default. Proposal metadata lives in signed client cookies rather than process memory. If the service is scaled to multiple workers or instances, every instance must receive the same strong `SITE_SESSION_SECRET`; the random fallback is intentionally restart-local.
 
 ## Production configuration
 
@@ -61,6 +61,11 @@ The portfolio uses one Gunicorn worker because its review-only proposal state is
 |---|---|---|---|
 | `PLATFORM_ENVIRONMENT` | Platform | No | Must be `production` outside local/test environments |
 | `PLATFORM_DATABASE_URL` | Platform | Yes | PostgreSQL URL; never commit it |
+| `PLATFORM_DATABASE_HOST` | Platform | No | Compose host; activates field-based URL assembly |
+| `PLATFORM_DATABASE_PORT` | Platform | No | Compose database port; default 5432 |
+| `PLATFORM_DATABASE_NAME` | Platform | No | Compose database name |
+| `PLATFORM_DATABASE_USER` | Platform | No | Compose database user |
+| `PLATFORM_DATABASE_PASSWORD` | Platform | Yes | Raw password assembled and percent-encoded by SQLAlchemy |
 | `PLATFORM_SECRET_KEY` | Platform | Yes | Unique random value of at least 32 characters |
 | `PLATFORM_ACCESS_TOKEN_MINUTES` | Platform | No | 5–1440; default 30 |
 | `PLATFORM_ALLOWED_ORIGINS` | Platform | No | Comma-separated exact HTTPS origins |
@@ -70,8 +75,14 @@ The portfolio uses one Gunicorn worker because its review-only proposal state is
 | `SITE_RESUME_PATH` | Portfolio | No | Optional existing PDF under `assets/`; omitted otherwise |
 | `SITE_PLATFORM_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
 | `SITE_ORBITAL_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
+| `SITE_PROPOSALS_ENABLED` | Portfolio | No | Disabled by default; enable only for a trusted local review session |
+| `SITE_SESSION_SECRET` | Portfolio | Yes | At least 32 random characters with sufficient variety when proposals are enabled |
 
 Do not put secrets in `.env.example`, Docker build arguments, source files, or client-side JavaScript. Inject them through the deployment provider. Rotating `PLATFORM_SECRET_KEY` invalidates all outstanding access tokens; schedule rotation with a user re-login window. Use managed PostgreSQL backups, take a verified backup before migrations, and practice restore. Because the initial migration has no production data downgrade strategy, restore from backup rather than improvising a destructive downgrade.
+
+Compose passes the PostgreSQL host, port, database, user, and password as separate values. The platform uses SQLAlchemy's `URL.create`, so secure passwords containing URI delimiters such as `@:/#` are encoded correctly rather than interpolated into a connection string. Quote such values in `.env` (for example, `POSTGRES_PASSWORD='secure@:/#value'`) so dotenv parsing preserves every character.
+
+Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size. Keep this feature disabled on the public portfolio.
 
 ### Adding a resume later
 

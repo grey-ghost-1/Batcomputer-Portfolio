@@ -38,7 +38,7 @@ The Flask site, platform, and Orbital service are separate processes and do not 
 ## Repository map
 
 - `batcomputer_console.html`, `style.css`, `app.js` — visually faithful recruiter homepage and deterministic browser behavior
-- `app.py`, `site_config.py` — Flask delivery, safe routes, health/summary/config APIs, and optional-link omission
+- `app.py`, `site_config.py` — Flask delivery, safe routes, health/summary/config APIs, optional-link omission, and disabled-by-default session-owned proposal metadata
 - `projects/` — three primary case studies plus the original 20 detail-page paths
 - `Cybersecurity/`, `IT Support/`, `Network/`, `Software Automation/` — all 20 original prototype source folders
 - `platform/` — independently served operations platform, migration, container, UI, and API tests
@@ -72,13 +72,13 @@ The site configuration API always publishes the known repository URL. Optional e
 
 ## Verified commands and counts
 
-The current baseline is **42 passing automated tests** across four suites: 20 Flask/site tests, 9 platform tests, 6 Orbital tests, and 7 algorithm tests.
+The current baseline is **47 passing automated tests** across four suites: 24 Flask/site tests, 10 platform tests, 6 Orbital tests, and 7 algorithm tests.
 
 ```powershell
-# Portfolio: 20
+# Portfolio: 24
 python -m unittest discover -s tests -v
 
-# Platform migration + API: 9
+# Platform migration + API: 10
 Set-Location platform
 $env:PLATFORM_ENVIRONMENT = "test"
 $env:PLATFORM_DATABASE_URL = "sqlite:///./migration-check.db"
@@ -107,7 +107,7 @@ CI runs this chain and validates Compose structure. Docker is unavailable in the
 
 - **Deployment status:** configuration exists; no hosted deployment is claimed.
 - **Source visibility:** the current GitHub repository is private; unauthenticated recruiters cannot inspect linked code until access is changed.
-- The root Flask site has no authentication because it serves public portfolio content and in-memory review-only previews.
+- The root Flask site has no user accounts because it serves public portfolio content. Local proposal metadata is disabled by default, session-owned when enabled, and never reads repository files.
 - The platform implements authentication and tenant boundaries, but not MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations.
 - Alfred is deterministic and predefined. It has no language model, retrieval, memory, autonomous tools, or action execution.
 - The Orbital model is educational and omits perturbations, burns, atmosphere, ephemerides, uncertainty, collision handling, and flight validation.
