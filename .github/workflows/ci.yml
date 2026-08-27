@@ -10,7 +10,7 @@ permissions:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -27,3 +27,32 @@ jobs:
 
       - name: Run test suite
         run: python -m unittest discover -s tests -v
+
+      - name: Validate flagship migration
+        working-directory: platform
+        env:
+          PLATFORM_ENVIRONMENT: test
+          PLATFORM_DATABASE_URL: sqlite:///./migration-check.db
+          PLATFORM_SECRET_KEY: ci-only-secret-that-is-long-enough-for-tests
+        run: python -m alembic -c alembic.ini upgrade head
+
+      - name: Test flagship platform
+        working-directory: platform
+        run: python -m pytest tests -q
+
+      - name: Test orbital data lab
+        working-directory: orbital-data-lab
+        run: python -m pytest tests -q
+
+      - name: Test algorithm quality lab
+        working-directory: algorithms-quality
+        run: python -m pytest tests -q
+
+      - name: Lint new projects
+        run: python -m ruff check platform orbital-data-lab algorithms-quality
+
+      - name: Compile Python modules
+        run: python -m compileall -q platform orbital-data-lab algorithms-quality
+
+      - name: Validate container configuration
+        run: docker compose config --quiet

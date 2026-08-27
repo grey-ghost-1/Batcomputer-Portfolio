@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbital Data Lab | Justin Wimmer HUD</title><link rel="stylesheet" href="../style.css">
+</head>
+<body class="site-shell"><main class="detail-shell">
+  <nav class="detail-nav"><a class="home-link" href="../batcomputer_console.html">← Back to portfolio</a></nav>
+  <header class="detail-header"><p class="eyebrow">Data and Simulation Evidence</p><h1>Orbital Data Lab</h1>
+    <p class="detail-focus">A deterministic, educational two-body RK4 and velocity-Verlet comparison with validated scenario storage and exports. It is explicitly not flight grade.</p></header>
+  <section class="detail-card"><h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>orbital-data-lab</code></p>
+    <p><strong>Run from repository root:</strong> <code>Set-Location orbital-data-lab; python -m uvicorn orbital_lab.api:app --port 8010</code></p>
+    <p><strong>Validation:</strong> Circular-orbit, energy drift, determinism, bounded input, API, idempotent storage, lineage, and export tests.</p></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>Configurable central body label, gravity parameter, initial state, duration, step size, and integrators</li><li>Trajectory samples, browser visualization, energy drift and final-state comparison</li><li>Content-addressed SQLite scenarios, share paths, lineage metadata, and JSON/CSV export</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>The point-mass model omits perturbations, atmosphere, burns, ephemerides, frames, uncertainty, and collision handling. It is not suitable for navigation or safety decisions.</p></section>
+</main></body></html>

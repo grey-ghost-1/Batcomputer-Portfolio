@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: batcomputer
+      POSTGRES_USER: batcomputer
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U batcomputer -d batcomputer"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    volumes:
+      - platform-postgres:/var/lib/postgresql/data
+  platform:
+    build:
+      context: .
+      dockerfile: platform/Dockerfile
+    environment:
+      PLATFORM_ENVIRONMENT: ${PLATFORM_ENVIRONMENT:-development}
+      PLATFORM_DATABASE_URL: postgresql+psycopg://batcomputer:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/batcomputer
+      PLATFORM_SECRET_KEY: ${PLATFORM_SECRET_KEY:-development-only-change-before-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "alembic -c alembic.ini upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  platform-postgres:

@@ -56,14 +56,14 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(health.status_code, 200)
         self.assertEqual(
             health.get_json(),
-            {"status": "ok", "service": "batcomputer-website", "projects": 20},
+            {"status": "ok", "service": "batcomputer-website", "projects": 23},
         )
 
         summary = self.client.get("/api/site/summary")
         self.assertEqual(summary.status_code, 200)
         payload = summary.get_json()
-        self.assertEqual(payload["project_count"], 20)
-        self.assertEqual(len(payload["projects"]), 20)
+        self.assertEqual(payload["project_count"], 23)
+        self.assertEqual(len(payload["projects"]), 23)
         self.assertEqual(payload["evidence_inventory"], "project-evidence.json")
         self.assertEqual(payload["categories"], site.CATEGORY_PAGES)
 
@@ -222,9 +222,9 @@ class StaticContentTestCase(unittest.TestCase):
 
     def test_evidence_inventory_maps_all_pages_and_sources(self):
         projects = self.evidence["projects"]
-        self.assertEqual(self.evidence["project_count"], 20)
-        self.assertEqual(len(projects), 20)
-        self.assertEqual(len({project["slug"] for project in projects}), 20)
+        self.assertEqual(self.evidence["project_count"], 23)
+        self.assertEqual(len(projects), 23)
+        self.assertEqual(len({project["slug"] for project in projects}), 23)
 
         expected_pages = {path.relative_to(ROOT).as_posix() for path in (ROOT / "projects").glob("*.html")}
         inventory_pages = {project["page"] for project in projects}
@@ -235,9 +235,10 @@ class StaticContentTestCase(unittest.TestCase):
                 page = ROOT / project["page"]
                 source = ROOT / project["source_folder"]
                 self.assertTrue(page.is_file())
-                self.assertTrue((source / "main.py").is_file())
+                entrypoint = ROOT / project.get("entrypoint", f"{project['source_folder']}/main.py")
+                self.assertTrue(entrypoint.is_file())
                 self.assertTrue((source / "README.md").is_file())
-                self.assertTrue(project["run_command"].startswith("python "))
+                self.assertTrue(project["run_command"])
                 self.assertTrue(project["implemented_features"])
                 self.assertTrue(project["limitations"])
                 self.assertTrue(project["validation_status"].startswith("passed"))

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Orbital Data Lab</title>
+  <style>body{font-family:system-ui;max-width:1000px;margin:auto;padding:2rem;background:#07111d;color:#e7f4ff}canvas{width:100%;height:480px;background:#02060a;border:1px solid #4ca3d9}input,button{padding:.6rem;margin:.3rem;background:#10283a;color:inherit;border:1px solid #4ca3d9}</style>
+</head>
+<body>
+  <h1>Orbital Data Lab</h1><p>Deterministic two-body comparison; educational and explicitly not flight grade.</p>
+  <form id="simulation"><label>Duration <input id="duration" type="number" value="5828.516637686015"></label><label>Step <input id="step" type="number" value="10"></label><button>Simulate and save</button></form>
+  <p id="result"></p><canvas id="plot" width="1000" height="480"></canvas>
+  <script>
+    const canvas=document.querySelector("#plot"),ctx=canvas.getContext("2d");
+    document.querySelector("#simulation").addEventListener("submit",async event=>{
+      event.preventDefault();
+      const payload={duration_seconds:Number(duration.value),step_seconds:Number(step.value)};
+      const response=await fetch("/api/v1/scenarios",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      const saved=await response.json(); if(!response.ok){result.textContent=JSON.stringify(saved);return}
+      result.innerHTML=`Scenario <a href="/api/v1/scenarios/${saved.scenario_id}/export.json">${saved.scenario_id}</a>; RK4 drift ${saved.result.runs.rk4.max_relative_energy_drift.toExponential(3)}; <a href="/api/v1/scenarios/${saved.scenario_id}/export.csv">CSV</a>`;
+      const samples=saved.result.runs.rk4.samples,scale=Math.max(...samples.flatMap(s=>s.position.map(Math.abs)));
+      ctx.clearRect(0,0,canvas.width,canvas.height);ctx.strokeStyle="#52d6ff";ctx.beginPath();
+      samples.forEach((s,i)=>{const x=canvas.width/2+s.position[0]/scale*210,y=canvas.height/2-s.position[1]/scale*210;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+      ctx.fillStyle="#ffd95b";ctx.beginPath();ctx.arc(canvas.width/2,canvas.height/2,7,0,Math.PI*2);ctx.fill();
+    });
+  </script>
+</body>
+</html>

@@ -4,6 +4,8 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+.mypy_cache/
+.ruff_cache/
 
 # Virtual environments
 .venv/
@@ -15,6 +17,10 @@ instance/
 *.db
 *.sqlite
 *.sqlite3
+platform/platform-test.db
+platform/migration-check.db
+orbital-data-lab/orbital-test.db
+orbital-data-lab/scenarios.db
 
 # Secrets and local configuration
 .env

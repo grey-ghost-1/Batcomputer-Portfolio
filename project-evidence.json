@@ -2,8 +2,8 @@
   "schema_version": 1,
   "audited_at": "2026-08-26",
   "repository": "grey-ghost-1/Batcomputer-Portfolio",
-  "project_count": 20,
-  "validation_summary": "All 20 main.py entry points executed successfully with loopback targets, local fixture data, or read-only paths. Network and database side effects are identified per project.",
+  "project_count": 23,
+  "validation_summary": "The 20 retained main.py prototypes pass their layer-1 checks. The separate FastAPI flagship, orbital data lab, and algorithm quality lab pass dedicated API, persistence, numerical, algorithm, migration, lint, and CI checks.",
   "projects": [
     {
       "slug": "network-scanner",
@@ -204,6 +204,39 @@
       "limitations": ["not an HTTP API", "no FastAPI, JWT, authentication, database, persistence, service layer, or CRUD beyond create"],
       "validation_status": "passed-local",
       "validation_notes": "Executed with explicit item values; deterministic and side-effect free."
+    },
+    {
+      "slug": "operations-platform",
+      "page": "projects/operations-platform.html",
+      "source_folder": "platform",
+      "entrypoint": "platform/app/main.py",
+      "run_command": "Set-Location platform; python -m uvicorn app.main:app",
+      "implemented_features": ["FastAPI and typed Pydantic API", "SQLAlchemy with PostgreSQL production configuration and SQLite tests", "Alembic migration", "Argon2 passwords and expiring signed authentication", "server-side RBAC and tenant isolation", "six-category asset and work-item CRUD", "guarded workflow transitions", "immutable audit events", "pagination and filtering", "explicit error envelopes", "health and readiness", "correlation IDs and structured logs", "OpenAPI", "functional operator UI", "approval-pending non-executing Alfred intents"],
+      "limitations": ["not hosted", "no MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations", "Alfred never generates or executes content"],
+      "validation_status": "passed-api-and-migration",
+      "validation_notes": "Dedicated tests cover authentication, RBAC, cross-workspace denial, CRUD, workflow rules, audit immutability, validation, health, OpenAPI, and Alfred non-execution. CI applies the initial migration."
+    },
+    {
+      "slug": "orbital-data-lab",
+      "page": "projects/orbital-data-lab.html",
+      "source_folder": "orbital-data-lab",
+      "entrypoint": "orbital-data-lab/orbital_lab/api.py",
+      "run_command": "Set-Location orbital-data-lab; python -m uvicorn orbital_lab.api:app --port 8010",
+      "implemented_features": ["bounded configurable two-body simulation", "RK4 and velocity-Verlet integration", "trajectory and energy-drift output", "integrator comparison", "browser canvas visualization", "content-addressed idempotent SQLite scenarios", "share paths", "lineage metadata", "JSON and CSV exports"],
+      "limitations": ["educational and not flight grade", "fixed two-dimensional point-mass central gravity only", "no perturbations, atmosphere, burns, ephemerides, frames, uncertainty, or collision handling"],
+      "validation_status": "passed-numerical-api-storage",
+      "validation_notes": "Tests cover a known circular-orbit case, energy drift, determinism, bounded validation, API behavior, idempotent storage, lineage, exports, and missing records."
+    },
+    {
+      "slug": "algorithm-quality-lab",
+      "page": "projects/algorithm-quality-lab.html",
+      "source_folder": "algorithms-quality",
+      "entrypoint": "algorithms-quality/algorithms/core.py",
+      "run_command": "python -m pytest algorithms-quality\\tests -q",
+      "implemented_features": ["arrays and strings", "hash maps", "queue from stacks", "binary search tree", "graph breadth-first search", "merge sort", "binary search", "recursive backtracking", "dynamic programming", "edge-case tests", "complexity and trade-off documentation"],
+      "limitations": ["educational implementations", "unbalanced search tree", "unweighted graph paths", "factorial permutation output", "not a replacement for optimized libraries"],
+      "validation_status": "passed-algorithm-tests",
+      "validation_notes": "Deterministic tests cover normal, empty, duplicate, invalid, missing, ordering, mutation-safety, and error cases across all documented categories."
     }
   ]
 }

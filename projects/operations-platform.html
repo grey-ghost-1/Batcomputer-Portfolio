@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operations Platform | Justin Wimmer HUD</title><link rel="stylesheet" href="../style.css">
+</head>
+<body class="site-shell"><main class="detail-shell">
+  <nav class="detail-nav"><a class="home-link" href="../batcomputer_console.html">← Back to portfolio</a></nav>
+  <header class="detail-header"><p class="eyebrow">Flagship Platform</p><h1>Batcomputer Operations Platform</h1>
+    <p class="detail-focus">A separate FastAPI modular monolith for tenant-isolated operational assets, workflows, audit evidence, and approval-only Alfred intents.</p></header>
+  <section class="detail-card"><h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>platform</code></p>
+    <p><strong>Run from repository root:</strong> <code>Set-Location platform; python -m uvicorn app.main:app</code></p>
+    <p><strong>Validation:</strong> API tests exercise auth, RBAC, isolation, CRUD, workflows, audit immutability, validation, health, and Alfred boundaries.</p></section>
+  <section class="detail-card"><h2>Implemented</h2><ul>
+    <li>FastAPI, Pydantic, SQLAlchemy, Alembic, PostgreSQL configuration, and SQLite test support</li>
+    <li>Argon2 passwords, expiring signed access tokens, role checks, workspace scoping, structured request logs, and correlation IDs</li>
+    <li>Six-category assets and work items, guarded transitions, pagination/filtering, audit events, health/readiness, OpenAPI, and operator UI</li>
+  </ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>No hosted deployment, MFA, SSO, password reset, refresh/revocation flow, external integrations, background execution, rate limiting, or Alfred generation/execution is implemented. See <code>platform\README.md</code> for operations guidance.</p></section>
+</main></body></html>

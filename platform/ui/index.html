@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Batcomputer Operations Platform</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#07100f; color:#d8fff7; }
+    body { max-width:1100px; margin:auto; padding:2rem; }
+    h1,h2 { color:#61ffca; } section { border:1px solid #2d806e; padding:1rem; margin:1rem 0; border-radius:8px; }
+    form { display:flex; gap:.5rem; flex-wrap:wrap; } input,select,button { padding:.65rem; border-radius:4px; border:1px solid #397c70; background:#0c1b19; color:inherit; }
+    button { cursor:pointer; background:#145c4d; } table { width:100%; border-collapse:collapse; } th,td { text-align:left; border-bottom:1px solid #214a43; padding:.5rem; }
+    .muted { color:#96bcb5; } #message { min-height:1.5rem; color:#ffd36a; }
+  </style>
+</head>
+<body>
+  <h1>Batcomputer Operations Platform</h1>
+  <p class="muted">Tenant-isolated asset and workflow operations. Alfred records approval-pending intents only.</p>
+  <p id="message"></p>
+  <section id="auth">
+    <h2>Access</h2>
+    <form id="auth-form">
+      <input id="workspace" placeholder="Workspace" required minlength="2">
+      <input id="email" type="email" placeholder="Email" required>
+      <input id="password" type="password" placeholder="Password (12+ characters)" required minlength="12">
+      <button name="action" value="login">Log in</button>
+      <button name="action" value="register">Create workspace</button>
+    </form>
+  </section>
+  <main id="operator" hidden>
+    <section>
+      <h2>Assets</h2>
+      <form id="asset-form">
+        <input id="asset-name" placeholder="Asset name" required>
+        <select id="asset-category"></select>
+        <input id="asset-description" placeholder="Description">
+        <button>Add asset</button>
+      </form>
+      <table><thead><tr><th>Name</th><th>Category</th><th>Status</th></tr></thead><tbody id="assets"></tbody></table>
+    </section>
+    <section>
+      <h2>Work items</h2>
+      <form id="work-form">
+        <input id="work-title" placeholder="Work item" required>
+        <select id="work-category"></select>
+        <button>Add planned work</button>
+      </form>
+      <table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Transition</th></tr></thead><tbody id="work-items"></tbody></table>
+    </section>
+    <section>
+      <h2>Alfred boundary</h2>
+      <p id="alfred-status"></p>
+      <form id="alfred-form"><input id="alfred-prompt" placeholder="Intent for human approval" required minlength="3"><button>Record intent</button></form>
+    </section>
+  </main>
+  <script src="/operator.js"></script>
+</body>
+</html>
