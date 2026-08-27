@@ -1,87 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Device Troubleshooting Toolkit | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Device Health Classifier | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../it_support.html">← Back to IT Support</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../it_support.html">← Back to IT Support</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">IT Support</p>
+    <p class="eyebrow">IT Support Prototype</p>
     <h1>Device Troubleshooting Toolkit</h1>
-    <p class="detail-focus">Developed a Python-based GUI application capable of diagnosing CPU load, RAM usage, disk health, driver issues, and network connectivity problems. Designed to replicate real help desk diagnostic workflows, providing structured output and actionable recommendations for system remediation.</p>
+    <p class="detail-focus">A command-line health classifier that evaluates three user-supplied utilization percentages against fixed thresholds.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import psutil
-import tkinter as tk
-
-def run_diagnostics():
-    cpu = psutil.cpu_percent(interval=1)
-    memory = psutil.virtual_memory().percent
-    disk = psutil.disk_usage("/").percent
-
-    issues = []
-    if cpu > 85:
-        issues.append("High CPU load detected")
-    if memory > 90:
-        issues.append("Memory usage critical")
-    if disk > 90:
-        issues.append("Disk nearly full")
-
-    return {"cpu": cpu, "memory": memory, "disk": disk, "issues": issues}
-
-def show_report(report):
-    window = tk.Tk()
-    window.title("Device Diagnostics")
-    for key, value in report.items():
-        tk.Label(window, text=f"{key}: {value}").pack()
-    window.mainloop()
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>IT Support\device-troubleshooting-toolkit</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "IT Support\device-troubleshooting-toolkit\main.py" --cpu 32 --memory 71 --disk 94</code></p>
+    <p><strong>Validation:</strong> Fully local and deterministic; uses supplied values and makes no system changes.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample diagnostic report generated on a test workstation:</p>
-    <pre><code>CPU: 32%
-Memory: 71%
-Disk: 94%
-Issues: ["Disk nearly full"]
-Recommendation: Clear temp files or expand storage before performance degrades further.</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The toolkit collects CPU, memory, and disk measurements, evaluates them against practical thresholds, and returns a structured report of detected issues and recommendations.</p>
-    <ul><li>psutil gathers workstation health metrics.</li><li>Threshold checks classify resource pressure.</li><li>A Tkinter view presents the diagnostic report.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include CPU, RAM, and disk checks, issue classification, actionable recommendations, and a basic GUI report. Next additions should include driver and network checks, exportable reports, configurable thresholds, and tests for boundary values.</p>
-    <p><strong>Visuals:</strong> diagnostic workflow, health summary panel, and issue-to-recommendation view.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add driver/network probes, configurable thresholds, and exportable reports around the psutil and Tkinter workflow.</p><pre><code>run_diagnostics()
-cpu=32%, memory=71%, disk=94%
-issues=["Disk nearly full"]</code></pre><p><strong>Simulation:</strong> normal CPU and memory with high disk usage produced a maintenance recommendation.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\IT Support\device-troubleshooting-toolkit</code></p><p>Run: <code>python main.py --cpu 32 --memory 71 --disk 94</code></p><p>The current build produces a structured workstation health report.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>DEVICE HEALTH / DIAGNOSTICS</span><span class="visual-status">ATTENTION</span></div><div class="visual-grid"><div class="visual-metric">CPU<strong>32%</strong></div><div class="visual-metric">Memory<strong>71%</strong></div><div class="visual-metric">Disk<strong>94%</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>CPU load</span><i style="width:32%"></i><b>OK</b></div><div class="visual-bar"><span>Disk usage</span><i style="width:94%"></i><b>HIGH</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>CPU, memory, and disk percentage inputs</li><li>Threshold-based healthy or attention state</li><li>Structured issue list in JSON output</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>This is a CLI calculation, not a GUI or live diagnostic scanner. It does not inspect drivers, network connectivity, processes, hardware, or operating-system state.</p></section>
 </main>
 </body>
 </html>

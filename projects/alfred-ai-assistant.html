@@ -1,93 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alfred AI Assistant | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfred Deterministic Assistant | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Software &amp; Automation</p>
+    <p class="eyebrow">Software Prototype</p>
     <h1>Alfred AI Assistant</h1>
-    <p class="detail-focus">Engineered a fully local Python-based AI assistant featuring wake-word detection, speech-to-text, text-to-speech, and a Flask backend. Integrated modular automation functions to execute system tasks, retrieve information, and interact with desktop workflows, demonstrating strong capability in Python automation and AI-driven utility development. The assistant runs entirely on-device, keeping conversation state, memory, and desktop actions local rather than routed through third-party cloud services.</p>
+    <p class="detail-focus">Despite the retained project path and title, the current implementation is a deterministic keyword matcher with canned local responses, not an AI system.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import speech_recognition as sr
-import pyttsx3
-from flask import Flask, request, jsonify
-
-recognizer = sr.Recognizer()
-speaker = pyttsx3.init()
-app = Flask(__name__)
-
-WAKE_WORD = "alfred"
-
-def listen_for_wake_word(source):
-    audio = recognizer.listen(source, phrase_time_limit=3)
-    try:
-        phrase = recognizer.recognize_google(audio).lower()
-        return WAKE_WORD in phrase
-    except sr.UnknownValueError:
-        return False
-
-def speak(text):
-    speaker.say(text)
-    speaker.runAndWait()
-
-@app.route("/alfred", methods=["POST"])
-def handle_message():
-    message = request.json.get("message", "")
-    reply = build_reply(message)
-    speak(reply)
-    return jsonify({"reply": reply})
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Software Automation\alfred-ai-assistant</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Software Automation\alfred-ai-assistant\main.py" status</code></p>
+    <p><strong>Validation:</strong> Fully local, deterministic, and side-effect free.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>A live console exchange after the wake word is detected and the message is routed through the Flask backend:</p>
-    <pre><code>You: Alfred, what's my system status?
-Alfred: All systems nominal, sir. CPU at 12%, memory at 41%, and the network link is stable.
-
-You: Alfred, open notepad.
-Alfred: Confirm you'd like me to launch Notepad, sir?
-You: Confirmed.
-Alfred: Notepad is now open.</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>Alfred combines speech recognition, text-to-speech, a wake-word gate, and a Flask endpoint into a local assistant workflow that can route requests to desktop automation and information services.</p>
-    <ul><li>Speech recognition captures the spoken request.</li><li>Wake-word detection controls when listening is actionable.</li><li>Flask exposes the assistant request endpoint.</li><li>Text-to-speech returns the response through the local speaker.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include wake-word detection, speech-to-text, text-to-speech, Flask routing, local execution, and desktop workflow integration. Next additions should include intent routing, conversation history, device permissions, offline speech models, structured tool results, and failure recovery.</p>
-    <p><strong>Visuals:</strong> voice request sequence, assistant capability map, and local-service architecture diagram.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add intent classification, permissioned tool routing, conversation state, and voice profiles around the Flask assistant.</p><pre><code>handle_message({"message": "system status"})
-reply=All systems nominal
-speech=spoken response queued</code></pre><p><strong>Simulation:</strong> a wake-word request reached the assistant endpoint and returned a spoken status response; an unrecognized command was kept informational.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Software Automation\alfred-ai-assistant</code></p><p>Run: <code>python main.py status</code></p><p>The current build routes local text requests to assistant responses.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>ALFRED / LOCAL ASSISTANT</span><span class="visual-status">ONLINE</span></div><div class="visual-grid"><div class="visual-metric">Wake word<strong>READY</strong></div><div class="visual-metric">Backend<strong>FLASK</strong></div><div class="visual-metric">Voice<strong>ACTIVE</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>Speech input</span><i style="width:86%"></i><b>READY</b></div><div class="visual-bar"><span>Response output</span><i style="width:92%"></i><b>READY</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>Text input through one positional command-line argument</li><li>Keyword matching for greeting, status, and help intents</li><li>Fallback response for unmatched text</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>No language model, wake-word detection, audio capture, speech recognition, text-to-speech engine, Flask route, memory, external information retrieval, or system-task execution exists in this folder.</p></section>
 </main>
 </body>
 </html>

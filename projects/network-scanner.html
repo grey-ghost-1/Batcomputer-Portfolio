@@ -1,21 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Scanner | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Scanner Prototype | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
@@ -23,59 +12,28 @@
     <a class="home-link" href="../cybersecurity.html">← Back to Cyber Security</a>
   </nav>
   <header class="detail-header">
-    <p class="eyebrow">Cyber Security</p>
+    <p class="eyebrow">Cyber Security Prototype</p>
     <h1>Network Scanner</h1>
-    <p class="detail-focus">Created a Python-based multithreaded network scanner capable of probing IP ranges, detecting open ports, and identifying running services. Implemented socket-level communication, concurrency, and structured output formatting to support reconnaissance and network mapping tasks in authorized lab environments.</p>
+    <p class="detail-focus">A dependency-free command-line prototype that performs sequential TCP connection checks against one explicitly supplied host and port list.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>import socket
-from concurrent.futures import ThreadPoolExecutor
-
-COMMON_PORTS = [21, 22, 23, 25, 80, 443, 3389]
-
-def scan_port(host, port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.settimeout(0.5)
-        if sock.connect_ex((host, port)) == 0:
-            return port
-    return None
-
-def scan_host(host):
-    open_ports = []
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        results = executor.map(lambda p: scan_port(host, p), COMMON_PORTS)
-        open_ports = [p for p in results if p]
-    return host, open_ports
-</code></pre>
-  </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample output scanning a lab subnet for common open ports:</p>
-    <pre><code>$ python scanner.py 192.168.56.0/24
-192.168.56.10 -> open ports: [22, 80]
-192.168.56.15 -> open ports: [443]
-192.168.56.20 -> open ports: [22, 3389]
-Scan complete: 3 hosts responded out of 254 probed.</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Cybersecurity\network-scanner</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Cybersecurity\network-scanner\main.py" 127.0.0.1 --ports 22,80,443</code></p>
+    <p><strong>Validation:</strong> Safe against the loopback target; sends bounded TCP connection attempts and writes no files.</p>
   </section>
   <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The scanner accepts an authorized host, probes a defined set of common ports with bounded socket timeouts, runs checks concurrently, and returns structured open-port results.</p>
-    <ul><li>Python socket probes isolate each host and port check.</li><li>ThreadPoolExecutor coordinates concurrent checks.</li><li>Structured results support reporting and export.</li></ul>
+    <h2>Implemented</h2>
+    <ul>
+      <li>Comma-separated port parsing</li>
+      <li>Sequential <code>socket.connect_ex</code> checks with a 0.3-second timeout</li>
+      <li>JSON output containing the host and detected open ports</li>
+    </ul>
   </section>
   <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include timeout-bounded socket scanning, common-port discovery, concurrency, and host-level summaries. Next additions should include CIDR input, configurable ports, rate limiting, allowlists, service banners, JSON/CSV export, and timeout tests.</p>
-    <p><strong>Visuals:</strong> authorized-scope diagram, scan progress view, and port findings report.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
+    <h2>Limitations</h2>
+    <p>This is not multithreaded, does not expand CIDR ranges, and does not identify services or banners. Use only against systems you own or are authorized to test.</p>
   </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add configurable ports, CIDR expansion, rate limits, and JSON output around the concurrent socket checks.</p><pre><code>scan_host("192.168.56.10")
-open_ports=[22, 80]
-timeout host: open_ports=[]</code></pre><p><strong>Simulation:</strong> authorized lab hosts produced open-port findings and a timeout case without treating the timeout as a successful scan.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Cybersecurity\network-scanner</code></p><p>Run: <code>python main.py 127.0.0.1 --ports 22,80,443</code></p><p>The current build performs bounded TCP checks and prints structured open-port results.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>SCAN CONSOLE / AUTHORIZED LAB</span><span class="visual-status">ONLINE</span></div><div class="visual-grid"><div class="visual-metric">Hosts<strong>3</strong></div><div class="visual-metric">Open ports<strong>3</strong></div><div class="visual-metric">Timeouts<strong>1</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>22 / SSH</span><i style="width:78%"></i><b>OPEN</b></div><div class="visual-bar"><span>80 / HTTP</span><i style="width:62%"></i><b>OPEN</b></div><div class="visual-bar"><span>443 / TLS</span><i style="width:46%"></i><b>OPEN</b></div></div></section>
 </main>
 </body>
 </html>

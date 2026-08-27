@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "audited_at": "2026-08-26",
+  "repository": "grey-ghost-1/Batcomputer-Portfolio",
+  "project_count": 20,
+  "validation_summary": "All 20 main.py entry points executed successfully with loopback targets, local fixture data, or read-only paths. Network and database side effects are identified per project.",
+  "projects": [
+    {
+      "slug": "network-scanner",
+      "page": "projects/network-scanner.html",
+      "source_folder": "Cybersecurity/network-scanner",
+      "run_command": "python \"Cybersecurity\\network-scanner\\main.py\" 127.0.0.1 --ports 22,80,443",
+      "implemented_features": ["single-host TCP checks", "comma-separated port input", "0.3-second socket timeout", "JSON output"],
+      "limitations": ["sequential only", "no CIDR expansion", "no service identification"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against loopback; performs bounded TCP connection attempts and writes no files."
+    },
+    {
+      "slug": "owasp-juice-shop-testing",
+      "page": "projects/owasp-juice-shop-testing.html",
+      "source_folder": "Cybersecurity/owasp-juice-shop-testing",
+      "run_command": "python \"Cybersecurity\\owasp-juice-shop-testing\\main.py\"",
+      "implemented_features": ["local probe string input", "local response string input", "unescaped reflection check"],
+      "limitations": ["no Juice Shop connection", "no exploit execution", "single reflection concept only"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with defaults; deterministic and side-effect free."
+    },
+    {
+      "slug": "password-cracking-lab",
+      "page": "projects/password-cracking-lab.html",
+      "source_folder": "Cybersecurity/password-cracking-lab",
+      "run_command": "python \"Cybersecurity\\password-cracking-lab\\main.py\"",
+      "implemented_features": ["local training-value hashing", "three-word in-memory dictionary comparison", "match result"],
+      "limitations": ["no Hashcat", "no brute force", "no external password data"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with defaults; deterministic and side-effect free."
+    },
+    {
+      "slug": "siem-log-analyzer",
+      "page": "projects/siem-log-analyzer.html",
+      "source_folder": "Cybersecurity/siem-log-analyzer",
+      "run_command": "python \"Cybersecurity\\siem-log-analyzer\\main.py\" path\\to\\auth.log --threshold 3",
+      "implemented_features": ["failed-password regex", "user/IP pair counting", "threshold filtering"],
+      "limitations": ["requires a user-supplied log", "no timestamp parsing", "no event correlation or persistence"],
+      "validation_status": "passed-local-fixture",
+      "validation_notes": "Executed against a temporary three-line log; reads the file and writes nothing."
+    },
+    {
+      "slug": "vulnerability-assessment-toolkit",
+      "page": "projects/vulnerability-assessment-toolkit.html",
+      "source_folder": "Cybersecurity/vulnerability-assessment-toolkit",
+      "run_command": "python \"Cybersecurity\\vulnerability-assessment-toolkit\\main.py\" path\\to\\inventory.json path\\to\\advisories.json",
+      "implemented_features": ["local inventory JSON loading", "local advisory JSON loading", "exact product/version matching"],
+      "limitations": ["requires user-supplied JSON", "no NVD/CVE API", "no installed-software discovery or CVSS processing"],
+      "validation_status": "passed-local-fixture",
+      "validation_notes": "Executed against temporary inventory and advisory JSON files; offline and read-only."
+    },
+    {
+      "slug": "device-troubleshooting-toolkit",
+      "page": "projects/device-troubleshooting-toolkit.html",
+      "source_folder": "IT Support/device-troubleshooting-toolkit",
+      "run_command": "python \"IT Support\\device-troubleshooting-toolkit\\main.py\" --cpu 32 --memory 71 --disk 94",
+      "implemented_features": ["CPU/memory/disk numeric inputs", "fixed threshold classification", "JSON issue list"],
+      "limitations": ["CLI only", "supplied values only", "no driver, network, or live-system inspection"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with explicit values; pure calculation with no side effects."
+    },
+    {
+      "slug": "messaging-rcs-diagnostic-simulator",
+      "page": "projects/messaging-rcs-diagnostic-simulator.html",
+      "source_folder": "IT Support/messaging-rcs-diagnostic-simulator",
+      "run_command": "python \"IT Support\\messaging-rcs-diagnostic-simulator\\main.py\" hello --rcs-unavailable",
+      "implemented_features": ["message text input", "RCS availability flag", "deterministic RCS/SMS fallback result"],
+      "limitations": ["no telecom protocol", "no carrier or device interaction", "canned latency values"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed in fallback mode; deterministic and side-effect free."
+    },
+    {
+      "slug": "network-diagnostic-utility",
+      "page": "projects/network-diagnostic-utility.html",
+      "source_folder": "IT Support/network-diagnostic-utility",
+      "run_command": "python \"IT Support\\network-diagnostic-utility\\main.py\" localhost",
+      "implemented_features": ["IPv4 DNS resolution", "one bounded OS ping", "reachability result"],
+      "limitations": ["no traceroute", "no parsed latency", "no repeated monitoring or remediation"],
+      "validation_status": "passed-loopback",
+      "validation_notes": "Executed against localhost; spawns a system ping process and performs local DNS/ICMP activity."
+    },
+    {
+      "slug": "support-automation-scripts",
+      "page": "projects/support-automation-scripts.html",
+      "source_folder": "IT Support/support-automation-scripts",
+      "run_command": "python \"IT Support\\support-automation-scripts\\main.py\" .",
+      "implemented_features": ["non-recursive log discovery", "dry-run collection plan", "zero-change result"],
+      "limitations": ["no file collection", "no cleanup or configuration checks", "no persisted report"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against a temporary directory; read-only and writes nothing."
+    },
+    {
+      "slug": "system-health-checker",
+      "page": "projects/system-health-checker.html",
+      "source_folder": "IT Support/system-health-checker",
+      "run_command": "python \"IT Support\\system-health-checker\\main.py\" .",
+      "implemented_features": ["disk usage lookup", "10 GB free-space threshold", "health state output"],
+      "limitations": ["disk space only", "no update, driver, CPU, memory, network, or SMART checks"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against a temporary directory; read-only disk query."
+    },
+    {
+      "slug": "api-based-network-inventory-tool",
+      "page": "projects/api-based-network-inventory-tool.html",
+      "source_folder": "Network/api-based-network-inventory-tool",
+      "run_command": "python \"Network\\api-based-network-inventory-tool\\main.py\" path\\to\\inventory.json",
+      "implemented_features": ["local JSON loading", "SQLite table creation", "device upsert", "stored-row output"],
+      "limitations": ["requires user-supplied JSON", "no API request", "no discovery, topology, or remote database"],
+      "validation_status": "passed-local-fixture",
+      "validation_notes": "Executed with temporary JSON; created inventory.db in the isolated validation directory."
+    },
+    {
+      "slug": "automated-device-configuration-utility",
+      "page": "projects/automated-device-configuration-utility.html",
+      "source_folder": "Network/automated-device-configuration-utility",
+      "run_command": "python \"Network\\automated-device-configuration-utility\\main.py\" path\\to\\targets.json --command \"vlan 20\"",
+      "implemented_features": ["local target JSON loading", "repeated command input", "plan-only per-device output"],
+      "limitations": ["requires user-supplied JSON", "no SSH or device connection", "no push, validation, backup, rollback, or logging"],
+      "validation_status": "passed-local-fixture",
+      "validation_notes": "Executed with a temporary loopback target record; read-only and made no connection."
+    },
+    {
+      "slug": "network-monitoring-dashboard",
+      "page": "projects/network-monitoring-dashboard.html",
+      "source_folder": "Network/network-monitoring-dashboard",
+      "run_command": "python \"Network\\network-monitoring-dashboard\\main.py\"",
+      "implemented_features": ["DeviceStatus dataclass", "two built-in sample records", "healthy/alert JSON summary"],
+      "limitations": ["no SNMP", "no polling or dashboard", "no live data, history, or alert delivery"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with built-in sample data; deterministic and side-effect free."
+    },
+    {
+      "slug": "ping-latency-analyzer",
+      "page": "projects/ping-latency-analyzer.html",
+      "source_folder": "Network/ping-latency-analyzer",
+      "run_command": "python \"Network\\ping-latency-analyzer\\main.py\" 127.0.0.1",
+      "implemented_features": ["sequential host input", "bounded two-packet OS ping", "reachability and raw output"],
+      "limitations": ["not multithreaded or continuous", "no packet-loss or latency parsing", "no storage or charts"],
+      "validation_status": "passed-loopback",
+      "validation_notes": "Executed against loopback; spawns a system ping process and sends local ICMP traffic."
+    },
+    {
+      "slug": "subnet-calculator",
+      "page": "projects/subnet-calculator.html",
+      "source_folder": "Network/subnet-calculator",
+      "run_command": "python \"Network\\subnet-calculator\\main.py\" 192.168.1.0/24",
+      "implemented_features": ["IPv4/IPv6 CIDR parsing", "network/broadcast/netmask output", "address and usable-host boundaries"],
+      "limitations": ["calculation only", "no discovery, persistence, reservation, or configuration changes"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with IPv4 CIDR input; deterministic and side-effect free."
+    },
+    {
+      "slug": "alfred-ai-assistant",
+      "page": "projects/alfred-ai-assistant.html",
+      "source_folder": "Software Automation/alfred-ai-assistant",
+      "run_command": "python \"Software Automation\\alfred-ai-assistant\\main.py\" status",
+      "implemented_features": ["text argument", "keyword matching", "greeting/status/help/fallback canned responses"],
+      "limitations": ["not AI or model-backed", "no audio, Flask route, memory, retrieval, or task execution in this folder"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with status input; deterministic and side-effect free."
+    },
+    {
+      "slug": "file-automation-toolkit",
+      "page": "projects/file-automation-toolkit.html",
+      "source_folder": "Software Automation/file-automation-toolkit",
+      "run_command": "python \"Software Automation\\file-automation-toolkit\\main.py\" .",
+      "implemented_features": ["immediate file discovery", "extension grouping", "dry-run destination output"],
+      "limitations": ["no file mutation", "no rename, recursion, compression, sync, rollback, or scheduling"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against a temporary directory; read-only by construction."
+    },
+    {
+      "slug": "personal-dashboard-web-app",
+      "page": "projects/personal-dashboard-web-app.html",
+      "source_folder": "Software Automation/personal-dashboard-web-app",
+      "run_command": "python \"Software Automation\\personal-dashboard-web-app\\main.py\" .",
+      "implemented_features": ["disk-use percentage", "OS name", "JSON snapshot with null CPU/memory fields"],
+      "limitations": ["no web server or UI", "no REST, polling, weather, CPU, memory, network, persistence, or visualization"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against a temporary directory; read-only disk query."
+    },
+    {
+      "slug": "portfolio-website",
+      "page": "projects/portfolio-website.html",
+      "source_folder": "Software Automation/portfolio-website",
+      "run_command": "python \"Software Automation\\portfolio-website\\main.py\" .",
+      "implemented_features": ["non-recursive HTML discovery", "sorted page-name list", "page count"],
+      "limitations": ["paired script does not serve, render, deploy, or validate links", "actual Flask HUD is in the repository root"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed against a temporary directory; read-only glob."
+    },
+    {
+      "slug": "rest-api-backend",
+      "page": "projects/rest-api-backend.html",
+      "source_folder": "Software Automation/rest-api-backend",
+      "run_command": "python \"Software Automation\\rest-api-backend\\main.py\" widget --quantity 4",
+      "implemented_features": ["non-empty name validation", "non-negative quantity validation", "owner-scoped in-memory record"],
+      "limitations": ["not an HTTP API", "no FastAPI, JWT, authentication, database, persistence, service layer, or CRUD beyond create"],
+      "validation_status": "passed-local",
+      "validation_notes": "Executed with explicit item values; deterministic and side-effect free."
+    }
+  ]
+}

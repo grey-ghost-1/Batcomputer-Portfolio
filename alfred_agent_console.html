@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alfred Coding Agent</title>
+<title>Alfred Proposal Review</title>
 <link rel="stylesheet" href="style.css">
 <script>
   // Redirect root-relative links to the live server when this page was opened as a local file.
@@ -25,9 +25,9 @@
   </nav>
 
   <header class="detail-header">
-    <p class="eyebrow">Alfred Workspace Agent</p>
-    <h1>Alfred Coding Agent</h1>
-    <p class="detail-focus">Draft Python code changes inside the Alfred workspace, review the plan and preview, then explicitly approve or reject the proposal.</p>
+    <p class="eyebrow">Deterministic Review Utility</p>
+    <h1>Alfred Proposal Review</h1>
+    <p class="detail-focus">Load existing file previews and record approve or reject decisions. This utility does not use an AI model, generate code, execute commands, or write changes.</p>
   </header>
 
   <section class="detail-card">
@@ -36,11 +36,11 @@
   </section>
 
   <section class="detail-card">
-    <h2>Create proposal</h2>
+    <h2>Create review-only preview</h2>
     <form id="proposalForm" class="agent-form">
       <label class="agent-field">
         <span>Task</span>
-        <textarea id="taskInput" rows="5" placeholder="Describe the coding task Alfred should perform." required></textarea>
+        <textarea id="taskInput" rows="5" placeholder="Describe the change you want to review." required></textarea>
       </label>
       <label class="agent-field">
         <span>Target file</span>
@@ -51,46 +51,46 @@
         <input id="contextFilesInput" type="text" placeholder="project/module.py, project/tests/test_module.py">
       </label>
       <div class="panel-actions">
-        <button class="hud-btn" type="submit">Generate proposal</button>
+        <button class="hud-btn" type="submit">Load preview</button>
         <button class="hud-btn" type="button" id="refreshAgentState">Refresh status</button>
       </div>
     </form>
   </section>
 
   <section class="detail-card">
-    <h2>Pending proposal</h2>
-    <div id="proposalState" class="agent-empty">No pending proposal.</div>
+    <h2>Pending review</h2>
+    <div id="proposalState" class="agent-empty">No pending review.</div>
     <div class="panel-actions">
-      <button class="hud-btn" type="button" id="approveProposal">Approve code change</button>
-      <button class="hud-btn" type="button" id="rejectProposal">Reject code change</button>
+      <button class="hud-btn" type="button" id="approveProposal">Record approval</button>
+      <button class="hud-btn" type="button" id="rejectProposal">Record rejection</button>
     </div>
   </section>
 
   <section class="detail-card">
-    <h2>Recent agent events</h2>
+    <h2>Recent review events</h2>
     <div id="agentEvents" class="agent-empty">No recent agent events.</div>
   </section>
 
   <section class="detail-card">
-    <h2>Website redesign proposals</h2>
-    <p class="detail-focus">Use this tab for homepage, HUD, CSS, and website redesign work. Alfred will generate a proposal, wait for approval, and return final file content only after approval.</p>
+    <h2>Homepage review preview</h2>
+    <p class="detail-focus">This control copies the current homepage into a preview for review. Approval returns that same preview; it does not generate a redesign or modify the file.</p>
     <form id="hudProposalForm" class="agent-form">
       <label class="agent-field">
         <span>Website redesign request</span>
-        <textarea id="hudTaskInput" rows="5" placeholder="Alfred, redesign the homepage hero to feel more tactical and cinematic." required></textarea>
+        <textarea id="hudTaskInput" rows="5" placeholder="Describe a homepage change to review." required></textarea>
       </label>
       <div class="panel-actions">
-        <button class="hud-btn" type="submit">Generate website proposal</button>
+        <button class="hud-btn" type="submit">Load homepage preview</button>
         <button class="hud-btn" type="button" id="refreshHudState">Refresh website state</button>
       </div>
     </form>
-    <div id="hudProposalState" class="agent-empty">No pending website redesign proposal.</div>
+    <div id="hudProposalState" class="agent-empty">No pending homepage review.</div>
     <div class="panel-actions">
-      <button class="hud-btn" type="button" id="approveHudProposal">Approve website proposal</button>
-      <button class="hud-btn" type="button" id="rejectHudProposal">Reject website proposal</button>
+      <button class="hud-btn" type="button" id="approveHudProposal">Record approval</button>
+      <button class="hud-btn" type="button" id="rejectHudProposal">Record rejection</button>
     </div>
     <div class="agent-final-output hidden" id="hudFinalOutputWrap">
-      <h3>Approved final file content</h3>
+      <h3>Approved review copy (not written)</h3>
       <pre id="hudFinalOutput"></pre>
     </div>
   </section>

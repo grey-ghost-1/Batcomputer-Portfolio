@@ -88,7 +88,7 @@ function appendChatEntry(role, content, preformatted = false) {
     return entry;
 }
 
-function appendPendingAssistantEntry(message = "Alfred is responding…") {
+function appendPendingAssistantEntry(message = "Checking deterministic responses…") {
     return appendChatEntry("assistant", message);
 }
 
@@ -143,16 +143,16 @@ function speakAssistantResponse(message) {
 function buildLocalAlfredReply(message) {
     const normalized = message.toLowerCase();
     if (normalized.includes("status") || normalized.includes("health")) {
-        return "Standalone mode is online. The HUD is loaded, but the Flask service is not connected.";
+        return "Standalone mode is loaded, but the Flask service is not connected. Alfred remains a deterministic helper.";
     }
     if (normalized.includes("help") || normalized.includes("what can")) {
-        return "I can answer basic status questions in standalone mode. Start the Flask server for live system actions, weather, and coding-agent features.";
+        return "I can return a small set of predefined portfolio and status responses. I do not use a model or perform system actions.";
     }
-    return "I am ready to help. Ask me about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
+    return "This deterministic helper can answer predefined questions about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
 }
 
 async function sendAlfredMessage(message) {
-    setRedesignStatus("Alfred is responding…");
+    setRedesignStatus("Checking deterministic responses…");
     const pendingEntry = appendPendingAssistantEntry();
     try {
         const response = await fetch(`${alfredApiBase}/alfred`, {
@@ -165,8 +165,8 @@ async function sendAlfredMessage(message) {
             throw new Error(payload.error || "Unable to reach Alfred.");
         }
         updateChatEntry(pendingEntry, payload.reply || "Alfred is standing by.");
-        setRedesignStatus("Alfred is live and ready.");
-        speakAssistantResponse(payload.reply || "Alfred is standing by.");
+        setRedesignStatus("Deterministic helper connected. No model or actions are available.");
+        speakAssistantResponse(payload.reply || "The deterministic helper is standing by.");
     } catch (error) {
         const reply = buildLocalAlfredReply(message);
         updateChatEntry(pendingEntry, reply);
@@ -190,9 +190,9 @@ async function submitChatMessage() {
 
     const normalized = message.toLowerCase();
     if (normalized === "approve" || normalized === "reject" || normalized === "refresh" || normalized === "refresh state") {
-        appendChatEntry("assistant", "Website redesign controls now live on the Coding Agent tab, sir. Use that page for proposal approval, rejection, and redesign state.");
-        setRedesignStatus("Use the Coding Agent tab for website redesign proposals.");
-        speakAssistantResponse("Use the Coding Agent tab for website redesign proposals.");
+        appendChatEntry("assistant", "Review-only preview controls are on the Proposal Review tab. Approval records a decision but does not write files.");
+        setRedesignStatus("Use Proposal Review for non-executing previews.");
+        speakAssistantResponse("Use Proposal Review for non-executing previews.");
         return;
     }
 
@@ -217,14 +217,14 @@ function setupVoiceInput() {
     recognition.maxAlternatives = 1;
 
     startVoiceInputButton.addEventListener("click", () => {
-        setRedesignStatus("Listening for HUD redesign request…");
+        setRedesignStatus("Listening for a portfolio question…");
         recognition.start();
     });
 
     recognition.addEventListener("result", (event) => {
         const transcript = event.results[0][0].transcript.trim();
         alfredChatInputElement.value = transcript;
-        setRedesignStatus("Voice input captured. Sending it to Alfred.");
+        setRedesignStatus("Voice input captured. Checking deterministic responses.");
         submitChatMessage().catch((error) => {
             setRedesignStatus(error.message, true);
         });
@@ -257,7 +257,7 @@ if (alfredChatInputElement) {
 setupVoiceInput();
 
 if (alfredChatLogElement) {
-    alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is online. Ask a question, request a HUD redesign, or use voice input for live conversation.</div>';
+    alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is a deterministic local helper. Ask about this portfolio or use browser voice input; no AI model or action execution is connected.</div>';
 }
 
 showPanel(window.location.hash.slice(1) || "about", { updateHash: false });

@@ -55,7 +55,7 @@ function renderPendingProposal(pendingChange) {
     rejectProposalButton.disabled = !hasPending;
 
     if (!hasPending) {
-        proposalStateElement.innerHTML = '<div class="agent-empty">No pending proposal.</div>';
+        proposalStateElement.innerHTML = '<div class="agent-empty">No pending review.</div>';
         return;
     }
 
@@ -66,7 +66,8 @@ function renderPendingProposal(pendingChange) {
         <div class="agent-proposal">
             <p><strong>Task:</strong> ${escapeHtml(pendingChange.task || "")}</p>
             <p><strong>Target file:</strong> ${escapeHtml(pendingChange.target_file || "")}</p>
-            <p><strong>Model:</strong> ${escapeHtml(pendingChange.model || "unknown")}</p>
+            <p><strong>Mode:</strong> ${escapeHtml(pendingChange.mode || "deterministic-review-only")}</p>
+            <p><strong>Execution:</strong> Review only; no commands or file writes.</p>
             <p><strong>Workspace:</strong> ${escapeHtml(pendingChange.workspace_root || "")}</p>
             <div class="agent-split">
                 <div>
@@ -102,7 +103,7 @@ function renderHudProposal(pendingProposal) {
     rejectHudProposalButton.disabled = !hasPending;
 
     if (!hasPending) {
-        hudProposalStateElement.innerHTML = '<div class="agent-empty">No pending website redesign proposal.</div>';
+        hudProposalStateElement.innerHTML = '<div class="agent-empty">No pending homepage review.</div>';
         return;
     }
 
@@ -135,11 +136,10 @@ function showHudFinalOutput(content) {
 }
 
 function renderState(state) {
-    const available = Boolean(state.available);
-    const message = available
-        ? `Model ${state.model} is available at ${state.host}. Workspace: ${state.workspace_root}.`
-        : `Coding agent unavailable. ${state.error || "The local model service is not ready."}`;
-    setStatusMessage(message, !available);
+    const message = state.status === "ready"
+        ? `Deterministic review utility ready. No AI model, command execution, or file writes are available. Workspace: ${state.workspace_root}.`
+        : "Deterministic review utility is unavailable.";
+    setStatusMessage(message, state.status !== "ready");
     renderPendingProposal(state.pending_code_change);
     renderEvents(state.recent_events);
 }
@@ -172,7 +172,7 @@ function parseContextFiles(value) {
 
 async function createProposal(event) {
     event.preventDefault();
-    setStatusMessage("Generating proposal…");
+    setStatusMessage("Loading review-only preview…");
 
     const response = await fetch("/api/coding-agent/proposals", {
         method: "POST",
@@ -185,9 +185,9 @@ async function createProposal(event) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || "Unable to generate proposal.");
+        throw new Error(payload.error || "Unable to load the review preview.");
     }
-    setStatusMessage(payload.reply || "Proposal ready.");
+    setStatusMessage(payload.reply || "Review preview ready.");
     renderState(payload.coding_agent || payload);
 }
 
@@ -207,7 +207,7 @@ async function decideProposal(url, successMessage) {
 async function createHudProposal(event) {
     event.preventDefault();
     clearHudFinalOutput();
-    setStatusMessage("Generating website redesign proposal…");
+    setStatusMessage("Loading current homepage for review…");
     const response = await fetch("/api/hud-redesign/proposals", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -217,9 +217,9 @@ async function createHudProposal(event) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || "Unable to generate website redesign proposal.");
+        throw new Error(payload.error || "Unable to load the homepage review preview.");
     }
-    setStatusMessage(payload.reply || "Website redesign proposal ready.");
+    setStatusMessage(payload.reply || "Homepage review preview ready.");
     renderHudProposal(payload.pending_hud_redesign || payload.proposal);
 }
 
@@ -230,7 +230,7 @@ async function decideHudProposal(url, successMessage) {
     });
     const payload = await response.json();
     if (!response.ok) {
-        throw new Error(payload.error || payload.reply || "Unable to update website redesign proposal.");
+        throw new Error(payload.error || payload.reply || "Unable to update the homepage review.");
     }
     setStatusMessage(payload.reply || successMessage);
     return payload;
@@ -249,13 +249,13 @@ refreshAgentStateButton.addEventListener("click", () => {
 });
 
 approveProposalButton.addEventListener("click", () => {
-    decideProposal("/api/coding-agent/proposals/approve", "Proposal approved.").catch((error) => {
+    decideProposal("/api/coding-agent/proposals/approve", "Approval recorded; no file was written.").catch((error) => {
         setStatusMessage(error.message, true);
     });
 });
 
 rejectProposalButton.addEventListener("click", () => {
-    decideProposal("/api/coding-agent/proposals/reject", "Proposal rejected.").catch((error) => {
+    decideProposal("/api/coding-agent/proposals/reject", "Rejection recorded; no file was written.").catch((error) => {
         setStatusMessage(error.message, true);
     });
 });
@@ -273,7 +273,7 @@ refreshHudStateButton.addEventListener("click", () => {
 });
 
 approveHudProposalButton.addEventListener("click", () => {
-    decideHudProposal("/api/hud-redesign/proposals/approve", "Website redesign proposal approved.")
+    decideHudProposal("/api/hud-redesign/proposals/approve", "Homepage review approved; no file was written.")
         .then((payload) => {
             renderHudProposal(null);
             showHudFinalOutput(payload.final_content || "");
@@ -284,7 +284,7 @@ approveHudProposalButton.addEventListener("click", () => {
 });
 
 rejectHudProposalButton.addEventListener("click", () => {
-    decideHudProposal("/api/hud-redesign/proposals/reject", "Website redesign proposal rejected.")
+    decideHudProposal("/api/hud-redesign/proposals/reject", "Homepage review rejected; no file was written.")
         .then(() => {
             clearHudFinalOutput();
             renderHudProposal(null);

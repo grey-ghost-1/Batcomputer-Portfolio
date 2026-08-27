@@ -1,79 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OWASP Juice Shop Testing | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Response Reflection Check | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../cybersecurity.html">← Back to Cyber Security</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../cybersecurity.html">← Back to Cyber Security</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Cyber Security</p>
+    <p class="eyebrow">Cyber Security Training Prototype</p>
     <h1>OWASP Juice Shop Testing</h1>
-    <p class="detail-focus">Performed hands-on web application security testing against OWASP Juice Shop, a deliberately vulnerable training application, aligned with the OWASP Top 10. Practiced identifying and documenting injection flaws, broken authentication, insecure direct object references, and cross-site scripting to build real-world offensive and defensive security awareness in a safe, legal, self-hosted environment.</p>
+    <p class="detail-focus">A local string-reflection check for illustrating one input-handling concept without contacting Juice Shop or another web application.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code># Example: scripted detection check for a reflected XSS field
-# against a locally-hosted Juice Shop instance (127.0.0.1)
-import requests
-
-TARGET = "http://127.0.0.1:3000/rest/products/search"
-PROBE = "&lt;script&gt;test&lt;/script&gt;"
-
-def check_reflected_input(target, probe):
-    response = requests.get(target, params={"q": probe}, timeout=5)
-    reflected = probe in response.text
-    return {
-        "endpoint": target,
-        "probe": probe,
-        "reflected_unescaped": reflected,
-        "status_code": response.status_code,
-    }
-</code></pre>
-  </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample finding logged during a self-hosted Juice Shop assessment:</p>
-    <pre><code>$ python xss_probe.py
-Endpoint: /rest/products/search?q=&lt;script&gt;test&lt;/script&gt;
-Reflected unescaped: True
-Finding: Search field does not sanitize output -> reflected XSS risk
-Recommendation: HTML-encode search terms before rendering results</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Cybersecurity\owasp-juice-shop-testing</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Cybersecurity\owasp-juice-shop-testing\main.py"</code></p>
+    <p><strong>Validation:</strong> Fully local and deterministic; performs no file, network, browser, or target interaction.</p>
   </section>
   <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The simulator sends a controlled query to a locally hosted Juice Shop endpoint, checks whether the probe is reflected in the response, and records the endpoint, probe, reflection result, and HTTP status.</p>
-    <ul><li>Request construction isolates the target and test input.</li><li>Response inspection checks for unescaped reflection.</li><li>Structured findings connect evidence to remediation.</li></ul>
+    <h2>Implemented</h2>
+    <ul>
+      <li>Accepts probe and response strings through command-line options</li>
+      <li>Checks whether the probe appears unescaped in the response</li>
+      <li>Prints a small structured training result</li>
+    </ul>
   </section>
   <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include a parameterized request, local Juice Shop targeting, response reflection checks, and evidence reporting. Next additions should include an OWASP test catalog, encoding checks, authenticated test flows, evidence capture, and remediation verification.</p>
-    <p><strong>Visuals:</strong> request-response sequence, finding evidence panel, and remediation verification matrix.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
+    <h2>Limitations</h2>
+    <p>This does not test OWASP Juice Shop, run exploits, cover the OWASP Top 10, or assess authentication, access control, injection, or browser behavior.</p>
   </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add a test-case catalog, response encoding checks, evidence capture, and remediation verification.</p><pre><code>check_reflected_input(TARGET, "&lt;script&gt;test&lt;/script&gt;")
-reflected_unescaped=True
-status_code=200</code></pre><p><strong>Simulation:</strong> the local training endpoint reflected the probe and produced an evidence-backed XSS finding.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Cybersecurity\owasp-juice-shop-testing</code></p><p>Run: <code>python main.py</code></p><p>The current build checks controlled response reflection for a local training target.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>JUICE SHOP / REFLECTION TEST</span><span class="visual-status">LOCAL TARGET</span></div><div class="visual-grid"><div class="visual-metric">Requests<strong>1</strong></div><div class="visual-metric">Reflected<strong>TRUE</strong></div><div class="visual-metric">HTTP<strong>200</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>Input probe</span><i style="width:88%"></i><b>FOUND</b></div><div class="visual-bar"><span>Output encoding</span><i style="width:18%"></i><b>TODO</b></div></div></section>
 </main>
 </body>
 </html>

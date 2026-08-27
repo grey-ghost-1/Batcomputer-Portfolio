@@ -1,86 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal Dashboard Web App | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Metrics Snapshot | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Software &amp; Automation</p>
+    <p class="eyebrow">Software Data Prototype</p>
     <h1>Personal Dashboard Web App</h1>
-    <p class="detail-focus">Built a Flask/FastAPI-powered dashboard that aggregates system metrics, weather data, and network information through REST APIs. Implemented dynamic UI components, real-time data polling, and modular API endpoints to create an interactive monitoring interface suitable for personal or operational use.</p>
+    <p class="detail-focus">A one-shot command-line snapshot that prints the operating-system name and disk-use percentage as JSON.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>from fastapi import FastAPI
-import psutil
-import requests
-
-app = FastAPI()
-
-@app.get("/api/metrics")
-def get_metrics():
-    return {
-        "cpu_percent": psutil.cpu_percent(interval=0.5),
-        "memory_percent": psutil.virtual_memory().percent,
-        "disk_percent": psutil.disk_usage("/").percent,
-    }
-
-@app.get("/api/weather")
-def get_weather(city: str = "Detroit"):
-    response = requests.get(
-        "https://api.open-meteo.com/v1/forecast",
-        params={"latitude": 42.33, "longitude": -83.05, "current_weather": True},
-        timeout=5,
-    )
-    return response.json()["current_weather"]
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Software Automation\personal-dashboard-web-app</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Software Automation\personal-dashboard-web-app\main.py" .</code></p>
+    <p><strong>Validation:</strong> Reads local disk-usage values and writes no files or settings.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample response from the aggregated metrics endpoint, polled every few seconds by the dashboard UI:</p>
-    <pre><code>GET /api/metrics
-{
-  "cpu_percent": 14.2,
-  "memory_percent": 46.8,
-  "disk_percent": 61.3
-}</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The dashboard aggregates system metrics and weather data through API routes, transforms responses into dashboard-ready values, and presents them through dynamic UI components with periodic polling.</p>
-    <ul><li>REST endpoints isolate metrics and weather retrieval.</li><li>psutil supplies local CPU, memory, and disk values.</li><li>Polling keeps the operational view current.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include metrics aggregation, weather retrieval, REST APIs, dynamic components, and real-time polling. Next additions should include authentication, caching, request timeouts, historical charts, configurable locations, and degraded-service states.</p>
-    <p><strong>Visuals:</strong> API data flow, live metric tiles, and historical resource trend charts.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card"><h2>Build and simulation</h2><p><strong>Enhancement:</strong> add authentication, caching, historical charts, configurable locations, and degraded-service states around the metrics and weather APIs.</p><pre><code>GET /api/metrics
-{"cpu_percent": 14.2, "memory_percent": 46.8, "disk_percent": 61.3}
-weather=clear, temperature=72F</code></pre><p><strong>Simulation:</strong> a polling cycle returned system metrics and weather data; an unavailable upstream service displayed a controlled degraded state.</p></section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Software Automation\personal-dashboard-web-app</code></p><p>Run: <code>python main.py .</code></p><p>The current build outputs host and disk metrics as JSON.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>PERSONAL DASHBOARD / LIVE METRICS</span><span class="visual-status">POLLING</span></div><div class="visual-grid"><div class="visual-metric">CPU<strong>14.2%</strong></div><div class="visual-metric">Memory<strong>46.8%</strong></div><div class="visual-metric">Disk<strong>61.3%</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>Resource health</span><i style="width:61%"></i><b>NOMINAL</b></div><div class="visual-bar"><span>Weather API</span><i style="width:88%"></i><b>LIVE</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li>Path input with current-directory default</li><li>Disk-use percentage calculation</li><li>JSON output with host type; CPU and memory fields are explicitly <code>null</code></li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>No Flask or FastAPI server, web UI, REST endpoint, polling, weather data, network metrics, CPU measurement, memory measurement, persistence, or visualization is implemented.</p></section>
 </main>
 </body>
 </html>

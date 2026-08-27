@@ -26,47 +26,34 @@
   <header class="detail-header">
     <p class="eyebrow">Cyber Security</p>
     <h1>Cyber Security</h1>
-    <p class="detail-focus">This category reflects security-aware engineering already built into Alfred: approval-gated actions, clearer state boundaries, safer command claims, and defensive workflow patterns that make the assistant more trustworthy.</p>
+    <p class="detail-focus">Five bounded training prototypes demonstrate local TCP checks, failed-login parsing, offline advisory matching, training-hash comparison, and controlled response-reflection checks.</p>
   </header>
 
   <section class="detail-card">
-    <h2>Core capabilities</h2>
+    <h2>Safety and scope</h2>
     <ul>
-      <li>Approval and confirmation gates around sensitive actions</li>
-      <li>State separation for profile, memory, and hub-state data</li>
-      <li>Safer capability routing that avoids overclaiming behavior</li>
-      <li>Defensive automation patterns and audit-aware workflows</li>
-      <li>Validation-first changes backed by regression checks</li>
+      <li>Network checks are limited to user-supplied hosts and ports</li>
+      <li>Advisory matching uses local JSON files and makes no CVE API requests</li>
+      <li>Password examples use locally generated training data only</li>
+      <li>The OWASP example checks reflection in a controlled response string; it does not attack Juice Shop</li>
+      <li>None of these scripts is a full scanner, SIEM, vulnerability manager, or penetration-testing suite</li>
     </ul>
   </section>
 
   <section class="detail-card">
-    <h2>Implemented work</h2>
+    <h2>Projects</h2>
     <ul>
-      <li>Boundary enforcement across Alfred profile, memory, and hub state</li>
-      <li>Command routing tightened to only describe implemented capabilities</li>
-      <li>Explicit approval and rejection workflows for code and redesign proposals</li>
-      <li>Guarded assistant behavior designed to reduce risky or misleading actions</li>
-      <li>Test-backed updates that verify the safer behavior remains intact</li>
+      <li><a href="projects/network-scanner.html"><strong>Network Scanner Prototype</strong></a> — Performs bounded TCP connection checks for one host and an explicit port list; it does not scan IP ranges or identify services.</li>
+      <li><a href="projects/siem-log-analyzer.html"><strong>Failed-Login Log Analyzer</strong></a> — Parses matching log lines and reports user/IP pairs at a threshold; it is not a SIEM ingestion or correlation platform.</li>
+      <li><a href="projects/vulnerability-assessment-toolkit.html"><strong>Offline Advisory Matcher</strong></a> — Cross-references two local JSON files by product and version; it does not query NVD or calculate live risk.</li>
+      <li><a href="projects/password-cracking-lab.html"><strong>Training Hash Comparison</strong></a> — Compares hashes created from a small local word list; it does not invoke Hashcat or perform brute-force attacks.</li>
+      <li><a href="projects/owasp-juice-shop-testing.html"><strong>Reflection Check Prototype</strong></a> — Detects whether a marker is reflected in a supplied training response; it does not execute OWASP exploits.</li>
     </ul>
   </section>
 
   <section class="detail-card">
-    <h2>Featured Projects</h2>
-    <ul>
-      <li><a href="projects/network-scanner.html"><strong>Network Scanner</strong></a> — Created a Python-based multithreaded network scanner capable of probing IP ranges, detecting open ports, and identifying running services. Implemented socket-level communication, concurrency, and structured output formatting to support reconnaissance and network mapping tasks.</li>
-      <li><a href="projects/siem-log-analyzer.html"><strong>SIEM Log Analyzer</strong></a> — Built a simulated SIEM ingestion pipeline that parses logs, identifies anomalies, and flags suspicious patterns. Developed regex-based detection, timestamp correlation, and event categorization to mirror real-world Blue Team log analysis workflows.</li>
-      <li><a href="projects/vulnerability-assessment-toolkit.html"><strong>Vulnerability Assessment Toolkit</strong></a> — Developed a Python utility that queries CVE databases and cross-references installed software versions to identify potential vulnerabilities. Automated data retrieval, parsing, and reporting to support vulnerability management and risk assessment.</li>
-      <li><a href="projects/password-cracking-lab.html"><strong>Password Cracking Lab</strong></a> — Conducted controlled password cracking exercises using Hashcat and Python to understand hashing algorithms, brute-force strategies, and defensive password policies. Documented results to strengthen knowledge of authentication weaknesses and mitigation techniques.</li>
-      <li><a href="projects/owasp-juice-shop-testing.html"><strong>OWASP Juice Shop Testing</strong></a> — Performed hands-on web application security testing aligned with OWASP Top 10 vulnerabilities. Executed practical exploits including injection, broken authentication, insecure direct object references, and cross-site scripting to build real-world offensive and defensive security awareness.</li>
-    </ul>
-  </section>
-
-  <section class="detail-card">
-    <h2>Open project in VS Code</h2>
-    <p>Use the workspace file on your Desktop to open the full Batcomputer project in VS Code.</p>
-    <p><strong>C:\Users\justi\OneDrive\Desktop\Batcomputer\Batcomputer.code-workspace</strong></p>
-    <p>Open that file in VS Code and then select the matching project folder for this category.</p>
+    <h2>Evidence</h2>
+    <p>See <a href="project-evidence.json">the project evidence inventory</a> for source folders, exact commands, limitations, and validation status.</p>
   </section>
 </main>
 </body>

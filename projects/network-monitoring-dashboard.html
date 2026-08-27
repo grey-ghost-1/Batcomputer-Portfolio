@@ -1,83 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Monitoring Dashboard | Justin Wimmer HUD</title>
-<link rel="stylesheet" href="../style.css">
-<script>
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Telemetry Summary | Justin Wimmer HUD</title>
+  <link rel="stylesheet" href="../style.css">
 </head>
 <body class="site-shell">
 <main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation">
-    <a class="home-link" href="../network_software.html">← Back to Network</a>
-  </nav>
+  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../network_software.html">← Back to Network Software</a></nav>
   <header class="detail-header">
-    <p class="eyebrow">Network</p>
+    <p class="eyebrow">Network Simulation</p>
     <h1>Network Monitoring Dashboard</h1>
-    <p class="detail-focus">Built an SNMP-powered monitoring dashboard that tracks device uptime, latency, bandwidth usage, and alert conditions. Integrated real-time polling and visualizations to support network operations and infrastructure oversight.</p>
+    <p class="detail-focus">A static telemetry-summary prototype that classifies two built-in device records and prints aggregate JSON.</p>
   </header>
-
   <section class="detail-card">
-    <h2>Code Example</h2>
-    <pre><code>from pysnmp.hlapi import (
-    getCmd, SnmpEngine, CommunityData, UdpTransportTarget,
-    ContextData, ObjectType, ObjectIdentity
-)
-
-def get_sys_uptime(host, community="public"):
-    iterator = getCmd(
-        SnmpEngine(),
-        CommunityData(community),
-        UdpTransportTarget((host, 161), timeout=2, retries=1),
-        ContextData(),
-        ObjectType(ObjectIdentity("1.3.6.1.2.1.1.3.0")),
-    )
-    error_indication, error_status, _, var_binds = next(iterator)
-    if error_indication or error_status:
-        return None
-    return var_binds[0][1]
-</code></pre>
+    <h2>Evidence snapshot</h2>
+    <p><strong>Source:</strong> <code>Network\network-monitoring-dashboard</code></p>
+    <p><strong>Run from repository root:</strong> <code>python "Network\network-monitoring-dashboard\main.py"</code></p>
+    <p><strong>Validation:</strong> Fully local and deterministic; uses only built-in sample data and writes nothing.</p>
   </section>
-
-  <section class="detail-card">
-    <h2>Example</h2>
-    <p>Sample dashboard poll across three monitored devices:</p>
-    <pre><code>router-01: uptime=41d 6h, latency=3ms, bandwidth=210 Mbps, status=OK
-switch-02: uptime=12d 2h, latency=1ms, bandwidth=880 Mbps, status=OK
-ap-03: uptime=0d 0h, latency=timeout, bandwidth=0 Mbps, status=ALERT (unreachable)</code></pre>
-  </section>
-  <section class="detail-card">
-    <h2>Project architecture</h2>
-    <p>The dashboard polls SNMP-enabled devices, collects uptime, latency, bandwidth, and alert data, then presents the results as an operational monitoring view.</p>
-    <ul><li>SNMP polling provides device telemetry.</li><li>Polling results are normalized into monitoring records.</li><li>Alert conditions surface degraded or unreachable devices.</li></ul>
-  </section>
-  <section class="detail-card">
-    <h2>Features and expansion</h2>
-    <p>Current features include uptime, latency, bandwidth, alert tracking, and real-time monitoring. Next additions should include device profiles, polling intervals, historical storage, alert acknowledgements, dashboard filters, and test fixtures for unreachable devices.</p>
-    <p><strong>Visuals:</strong> device topology, telemetry dashboard, and alert timeline.</p>
-    <p><strong>GitHub:</strong> repository link placeholder</p>
-  </section>
-  <section class="detail-card">
-    <h2>Build and simulation</h2>
-    <p><strong>Enhancement:</strong> add device profiles, historical storage, alert acknowledgement, and filtered views around SNMP polling.</p>
-    <pre><code>poll("router-01")
-uptime=41d, latency_ms=3, status=OK
-unreachable device: status=ALERT</code></pre>
-    <p><strong>Simulation:</strong> two devices reported healthy telemetry and one unreachable device raised an alert for operator review.</p>
-  </section>
-  <section class="detail-card"><h2>Working implementation</h2><p>Source folder: <code>Desktop\Batcomputer\Network\network-monitoring-dashboard</code></p><p>Run: <code>python main.py</code></p><p>The current build produces a JSON telemetry summary with healthy and alert devices.</p></section>
-  <section class="detail-card project-visual"><div class="visual-toolbar"><span>NETWORK TELEMETRY / SNMP VIEW</span><span class="visual-status">POLLING</span></div><div class="visual-grid"><div class="visual-metric">Devices<strong>2</strong></div><div class="visual-metric">Healthy<strong>1</strong></div><div class="visual-metric">Alerts<strong>1</strong></div></div><div class="visual-bars"><div class="visual-bar"><span>router-01</span><i style="width:91%"></i><b>OK</b></div><div class="visual-bar"><span>ap-03</span><i style="width:14%"></i><b>ALERT</b></div></div></section>
+  <section class="detail-card"><h2>Implemented</h2><ul><li><code>DeviceStatus</code> dataclass</li><li>Healthy and alert classification for two sample devices</li><li>JSON summary counts</li></ul></section>
+  <section class="detail-card"><h2>Limitations</h2><p>There is no SNMP dependency, live polling, dashboard server, visualization, historical storage, alert delivery, device connection, or real-time data.</p></section>
 </main>
 </body>
 </html>
