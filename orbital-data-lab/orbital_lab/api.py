@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.responses import FileResponse, PlainTextResponse, RedirectResponse
 
 from .physics import simulate
@@ -68,12 +68,16 @@ def get_scenario(scenario_id: str):
 @app.get("/scenarios/{scenario_id}", include_in_schema=False)
 def share_scenario(scenario_id: str):
     get_scenario(scenario_id)
-    return RedirectResponse(f"/api/v1/scenarios/{scenario_id}/export.json")
+    return RedirectResponse(f"/api/v1/scenarios/{scenario_id}")
 
 
 @app.get("/api/v1/scenarios/{scenario_id}/export.json", response_model=SavedScenario)
-def export_json(scenario_id: str):
-    return get_scenario(scenario_id)
+def export_json(scenario_id: str, response: Response):
+    saved = get_scenario(scenario_id)
+    response.headers["Content-Disposition"] = (
+        f'attachment; filename="{saved.scenario_id}.json"'
+    )
+    return saved
 
 
 @app.get("/api/v1/scenarios/{scenario_id}/export.csv", response_class=PlainTextResponse)

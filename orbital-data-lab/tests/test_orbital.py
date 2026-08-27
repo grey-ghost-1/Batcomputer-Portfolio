@@ -89,8 +89,8 @@ def test_ui_exposes_accessible_controls_responsive_canvas_and_local_assets():
         'id="rk4DriftMetric"',
         'id="verletDriftMetric"',
         'id="positionDeltaMetric"',
-        'id="jsonLink"',
-        'id="csvLink"',
+        'id="jsonLink" href="#" download',
+        'id="csvLink" href="#" download',
         'id="shareLink"',
         "Not flight grade",
     ):
@@ -119,8 +119,22 @@ def test_ui_exposes_accessible_controls_responsive_canvas_and_local_assets():
         "max_relative_energy_drift",
         "final_position_delta_m",
         "saved.share_path",
+        "sampleScale(runs);",
+        "for (const run of [runs.rk4, runs.verlet])",
+        "for (const sample of run.samples)",
+        "Number.isFinite(magnitude)",
+        "const cssWidth = rect.width",
+        "const cssHeight = rect.height",
     ):
         assert expected in script.text
+    assert "...runs.rk4.samples" not in script.text
+    assert "Math.max(320" not in script.text
+
+    maximum_result = simulate(
+        SimulationRequest(duration_seconds=20_000, step_seconds=1)
+    )
+    assert len(maximum_result.runs["rk4"].samples) == 20_001
+    assert len(maximum_result.runs["velocity_verlet"].samples) == 20_001
 
 
 def test_saved_scenario_response_matches_ui_metrics_and_result_links():
@@ -151,8 +165,16 @@ def test_saved_scenario_response_matches_ui_metrics_and_result_links():
         assert isinstance(run["max_relative_energy_drift"], float)
 
     scenario_id = saved["scenario_id"]
-    assert client.get(saved["share_path"], follow_redirects=True).status_code == 200
-    assert client.get(f"/api/v1/scenarios/{scenario_id}/export.json").status_code == 200
+    shared = client.get(saved["share_path"], follow_redirects=True)
+    assert shared.status_code == 200
+    assert shared.json()["scenario_id"] == scenario_id
+    assert "content-disposition" not in shared.headers
+    json_export = client.get(f"/api/v1/scenarios/{scenario_id}/export.json")
+    assert json_export.status_code == 200
+    assert (
+        json_export.headers["content-disposition"]
+        == f'attachment; filename="{scenario_id}.json"'
+    )
     csv_export = client.get(f"/api/v1/scenarios/{scenario_id}/export.csv")
     assert csv_export.status_code == 200
     assert f'filename="{scenario_id}.csv"' in csv_export.headers["content-disposition"]

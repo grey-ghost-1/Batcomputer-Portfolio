@@ -105,7 +105,9 @@ function assertSavedScenario(saved) {
   ) {
     throw new Error("The service returned an incomplete simulation result.");
   }
-  return { rk4, verlet };
+  const runs = { rk4, verlet };
+  sampleScale(runs);
+  return runs;
 }
 
 function formatDrift(value) {
@@ -218,11 +220,22 @@ function sampleScale(runs) {
   if (!runs) {
     return 7000000;
   }
-  return Math.max(
-    1,
-    ...runs.rk4.samples.flatMap((sample) => sample.position.map(Math.abs)),
-    ...runs.verlet.samples.flatMap((sample) => sample.position.map(Math.abs))
-  );
+  let maximum = 1;
+  for (const run of [runs.rk4, runs.verlet]) {
+    for (const sample of run.samples) {
+      if (!Array.isArray(sample?.position) || sample.position.length !== 2) {
+        throw new Error("The service returned an incomplete simulation result.");
+      }
+      for (const coordinate of sample.position) {
+        const magnitude = Math.abs(coordinate);
+        if (!Number.isFinite(magnitude)) {
+          throw new Error("The service returned an incomplete simulation result.");
+        }
+        maximum = Math.max(maximum, magnitude);
+      }
+    }
+  }
+  return maximum;
 }
 
 function mapSamples(samples, centerX, centerY, pixelRadius, scale) {
@@ -320,8 +333,11 @@ function drawScene(progress = animation.progress) {
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect();
-  const cssWidth = Math.max(320, Math.round(rect.width));
-  const cssHeight = Math.max(300, Math.round(rect.height || cssWidth * 0.625));
+  const cssWidth = rect.width;
+  const cssHeight = rect.height;
+  if (cssWidth <= 0 || cssHeight <= 0) {
+    return;
+  }
   const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
   canvas.width = Math.round(cssWidth * dpr);
   canvas.height = Math.round(cssHeight * dpr);
