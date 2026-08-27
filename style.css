@@ -920,21 +920,6 @@ body,
 }
 
 /* Split HUD header layout */
-.ai-badge {
-    position: fixed;
-    top: 12px;
-    right: 28px;
-    z-index: 10;
-    padding: 10px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.72);
-    border-radius: 999px;
-    background: #f7f2eb;
-    color: #493f37;
-    font-family: "Inter", "Segoe UI", sans-serif;
-    font-size: 14px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
-}
-
 .hud-header {
     position: relative;
     z-index: 5;
