@@ -28,7 +28,7 @@
         <a class="hud-btn nav-link-btn" href="#primary-work">PRIMARY WORK</a>
         <a class="hud-btn nav-link-btn" href="labs.html">LABS &amp; PROTOTYPES</a>
         <a class="hud-btn nav-link-btn" href="project-evidence.json">EVIDENCE</a>
-        <a class="hud-btn nav-link-btn" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">GITHUB</a>
+        <a class="hud-btn nav-link-btn" data-public-source-path="" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio">PUBLIC SOURCE</a>
         <button class="hud-btn" type="button" data-panel="contact" aria-controls="contact" aria-expanded="false">APPLICATION</button>
       </nav>
       <nav class="category-nav" aria-label="Six project categories">
@@ -54,7 +54,7 @@
       </div>
       <div class="cta-row">
         <a class="primary-cta" href="#primary-work">Review flagship work</a>
-        <a class="secondary-cta" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">Inspect source</a>
+        <a class="secondary-cta" href="project-evidence.json">Review evidence</a>
       </div>
     </div>
     <section class="alfred-console" aria-label="Alfred deterministic portfolio helper">
@@ -92,8 +92,8 @@
           <li>Health, readiness, structured logs, OpenAPI</li>
         </ul>
         <div class="card-actions">
-          <a href="projects/operations-platform.html">Read case study</a>
-          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/platform">Source</a>
+          <a href="projects/operations-platform.html">View platform evidence</a>
+          <a data-public-source-path="platform" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/platform">View source on GitHub</a>
           <a class="optional-site-link" data-demo-link="platform" hidden>Hosted demo</a>
         </div>
       </article>
@@ -107,8 +107,8 @@
           <li>Validated API inputs and JSON/CSV export</li>
         </ul>
         <div class="card-actions">
-          <a href="projects/orbital-data-lab.html">Read case study</a>
-          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/orbital-data-lab">Source</a>
+          <a href="projects/orbital-data-lab.html">View orbital evidence</a>
+          <a data-public-source-path="orbital-data-lab" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/orbital-data-lab">View source on GitHub</a>
           <a class="optional-site-link" data-demo-link="orbital" hidden>Hosted demo</a>
         </div>
       </article>
@@ -122,8 +122,8 @@
           <li>Empty, duplicate, invalid, ordering, and mutation cases</li>
         </ul>
         <div class="card-actions">
-          <a href="projects/algorithm-quality-lab.html">Read case study</a>
-          <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/algorithms-quality">Source</a>
+          <a href="projects/algorithm-quality-lab.html">View algorithms evidence</a>
+          <a data-public-source-path="algorithms-quality" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio/algorithms-quality">View source on GitHub</a>
         </div>
       </article>
     </div>
@@ -137,7 +137,7 @@
     </div>
     <div class="evidence-actions">
       <a href="project-evidence.json">Open evidence inventory</a>
-      <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/actions">View GitHub Actions</a>
+      <a data-public-source-path=".github/workflows/ci.yml" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/blob/grey-ghost-1-recruiter-ready-portfolio/.github/workflows/ci.yml">View CI workflow source</a>
     </div>
   </section>
 
@@ -157,11 +157,12 @@
 
   <section id="contact" class="panel hidden" tabindex="-1">
     <h2>Application &amp; contact</h2>
-    <p>Review the complete repository and project history on <a href="https://github.com/grey-ghost-1/Batcomputer-Portfolio">GitHub</a>.</p>
+    <p>Review the public source alongside any configured application links.</p>
     <div id="optional-application-links" class="application-links" aria-label="Configured application links"></div>
+    <a class="secondary-cta" data-public-source-path="" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-recruiter-ready-portfolio">View source on GitHub</a>
   </section>
 </main>
 
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>

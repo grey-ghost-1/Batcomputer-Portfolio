@@ -75,6 +75,7 @@ The portfolio container uses one Gunicorn worker as a conservative default. Prop
 | `SITE_RESUME_PATH` | Portfolio | No | Optional existing PDF under `assets/`; omitted otherwise |
 | `SITE_PLATFORM_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
 | `SITE_ORBITAL_DEMO_URL` | Portfolio | No | Optional HTTPS URL; omitted otherwise |
+| `SITE_PUBLIC_SOURCE_URL` | Portfolio | No | Optional public GitHub tree-root override for forks or branch moves |
 | `SITE_PROPOSALS_ENABLED` | Portfolio | No | Disabled by default; enable only for a trusted local review session |
 | `SITE_SESSION_SECRET` | Portfolio | Yes | At least 32 random characters with sufficient variety when proposals are enabled |
 
@@ -83,6 +84,8 @@ Do not put secrets in `.env.example`, Docker build arguments, source files, or c
 Compose passes the PostgreSQL host, port, database, user, and password as separate values. The platform uses SQLAlchemy's `URL.create`, so secure passwords containing URI delimiters such as `@:/#` are encoded correctly rather than interpolated into a connection string. Quote such values in `.env` (for example, `POSTGRES_PASSWORD='secure@:/#value'`) so dotenv parsing preserves every character.
 
 Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size. Keep this feature disabled on the public portfolio.
+
+Recruiter-facing flagship cards pair locally served evidence with the public GitHub source on this branch. `SITE_PUBLIC_SOURCE_URL` is an optional override for a public fork or branch move; it must be a complete GitHub tree root such as `https://github.com/owner/repository/tree/main`. The server validates the root and returns tested, fully constructed project URLs for the browser.
 
 ### Adding a resume later
 
@@ -109,4 +112,4 @@ For production, pass the three HTTPS origins. The script checks liveness and dat
 
 GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, environment-driven contact links, or either database-backed service. The browser helper falls back to deterministic local text when Flask is absent. Use Render, another container host, or separate application hosting for dynamic behavior; do not describe a Pages-only publication as a deployed API.
 
-The GitHub repository is private at the time of this layer-3 update. Source links resolve for authorized accounts after the branch is pushed, but unauthenticated recruiters receive GitHub's not-found response. Before sharing publicly, the owner must intentionally change repository visibility or grant reviewer access; this automation does not publish private source.
+The GitHub repository is public at the time of this update. The three configured branch/tree source URLs were checked without authentication before release; keep the local evidence links available so the case studies remain useful if repository visibility or branch names change later.

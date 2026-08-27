@@ -252,7 +252,8 @@ if (alfredChatLogElement) {
 async function loadPublicSiteConfig() {
     const optionalLinks = document.getElementById("optional-application-links");
     const demoLinks = Array.from(document.querySelectorAll("[data-demo-link]"));
-    if (!optionalLinks && demoLinks.length === 0) {
+    const sourceLinks = Array.from(document.querySelectorAll("[data-public-source-path]"));
+    if (!optionalLinks && demoLinks.length === 0 && sourceLinks.length === 0) {
         return;
     }
 
@@ -287,6 +288,17 @@ async function loadPublicSiteConfig() {
                 anchor.hidden = false;
             }
         });
+
+        if (config.public_source_urls && typeof config.public_source_urls === "object") {
+            sourceLinks.forEach((anchor) => {
+                const sourceUrl = config.public_source_urls[anchor.dataset.publicSourcePath];
+                if (typeof sourceUrl === "string" && sourceUrl.startsWith("https://")) {
+                    anchor.href = sourceUrl;
+                    anchor.rel = "noreferrer";
+                    anchor.hidden = false;
+                }
+            });
+        }
     } catch (error) {
         // Static hosting has no Flask configuration endpoint; optional links remain omitted.
     }

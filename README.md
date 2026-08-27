@@ -6,7 +6,7 @@ Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and b
 
 [Open the recruiter homepage](batcomputer_console.html) · [Review evidence inventory](project-evidence.json) · [Deployment guide](DEPLOYMENT.md)
 
-> **Sharing status:** GitHub currently reports this repository as private. Source links require authorized access until the owner intentionally makes the repository public or grants a reviewer access.
+> **Sharing status:** The repository is public. Each flagship card pairs a locally served evidence page with its public GitHub branch/tree source.
 
 ## Primary project matrix
 
@@ -68,14 +68,14 @@ Open <http://127.0.0.1:5000>. Useful endpoints:
 - `GET /api/site/config`
 - `POST /alfred` with `{"message": "status"}`
 
-The site configuration API always publishes the known repository URL. Optional email, LinkedIn, resume, platform demo, and Orbital demo values come from the single safe source in `site_config.py`; missing or invalid values are omitted. No resume file is currently included. To add one later, follow [Adding a resume later](DEPLOYMENT.md#adding-a-resume-later).
+Optional email, LinkedIn, resume, platform demo, Orbital demo, and public-source override values come from the single safe source in `site_config.py`; missing or invalid values are omitted. The site defaults to the now-public repository source URLs, while `SITE_PUBLIC_SOURCE_URL` can redirect them to a validated public GitHub tree root after a fork or branch move. No resume file is currently included. To add one later, follow [Adding a resume later](DEPLOYMENT.md#adding-a-resume-later).
 
 ## Verified commands and counts
 
-The current baseline is **47 passing automated tests** across four suites: 24 Flask/site tests, 10 platform tests, 6 Orbital tests, and 7 algorithm tests.
+The current baseline is **49 passing automated tests** across four suites: 26 Flask/site tests, 10 platform tests, 6 Orbital tests, and 7 algorithm tests.
 
 ```powershell
-# Portfolio: 24
+# Portfolio: 26
 python -m unittest discover -s tests -v
 
 # Platform migration + API: 10
@@ -106,7 +106,7 @@ CI runs this chain and validates Compose structure. Docker is unavailable in the
 ## Deployment status and limits
 
 - **Deployment status:** configuration exists; no hosted deployment is claimed.
-- **Source visibility:** the current GitHub repository is private; unauthenticated recruiters cannot inspect linked code until access is changed.
+- **Source visibility:** the GitHub repository is public; each flagship retains both local evidence and a clearly labeled source CTA.
 - The root Flask site has no user accounts because it serves public portfolio content. Local proposal metadata is disabled by default, session-owned when enabled, and never reads repository files.
 - The platform implements authentication and tenant boundaries, but not MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations.
 - Alfred is deterministic and predefined. It has no language model, retrieval, memory, autonomous tools, or action execution.

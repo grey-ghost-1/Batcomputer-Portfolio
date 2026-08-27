@@ -1,17 +1,62 @@
 import os
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import quote, urlsplit
 
 REPOSITORY_URL = "https://github.com/grey-ghost-1/Batcomputer-Portfolio"
 SOURCE_REF = "grey-ghost-1-recruiter-ready-portfolio"
+PUBLIC_SOURCE_PATHS = (
+    "",
+    "platform",
+    "orbital-data-lab",
+    "algorithms-quality",
+    "algorithms-quality/QUALITY.md",
+    ".github/workflows/ci.yml",
+)
 
 
 def _https_url(value):
     value = value.strip()
-    parsed = urlsplit(value)
+    try:
+        parsed = urlsplit(value)
+    except ValueError:
+        return None
     if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
         return None
     return value
+
+
+def _public_source_url(value):
+    url = _https_url(value)
+    if not url or "\\" in url:
+        return None
+    parsed = urlsplit(url)
+    if parsed.query or parsed.fragment or "%" in parsed.path:
+        return None
+    try:
+        port = parsed.port
+    except ValueError:
+        return None
+    parts = [part for part in parsed.path.split("/") if part]
+    if (
+        parsed.hostname != "github.com"
+        or port not in {None, 443}
+        or len(parts) != 4
+        or parts[2] != "tree"
+        or any(part in {".", ".."} for part in parts)
+    ):
+        return None
+    return url.rstrip("/")
+
+
+def _public_source_urls(base_url):
+    return {
+        path: (
+            base_url
+            if not path
+            else f"{base_url}/{'/'.join(quote(part, safe='') for part in path.split('/'))}"
+        )
+        for path in PUBLIC_SOURCE_PATHS
+    }
 
 
 def _email(value):
@@ -69,9 +114,13 @@ def public_site_config(base_dir, environ=None):
         if url:
             demos[key] = url
 
-    return {
+    config = {
         "repository_url": REPOSITORY_URL,
         "source_ref": SOURCE_REF,
         "optional_links": optional_links,
         "demos": demos,
     }
+    public_source_url = _public_source_url(environment.get("SITE_PUBLIC_SOURCE_URL", ""))
+    if public_source_url:
+        config["public_source_urls"] = _public_source_urls(public_source_url)
+    return config

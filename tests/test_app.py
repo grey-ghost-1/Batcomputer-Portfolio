@@ -83,6 +83,7 @@ class AppTestCase(unittest.TestCase):
                 "SITE_RESUME_PATH": "assets/missing.pdf",
                 "SITE_PLATFORM_DEMO_URL": "http://insecure.example",
                 "SITE_ORBITAL_DEMO_URL": "",
+                "SITE_PUBLIC_SOURCE_URL": "https://[",
             },
             clear=False,
         ):
@@ -112,6 +113,7 @@ class AppTestCase(unittest.TestCase):
                     "SITE_RESUME_PATH": "assets/resume.pdf",
                     "SITE_PLATFORM_DEMO_URL": "https://platform.example.com",
                     "SITE_ORBITAL_DEMO_URL": "javascript:alert(1)",
+                    "SITE_PUBLIC_SOURCE_URL": "https://github.com/public/example/tree/main/",
                 },
             )
         self.assertEqual(
@@ -135,6 +137,34 @@ class AppTestCase(unittest.TestCase):
             ],
         )
         self.assertEqual(config["demos"], {"platform": "https://platform.example.com"})
+        self.assertEqual(
+            config["public_source_urls"]["orbital-data-lab"],
+            "https://github.com/public/example/tree/main/orbital-data-lab",
+        )
+        self.assertEqual(
+            config["public_source_urls"][""],
+            "https://github.com/public/example/tree/main",
+        )
+
+    def test_public_source_requires_an_appendable_github_tree_root(self):
+        invalid_urls = (
+            "https://github.com/owner/repository",
+            "https://github.com/owner/repository/blob/main/README.md",
+            "https://github.com/owner/repository/tree/main/subdirectory",
+            "https://github.com/owner/repository/tree/main?token=secret",
+            "https://github.com/owner/repository/tree/%2E%2E",
+            "https://github.com/owner/repository/tree%2Fmain",
+            "https://github.com/owner/repository/tree\\main\\subdirectory",
+            "https://gitlab.com/owner/repository/tree/main",
+            "https://[",
+            "http://github.com/owner/repository/tree/main",
+        )
+        for invalid_url in invalid_urls:
+            with self.subTest(invalid_url=invalid_url):
+                config = public_site_config(
+                    ROOT, {"SITE_PUBLIC_SOURCE_URL": invalid_url}
+                )
+                self.assertNotIn("public_source_urls", config)
 
     def test_static_category_and_project_routes(self):
         self.assertEqual(self.get_status("/"), 200)
@@ -590,22 +620,15 @@ class StaticContentTestCase(unittest.TestCase):
             "network_software.html",
             "labs.html",
             "project-evidence.json",
-            REPOSITORY_URL,
         }
         self.assertTrue(expected_links.issubset(set(parser.links)))
         self.assertIn('data-panel="contact"', content)
 
     def test_flagship_pages_have_complete_case_study_evidence(self):
-        source_urls = {
-            "operations-platform.html": (
-                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/platform"
-            ),
-            "orbital-data-lab.html": (
-                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/orbital-data-lab"
-            ),
-            "algorithm-quality-lab.html": (
-                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality"
-            ),
+        source_paths = {
+            "operations-platform.html": "platform",
+            "orbital-data-lab.html": "orbital-data-lab",
+            "algorithm-quality-lab.html": "algorithms-quality",
         }
         required_sections = (
             "Problem and users",
@@ -617,15 +640,49 @@ class StaticContentTestCase(unittest.TestCase):
             "Current Limitations",
             "Demo status",
         )
-        for file_name, source_url in source_urls.items():
+        for file_name, source_path in source_paths.items():
             with self.subTest(file_name=file_name):
                 content = (ROOT / "projects" / file_name).read_text(encoding="utf-8")
                 parser = TextParser()
                 parser.feed(content)
                 for section in required_sections:
                     self.assertIn(section, parser.text)
-                self.assertIn(source_url, content)
+                self.assertIn(f'data-public-source-path="{source_path}"', content)
+                self.assertIn(
+                    f'href="{REPOSITORY_URL}/tree/{SOURCE_REF}/{source_path}"',
+                    content,
+                )
                 self.assertNotIn("fake screenshot", content.lower())
+
+    def test_flagship_cards_pair_local_evidence_with_public_source(self):
+        home = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        flagship_links = {
+            "View platform evidence": (
+                "projects/operations-platform.html",
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/platform",
+            ),
+            "View orbital evidence": (
+                "projects/orbital-data-lab.html",
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/orbital-data-lab",
+            ),
+            "View algorithms evidence": (
+                "projects/algorithm-quality-lab.html",
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality",
+            ),
+        }
+        client = site.app.test_client()
+        for label, (path, source_url) in flagship_links.items():
+            with self.subTest(label=label):
+                self.assertIn(f'href="{path}">{label}</a>', home)
+                self.assertIn(f'href="{source_url}">View source on GitHub</a>', home)
+                response = client.get(f"/{path}")
+                try:
+                    self.assertEqual(response.status_code, 200)
+                finally:
+                    response.close()
+
+        self.assertNotIn("Private GitHub source", home)
+        self.assertIn("config.public_source_urls", (ROOT / "app.js").read_text(encoding="utf-8"))
 
     def test_deployment_configuration_and_smoke_contract(self):
         render = (ROOT / "render.yaml").read_text(encoding="utf-8")
@@ -667,6 +724,7 @@ class StaticContentTestCase(unittest.TestCase):
             "SITE_RESUME_PATH",
             "SITE_PLATFORM_DEMO_URL",
             "SITE_ORBITAL_DEMO_URL",
+            "SITE_PUBLIC_SOURCE_URL",
         ):
             self.assertIn(site_setting, compose)
         self.assertTrue((ROOT / "Dockerfile").is_file())
