@@ -12,6 +12,7 @@
 <main class="detail-shell" id="case-study">
   <nav class="detail-nav" aria-label="Site navigation">
     <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../alfred-showcase.html">Try controlled showcase</a>
     <a class="home-link" href="../project-evidence.json">Evidence</a>
     <a class="home-link" href="../ALFRED_STATUS.md">Status and roadmap</a>
   </nav>
@@ -57,13 +58,15 @@
       <li>Knowledge / research / actions<br><small>separate bounded tools</small></li>
       <li>SQLite + Windows APIs<br><small>audit and approved effects</small></li>
     </ol>
-    <p>The public Flask portfolio only showcases Alfred. It does not proxy or expose the desktop-control API. The local service listens on <code>127.0.0.1:8020</code>; broad model chat, cited website answers, and cited web research remain separate from typed action execution, so model text cannot become a command or an approval.</p>
+    <p>The public Flask portfolio implements a separate showcase module over fixed answer and scenario dictionaries. It imports none of the local service, provider, knowledge-index, inspection, proposal-store, or executor modules and never proxies <code>127.0.0.1:8020</code>. Browser state is isolated in a signed session cookie and capped; every public "execution" produces only a synthetic result and session-local audit entry.</p>
+    <p>The full local service still listens only on <code>127.0.0.1:8020</code>. Broad model chat, cited website answers, cited web research, and typed action execution remain separate, so model text cannot become a command or an approval.</p>
   </section>
 
   <section class="detail-card">
     <h2>Safety boundary</h2>
     <p><strong>Every desktop mutation, application launch, URL launch, or clipboard write follows:</strong> propose → render exact effects and root-relative path diff → approve the canonical payload hash → execute once → record the immutable result. There is no chat shortcut, blanket approval, delete action, recursive operation, overwrite default, raw shell, PowerShell, arbitrary executable, or user-supplied command argument.</p>
     <p>Paths reject traversal, absolute/UNC/device forms, and links or reparse points that resolve outside configured roots. Execution revalidates paths, filesystem state, URL/app allowlists, ownership, expiry, and stored-payload integrity immediately before claiming the action. Residual local-account and filesystem-race risks are documented in <a href="../ALFRED_STATUS.md">the threat model</a>.</p>
+    <p><strong>Public boundary:</strong> the hosted demo accepts only a bounded question string or one fixed scenario identifier. It has no provider credentials, arbitrary source selection, URL input, repository reader, environment reader, system inspection, clipboard access, process launcher, filesystem adapter, or user-supplied HTML rendering. A strict CSP limits scripts and API connections to the same origin.</p>
   </section>
 
   <section class="detail-card">
@@ -118,7 +121,7 @@ node --check alfred-assistant\ui\console.js</code></pre>
 
   <section class="detail-card">
     <h2>Demo status</h2>
-    <p>No public hosted demo is claimed. Desktop capability only makes sense in a trusted native user session. Review the local evidence above, then inspect the <a data-public-source-path="alfred-assistant" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-alfred-desktop-assistant/alfred-assistant">public source on GitHub</a>.</p>
+    <p>The <a href="../alfred-showcase.html">controlled public showcase</a> provides curated, cited portfolio answers and three synthetic action scenarios. It is not the local service: no model, network research, localhost connection, desktop adapter, or real execution path is present. Desktop capability remains available only in a trusted native user session. Review the local evidence above, then inspect the <a data-public-source-path="alfred-assistant" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-public-alfred-showcase/alfred-assistant">public source on GitHub</a>.</p>
   </section>
 </main>
 <script src="../app.js?v=alfred-local"></script>

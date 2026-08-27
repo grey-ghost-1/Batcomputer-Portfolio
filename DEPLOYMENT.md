@@ -10,7 +10,7 @@ No service in this repository is claimed as currently deployed. The configuratio
 | Algorithms & Quality | Python tests only | N/A | None | N/A |
 | Alfred local assistant | FastAPI + Uvicorn (native Windows only) | 8020 | Local SQLite audit store | `/health/live`, `/health/ready` |
 
-The public services do not depend on one another at runtime. Deploy them as separate processes and domains so the public portfolio does not share the platform's authentication or database boundary. **Alfred is not a fourth public deployment target.** Its desktop-capable service rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
+The public services do not depend on one another at runtime. Deploy them as separate processes and domains so the public portfolio does not share the platform's authentication or database boundary. The portfolio process includes a controlled Alfred showcase backed only by fixed evidence and synthetic per-session state. **The desktop-capable Alfred service is not a fourth public deployment target.** It rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
 
 ## Local production-like startup
 
@@ -90,6 +90,8 @@ Compose passes the PostgreSQL host, port, database, user, and password as separa
 
 Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size. Keep this feature disabled on the public portfolio.
 
+The Alfred showcase routes are intentionally public and require no account because they have no real adapter or billable provider. They accept only a bounded question string, a fixed scenario ID, or explicit boolean approval/reset fields. Answers come from compiled curated copy and fixed local citation paths. Action results and capped audit entries are synthetic and live only in the signed browser session. Deploy the Flask process without Alfred provider credentials and do not add a proxy, service link, or firewall path to port 8020.
+
 Recruiter-facing flagship cards pair locally served evidence with the public GitHub source on this branch. `SITE_PUBLIC_SOURCE_URL` is an optional override for a public fork or branch move; it must be a complete GitHub tree root such as `https://github.com/owner/repository/tree/main`. The server validates the root and returns tested, fully constructed project URLs for the browser.
 
 ### Adding a resume later
@@ -115,6 +117,6 @@ For production, pass the three HTTPS origins. The script checks liveness and dat
 
 ## GitHub Pages boundary
 
-GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, environment-driven contact links, or database-backed services. The browser helper falls back to deterministic local text when Flask is absent. Use Render, another container host, or separate application hosting for public dynamic behavior; run Alfred only as the documented native loopback service and never expose its action API through a public site.
+GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, showcase APIs, environment-driven contact links, or database-backed services. The showcase page explains when its Flask API is unavailable; it does not silently substitute a less controlled workflow. Use the existing Flask deployment path for public interactivity. Run the full Alfred edition only as the documented native loopback service and never expose its action API through a public site.
 
 The GitHub repository is public at the time of this update. The configured branch/tree source URLs have local evidence counterparts so the case studies remain useful if repository visibility or branch names change later.

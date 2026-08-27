@@ -657,7 +657,7 @@ class StaticContentTestCase(unittest.TestCase):
                     self.assertIn(section, parser.text)
                 self.assertIn(f'data-public-source-path="{source_path}"', content)
                 source_ref = (
-                    "grey-ghost-1-alfred-desktop-assistant"
+                    "grey-ghost-1-public-alfred-showcase"
                     if source_path == "alfred-assistant"
                     else SOURCE_REF
                 )
@@ -681,7 +681,7 @@ class StaticContentTestCase(unittest.TestCase):
             ),
             "View Alfred evidence": (
                 "projects/alfred-ai-assistant.html",
-                f"{REPOSITORY_URL}/tree/grey-ghost-1-alfred-desktop-assistant/alfred-assistant",
+                f"{REPOSITORY_URL}/tree/grey-ghost-1-public-alfred-showcase/alfred-assistant",
             ),
         }
         client = site.app.test_client()

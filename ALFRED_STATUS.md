@@ -77,6 +77,13 @@ lines.
   approved roots.
 - [x] Alfred is the fourth Primary Work case study; all three existing flagships and all 20 legacy
   prototype folders remain present.
+- [x] A separate public Flask showcase provides deterministic answers from a fixed evidence set,
+  visible local citations, and three recruiter scenarios over synthetic data.
+- [x] Public scenarios demonstrate `propose -> exact preview -> explicit approval -> simulated
+  result -> session-local audit` without importing, proxying, or invoking the local Alfred service,
+  model providers, research, inspection, repository readers, or desktop executors.
+- [x] The public site applies a nonce-free same-origin CSP, framing denial, MIME sniffing denial,
+  restrictive browser permissions, no-referrer policy, no-store API caching, and production HSTS.
 
 ### Partial
 
@@ -215,6 +222,9 @@ Completion criteria:
 | Secret disclosure | No environment dumps, file content tools, process command lines, or token logging |
 | Model hallucination/tool confusion | Provider status is explicit; model output cannot bypass typed proposal validation |
 | Denial of service/storage growth | Request, response, listing, manifest, prompt, audit, and retention bounds |
+| Public demo reaches local capabilities | Separate fixed-data module; no local-service imports, proxy, provider, filesystem, process, browser, clipboard, inspection, or research adapter |
+| Public demo XSS or hostile URL input | DOM construction with `textContent`; fixed local citations/scenarios; no user HTML or URL fields; same-origin CSP |
+| Cross-session public approval | Signed SameSite session state, unguessable proposal IDs, exact scenario preview, explicit JSON approval, bounded audit, reset |
 
 Residual risks include a compromised local user account, malicious software already running with
 the same OS privileges, filesystem races that cannot be eliminated without OS-level handles, and

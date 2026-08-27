@@ -1,10 +1,19 @@
 import os
 import secrets
+from datetime import UTC, datetime
 from functools import wraps
 from pathlib import Path
 
 from flask import Flask, jsonify, request, send_from_directory, session
 
+from alfred_showcase import (
+    MAX_AUDIT_ENTRIES,
+    MAX_QUESTION_LENGTH,
+    SCENARIOS,
+    SUGGESTED_QUESTIONS,
+    answer_question,
+    public_scenarios,
+)
 from site_config import public_site_config
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -36,6 +45,8 @@ app.config.update(
 CODE_PROPOSAL_KEY = "code_proposal"
 HUD_PROPOSAL_KEY = "hud_proposal"
 RECENT_EVENTS_KEY = "proposal_events"
+SHOWCASE_PROPOSAL_KEY = "showcase_proposal"
+SHOWCASE_AUDIT_KEY = "showcase_audit"
 SESSION_TASK_LIMIT = 120
 SESSION_PATH_LIMIT = 160
 SESSION_CONTEXT_LIMIT = 3
@@ -59,6 +70,38 @@ ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
 ROOT_PUBLIC_FILES = {"project-evidence.json", "ALFRED_STATUS.md"}
 ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
 PROPOSAL_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
+CONTENT_SECURITY_POLICY = "; ".join(
+    (
+        "default-src 'self'",
+        "base-uri 'none'",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "form-action 'self'",
+        "script-src 'self'",
+        "style-src 'self' https://fonts.googleapis.com",
+        "font-src https://fonts.gstatic.com",
+        "img-src 'self' data:",
+        "connect-src 'self'",
+        "media-src 'none'",
+        "worker-src 'none'",
+    )
+)
+
+
+@app.after_request
+def apply_security_headers(response):
+    response.headers["Content-Security-Policy"] = CONTENT_SECURITY_POLICY
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = (
+        "camera=(), geolocation=(), microphone=(self), payment=(), usb=()"
+    )
+    if request.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    if app.config["SESSION_COOKIE_SECURE"]:
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
 
 
 def truncate_metadata(value, byte_limit):
@@ -153,6 +196,28 @@ def local_reply(message):
     return "This deterministic helper can answer predefined questions about the portfolio, software, cybersecurity, IT support, networking, automation, or system status."
 
 
+def _showcase_state():
+    pending = session.get(SHOWCASE_PROPOSAL_KEY)
+    audit = session.get(SHOWCASE_AUDIT_KEY, [])
+    return {
+        "demo": "controlled-public-showcase",
+        "model": None,
+        "network_enabled": False,
+        "real_execution_enabled": False,
+        "suggested_questions": list(SUGGESTED_QUESTIONS),
+        "scenarios": public_scenarios(),
+        "pending_proposal": pending if isinstance(pending, dict) else None,
+        "audit": audit if isinstance(audit, list) else [],
+    }
+
+
+def _json_payload():
+    if not request.is_json:
+        return None
+    payload = request.get_json(silent=True)
+    return payload if isinstance(payload, dict) else None
+
+
 @app.get("/")
 def home():
     return send_from_directory(BASE_DIR, "index.html")
@@ -230,6 +295,116 @@ def alfred():
             "executes_actions": False,
         }
     )
+
+
+@app.get("/api/alfred-showcase/state")
+def alfred_showcase_state():
+    return jsonify(_showcase_state())
+
+
+@app.post("/api/alfred-showcase/ask")
+def ask_alfred_showcase():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    question = payload.get("question")
+    if not isinstance(question, str):
+        return jsonify({"error": "Question must be a string."}), 400
+    question = question.strip()
+    if not question:
+        return jsonify({"error": "Question is required."}), 400
+    if len(question) > MAX_QUESTION_LENGTH:
+        return jsonify({"error": f"Question must be {MAX_QUESTION_LENGTH} characters or fewer."}), 400
+    return jsonify(answer_question(question))
+
+
+@app.post("/api/alfred-showcase/proposals")
+def create_alfred_showcase_proposal():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    scenario_id = payload.get("scenario_id")
+    if not isinstance(scenario_id, str) or scenario_id not in SCENARIOS:
+        return jsonify({"error": "Choose one of the fixed showcase scenarios."}), 400
+    scenario = SCENARIOS[scenario_id]
+    proposal = {
+        "proposal_id": secrets.token_urlsafe(24),
+        "scenario_id": scenario_id,
+        "title": scenario["title"],
+        "action_type": scenario["action_type"],
+        "preview": scenario["preview"],
+        "simulation_only": True,
+        "approved": False,
+    }
+    session[SHOWCASE_PROPOSAL_KEY] = proposal
+    return jsonify({"proposal": proposal, "real_execution_enabled": False})
+
+
+@app.post("/api/alfred-showcase/proposals/<proposal_id>/approve")
+def approve_alfred_showcase_proposal(proposal_id):
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("approved") is not True:
+        return jsonify({"error": "Explicit approval of this exact simulation is required."}), 400
+    proposal = session.get(SHOWCASE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this browser session."}), 404
+    scenario = SCENARIOS.get(str(proposal.get("scenario_id", "")))
+    if scenario is None:
+        session.pop(SHOWCASE_PROPOSAL_KEY, None)
+        return jsonify({"error": "The fixed scenario is no longer available."}), 409
+    entry = {
+        "event_id": secrets.token_urlsafe(12),
+        "scenario_id": proposal["scenario_id"],
+        "title": scenario["title"],
+        "action_type": scenario["action_type"],
+        "outcome": "simulated-success",
+        "recorded_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "real_execution": False,
+    }
+    audit = list(session.get(SHOWCASE_AUDIT_KEY, []))
+    audit.append(entry)
+    session[SHOWCASE_AUDIT_KEY] = audit[-MAX_AUDIT_ENTRIES:]
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    return jsonify(
+        {
+            "result": scenario["result"],
+            "audit": session[SHOWCASE_AUDIT_KEY],
+            "real_execution": False,
+            "network_used": False,
+        }
+    )
+
+
+@app.post("/api/alfred-showcase/proposals/<proposal_id>/reject")
+def reject_alfred_showcase_proposal(proposal_id):
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("rejected") is not True:
+        return jsonify({"error": "Explicit rejection is required."}), 400
+    proposal = session.get(SHOWCASE_PROPOSAL_KEY)
+    if not isinstance(proposal, dict) or not secrets.compare_digest(
+        str(proposal.get("proposal_id", "")), proposal_id
+    ):
+        return jsonify({"error": "Proposal not found for this browser session."}), 404
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    return jsonify({"result": "Proposal rejected. Nothing was simulated or recorded."})
+
+
+@app.post("/api/alfred-showcase/reset")
+def reset_alfred_showcase():
+    payload = _json_payload()
+    if payload is None:
+        return jsonify({"error": "A JSON object is required."}), 415
+    if payload.get("reset") is not True:
+        return jsonify({"error": "Explicit reset confirmation is required."}), 400
+    session.pop(SHOWCASE_PROPOSAL_KEY, None)
+    session.pop(SHOWCASE_AUDIT_KEY, None)
+    return jsonify(_showcase_state())
 
 
 @app.get("/api/coding-agent/state")

@@ -5,18 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cloud, Network &amp; Platform Engineering | Justin Wimmer HUD</title>
 <link rel="stylesheet" href="style.css">
-<script>
-  // Redirect root-relative links to the live server when this page was opened as a local file.
-  if (window.location.protocol === "file:") {
-    document.addEventListener("click", (event) => {
-      const link = event.target.closest("a[href^='/']");
-      if (link) {
-        event.preventDefault();
-        window.location.href = "http://127.0.0.1:5000" + link.getAttribute("href");
-      }
-    });
-  }
-</script>
+<script src="local-links.js"></script>
 </head>
 <body class="site-shell">
 <main class="detail-shell">
