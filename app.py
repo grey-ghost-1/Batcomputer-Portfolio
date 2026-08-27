@@ -132,7 +132,7 @@ def resolve_workspace_path(file_name):
 
 
 def normalize_proposal_path(file_name):
-    if not file_name or "\x00" in file_name or "\\" in file_name:
+    if not file_name or "\x00" in file_name or "\\" in file_name or ":" in file_name:
         return None
     candidate = Path(file_name)
     if candidate.is_absolute() or candidate.drive or ".." in candidate.parts:
