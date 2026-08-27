@@ -71,6 +71,93 @@ def test_health_endpoints_report_liveness_and_database_readiness():
     }
 
 
+def test_ui_exposes_accessible_controls_responsive_canvas_and_local_assets():
+    client = TestClient(app)
+    page = client.get("/")
+    assert page.status_code == 200
+    assert page.headers["content-type"].startswith("text/html")
+    html = page.text
+    for expected in (
+        'id="simulation"',
+        'id="runSimulation"',
+        'data-state="idle"',
+        'aria-describedby="runStatus" aria-busy="false"',
+        'id="runStatus" role="status" aria-live="polite"',
+        'id="pauseAnimation"',
+        'id="replayAnimation"',
+        'id="orbitCanvas"',
+        'id="rk4DriftMetric"',
+        'id="verletDriftMetric"',
+        'id="positionDeltaMetric"',
+        'id="jsonLink"',
+        'id="csvLink"',
+        'id="shareLink"',
+        "Not flight grade",
+    ):
+        assert expected in html
+    assert 'href="/orbital.css"' in html
+    assert 'src="/orbital.js"' in html
+
+    stylesheet = client.get("/orbital.css")
+    assert stylesheet.status_code == 200
+    assert stylesheet.headers["content-type"].startswith("text/css")
+    assert "overflow-x: hidden" in stylesheet.text
+    assert ":focus-visible" in stylesheet.text
+    assert "@media (prefers-reduced-motion: reduce)" in stylesheet.text
+
+    script = client.get("/orbital.js")
+    assert script.status_code == 200
+    assert "javascript" in script.headers["content-type"]
+    for expected in (
+        'fetch("/api/v1/scenarios"',
+        "response.ok",
+        "requestAnimationFrame",
+        "cancelAnimationFrame",
+        "window.devicePixelRatio",
+        '"(prefers-reduced-motion: reduce)"',
+        "ResizeObserver",
+        "max_relative_energy_drift",
+        "final_position_delta_m",
+        "saved.share_path",
+    ):
+        assert expected in script.text
+
+
+def test_saved_scenario_response_matches_ui_metrics_and_result_links():
+    client = TestClient(app)
+    response = client.post(
+        "/api/v1/scenarios",
+        json={"duration_seconds": 30, "step_seconds": 10},
+    )
+    assert response.status_code == 200
+    saved = response.json()
+    assert saved["request"]["duration_seconds"] == 30
+    assert saved["request"]["step_seconds"] == 10
+    assert saved["share_path"] == f"/scenarios/{saved['scenario_id']}"
+    assert set(saved["result"]["runs"]) == {"rk4", "velocity_verlet"}
+    assert set(saved["result"]["comparison"]) == {
+        "final_position_delta_m",
+        "final_velocity_delta_mps",
+    }
+    for integrator in ("rk4", "velocity_verlet"):
+        run = saved["result"]["runs"][integrator]
+        assert len(run["samples"]) >= 2
+        assert set(run["samples"][0]) == {
+            "time_seconds",
+            "position",
+            "velocity",
+            "specific_energy",
+        }
+        assert isinstance(run["max_relative_energy_drift"], float)
+
+    scenario_id = saved["scenario_id"]
+    assert client.get(saved["share_path"], follow_redirects=True).status_code == 200
+    assert client.get(f"/api/v1/scenarios/{scenario_id}/export.json").status_code == 200
+    csv_export = client.get(f"/api/v1/scenarios/{scenario_id}/export.csv")
+    assert csv_export.status_code == 200
+    assert f'filename="{scenario_id}.csv"' in csv_export.headers["content-disposition"]
+
+
 def test_api_storage_idempotence_exports_and_lineage():
     database = ROOT / "orbital-test.db"
     database.unlink(missing_ok=True)

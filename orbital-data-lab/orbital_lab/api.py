@@ -37,6 +37,16 @@ def ui():
     return FileResponse(ROOT / "ui" / "index.html")
 
 
+@app.get("/orbital.css", include_in_schema=False)
+def ui_styles():
+    return FileResponse(ROOT / "ui" / "orbital.css")
+
+
+@app.get("/orbital.js", include_in_schema=False)
+def ui_script():
+    return FileResponse(ROOT / "ui" / "orbital.js")
+
+
 @app.post("/api/v1/simulations", response_model=SimulationResult)
 def run_simulation(request: SimulationRequest):
     return simulate(request)

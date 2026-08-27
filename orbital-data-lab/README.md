@@ -6,7 +6,7 @@ A deterministic educational two-body simulator and small scenario-data service. 
 
 - Configurable central-body label, gravitational parameter, 2D initial position/velocity, duration, step size, and RK4/velocity-Verlet selection.
 - Bounded Pydantic inputs (including a 20,000-step limit), full trajectory output, specific-energy tracking, integrator drift, and final-state comparison metrics.
-- A browser canvas visualization at `/`.
+- A responsive browser workspace at `/` with explicit run/error states, DPR-aware orbit rendering, RK4 spacecraft playback, pause/replay controls, reduced-motion behavior, metrics, and working share/JSON/CSV links.
 - SQLite scenario storage with content-derived IDs, idempotent writes, share paths, schema/algorithm lineage, input hashes, and JSON/CSV exports.
 
 ## Run and test

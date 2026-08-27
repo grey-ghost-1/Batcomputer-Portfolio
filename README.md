@@ -13,7 +13,7 @@ Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and b
 | Project | Engineering evidence | Tests | Demo status |
 |---|---|---:|---|
 | [Batcomputer Operations Platform](projects/operations-platform.html) | Tenant-isolated FastAPI modular monolith; Argon2 auth, RBAC, workflows, same-transaction audits, Alembic/PostgreSQL, operator UI | 9 | Local only; not claimed as hosted |
-| [Orbital Data Lab](projects/orbital-data-lab.html) | Deterministic RK4/velocity-Verlet API; bounded inputs, energy drift, content-addressed SQLite, lineage, exports, canvas UI | 6 | Local only; educational, not flight grade |
+| [Orbital Data Lab](projects/orbital-data-lab.html) | Deterministic RK4/velocity-Verlet API; bounded inputs, energy drift, content-addressed SQLite, lineage, exports, interactive canvas UI | 8 | Local only; educational, not flight grade |
 | [Algorithms & Quality](projects/algorithm-quality-lab.html) | Original data structures and algorithms; complexity trade-offs and deterministic normal/edge behavior | 7 | Source-and-test project; no service |
 | [Labs & Prototypes](labs.html) | 20 retained small exercises across software, security, IT support, and network/systems fundamentals | Covered by site inventory/link tests | Local scripts only |
 
@@ -72,7 +72,7 @@ Optional email, LinkedIn, resume, platform demo, Orbital demo, and public-source
 
 ## Verified commands and counts
 
-The current baseline is **49 passing automated tests** across four suites: 26 Flask/site tests, 10 platform tests, 6 Orbital tests, and 7 algorithm tests.
+The current baseline is **51 passing automated tests** across four suites: 26 Flask/site tests, 10 platform tests, 8 Orbital tests, and 7 algorithm tests.
 
 ```powershell
 # Portfolio: 26
@@ -87,7 +87,7 @@ python -m alembic -c alembic.ini upgrade head
 python -m pytest tests -q
 Set-Location ..
 
-# Orbital: 6
+# Orbital: 8
 Set-Location orbital-data-lab
 python -m pytest tests -q
 Set-Location ..

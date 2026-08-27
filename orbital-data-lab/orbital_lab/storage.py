@@ -3,6 +3,7 @@ import hashlib
 import io
 import json
 import sqlite3
+from contextlib import closing
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -23,7 +24,7 @@ class ScenarioStore:
         return connection
 
     def initialize(self) -> None:
-        with self.connect() as connection:
+        with closing(self.connect()) as connection:
             connection.execute(
                 """
                 CREATE TABLE IF NOT EXISTS scenarios (
@@ -35,6 +36,7 @@ class ScenarioStore:
                 )
                 """
             )
+            connection.commit()
 
     @staticmethod
     def scenario_id(request: SimulationRequest) -> str:
@@ -52,7 +54,7 @@ class ScenarioStore:
             "central_body": request.central_body,
         }
         created_at = datetime.now(UTC).isoformat()
-        with self.connect() as connection:
+        with closing(self.connect()) as connection:
             cursor = connection.execute(
                 """
                 INSERT OR IGNORE INTO scenarios
@@ -68,11 +70,12 @@ class ScenarioStore:
                 ),
             )
             created = cursor.rowcount == 1
+            connection.commit()
         saved = self.get(scenario_id)
         return saved.model_copy(update={"created": created})
 
     def get(self, scenario_id: str) -> SavedScenario:
-        with self.connect() as connection:
+        with closing(self.connect()) as connection:
             row = connection.execute(
                 "SELECT * FROM scenarios WHERE scenario_id = ?", (scenario_id,)
             ).fetchone()
