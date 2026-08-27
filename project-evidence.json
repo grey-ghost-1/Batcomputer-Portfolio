@@ -3,7 +3,7 @@
   "audited_at": "2026-08-26",
   "repository": "grey-ghost-1/Batcomputer-Portfolio",
   "project_count": 23,
-  "validation_summary": "The 20 retained main.py prototypes pass their layer-1 checks. The separate FastAPI flagship, orbital data lab, and algorithm quality lab pass dedicated API, persistence, numerical, algorithm, migration, lint, and CI checks.",
+  "validation_summary": "All 20 retained main.py prototype folders remain intact. Four primary case studies now include the operations platform, orbital data lab, algorithm quality lab, and Alfred local assistant, with dedicated API, persistence, numerical, algorithm, migration, safety, isolation, lint, type, UI, and CI checks.",
   "projects": [
     {
       "slug": "network-scanner",
@@ -158,12 +158,14 @@
     {
       "slug": "alfred-ai-assistant",
       "page": "projects/alfred-ai-assistant.html",
-      "source_folder": "Software Automation/alfred-ai-assistant",
-      "run_command": "python \"Software Automation\\alfred-ai-assistant\\main.py\" status",
-      "implemented_features": ["text argument", "keyword matching", "greeting/status/help/fallback canned responses"],
-      "limitations": ["not AI or model-backed", "no audio, Flask route, memory, retrieval, or task execution in this folder"],
-      "validation_status": "passed-local",
-      "validation_notes": "Executed with status input; deterministic and side-effect free."
+      "source_folder": "alfred-assistant",
+      "legacy_source_folder": "Software Automation/alfred-ai-assistant",
+      "entrypoint": "alfred-assistant/alfred/main.py",
+      "run_command": "Set-Location alfred-assistant; .\\start.ps1",
+      "implemented_features": ["loopback-only typed FastAPI service", "versioned original household-manager persona", "bounded cited website knowledge", "optional Ollama and OpenAI-compatible reasoning providers with honest fallback", "keyless Wikipedia and optional Brave cited research", "SSRF-hardened fixed-source retrieval", "redacted read-only system inspection", "typed approval-gated desktop actions", "payload-bound owner/session approvals with expiry and replay defense", "strict approved-root path confinement and app/URL allowlists", "SQLite proposal and audit history", "accessible local console"],
+      "limitations": ["local native service only; not hosted or containerized", "desktop execution disabled by default", "no arbitrary browsing, shell, deletion, screen control, voice assistant, durable personal memory, or external productivity integrations", "broad web search and model reasoning require separately configured providers"],
+      "validation_status": "passed-safety-api-provider-ui",
+      "validation_notes": "Dedicated mocked tests cover API/UI contracts, providers, citations, injection resistance, SSRF, redaction, confinement, ownership, expiry, tampering, replay, disabled execution, allowlists, and temporary-directory-only mutations."
     },
     {
       "slug": "file-automation-toolkit",

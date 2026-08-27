@@ -1,6 +1,6 @@
 # Deployment guide
 
-No service in this repository is claimed as currently deployed. The configuration below is a repeatable path for a reviewer or owner to deploy three independent web processes:
+No service in this repository is claimed as currently deployed. The configuration below is a repeatable path for a reviewer or owner to deploy three independent public web processes:
 
 | Service | Runtime | Default port | Persistence | Health |
 |---|---|---:|---|---|
@@ -8,8 +8,9 @@ No service in this repository is claimed as currently deployed. The configuratio
 | Operations platform | FastAPI + Uvicorn | 8000 | PostgreSQL + Alembic | `/health/live`, `/health/ready` |
 | Orbital Data Lab | FastAPI + Uvicorn | 8010 | SQLite scenario file | `/health/live`, `/health/ready` |
 | Algorithms & Quality | Python tests only | N/A | None | N/A |
+| Alfred local assistant | FastAPI + Uvicorn (native Windows only) | 8020 | Local SQLite audit store | `/health/live`, `/health/ready` |
 
-The services do not depend on one another at runtime. Deploy them as separate processes and domains so the public portfolio does not share the platform's authentication or database boundary.
+The public services do not depend on one another at runtime. Deploy them as separate processes and domains so the public portfolio does not share the platform's authentication or database boundary. **Alfred is not a fourth public deployment target.** Its desktop-capable service rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
 
 ## Local production-like startup
 
@@ -36,13 +37,17 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 # Orbital Data Lab
 Set-Location orbital-data-lab
 python -m uvicorn orbital_lab.api:app --host 0.0.0.0 --port 8010
+
+# Alfred (separate trusted local terminal; see alfred-assistant/README.md first)
+Set-Location alfred-assistant
+.\start.ps1
 ```
 
 For a local multi-container environment, copy `.env.example` to `.env`, replace both documented development secrets, and run `docker compose up --build`. Compose explicitly maps the `SITE_*` values from `.env` into the portfolio container; `.env` is not copied into any image. The Compose file starts the portfolio, PostgreSQL, the migrated platform, and the Orbital service with health checks. Docker was not available in the layer-3 local environment; CI performs `docker compose config --quiet`, and an environment with Docker must perform the image build and live Compose check.
 
 ## Render blueprint
 
-[`render.yaml`](render.yaml) defines the three web services and a managed PostgreSQL database. Render deployment is intentionally manual (`autoDeploy: false`):
+[`render.yaml`](render.yaml) defines the three public web services and a managed PostgreSQL database. Render deployment is intentionally manual (`autoDeploy: false`). Alfred is deliberately excluded because a hosted/container service must never receive access to the user's desktop:
 
 1. Create a Render Blueprint from this repository and review names, regions, and plans before applying it.
 2. Set `PLATFORM_ALLOWED_ORIGINS` to the exact HTTPS origins allowed to call the platform. Do not use `*` with authenticated endpoints.
@@ -110,6 +115,6 @@ For production, pass the three HTTPS origins. The script checks liveness and dat
 
 ## GitHub Pages boundary
 
-GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, environment-driven contact links, or either database-backed service. The browser helper falls back to deterministic local text when Flask is absent. Use Render, another container host, or separate application hosting for dynamic behavior; do not describe a Pages-only publication as a deployed API.
+GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, environment-driven contact links, or database-backed services. The browser helper falls back to deterministic local text when Flask is absent. Use Render, another container host, or separate application hosting for public dynamic behavior; run Alfred only as the documented native loopback service and never expose its action API through a public site.
 
-The GitHub repository is public at the time of this update. The three configured branch/tree source URLs were checked without authentication before release; keep the local evidence links available so the case studies remain useful if repository visibility or branch names change later.
+The GitHub repository is public at the time of this update. The configured branch/tree source URLs have local evidence counterparts so the case studies remain useful if repository visibility or branch names change later.

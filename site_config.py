@@ -10,6 +10,8 @@ PUBLIC_SOURCE_PATHS = (
     "orbital-data-lab",
     "algorithms-quality",
     "algorithms-quality/QUALITY.md",
+    "alfred-assistant",
+    "ALFRED_STATUS.md",
     ".github/workflows/ci.yml",
 )
 

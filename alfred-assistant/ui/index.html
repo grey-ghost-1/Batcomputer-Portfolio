@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Alfred Assistant — Local Console</title>
+    <link rel="stylesheet" href="/console.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <div>
+          <h1>Alfred Assistant</h1>
+          <p class="tagline" id="tagline">Discreet, precise, and local.</p>
+        </div>
+      </div>
+      <div class="badges" id="statusBadges" aria-live="polite"></div>
+    </header>
+
+    <main id="main" class="layout">
+      <section class="panel" aria-labelledby="statusHeading">
+        <h2 id="statusHeading">Service &amp; safety</h2>
+        <dl class="status-grid" id="statusGrid"></dl>
+        <h3>Safety policy</h3>
+        <ul id="safetyPolicy" class="policy-list"></ul>
+        <h3>Answer modes</h3>
+        <p id="answerModes" class="muted"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="authHeading">
+        <h2 id="authHeading">Local action token</h2>
+        <p class="muted">
+          Required for system inspection and actions. Held in this tab only
+          (sessionStorage); never stored permanently and never sent anywhere but
+          this local server.
+        </p>
+        <form id="tokenForm" class="stack">
+          <label for="tokenInput">Action token</label>
+          <input
+            id="tokenInput"
+            name="token"
+            type="password"
+            autocomplete="off"
+            spellcheck="false"
+            aria-describedby="tokenState"
+          />
+          <div class="row">
+            <button type="submit">Save for this tab</button>
+            <button type="button" id="tokenClear" class="ghost">Forget</button>
+          </div>
+          <p id="tokenState" class="muted" aria-live="polite">No token set.</p>
+        </form>
+      </section>
+
+      <section class="panel wide" aria-labelledby="chatHeading">
+        <h2 id="chatHeading">Ask Alfred</h2>
+        <form id="chatForm" class="stack">
+          <label for="chatMessage">Your question</label>
+          <textarea id="chatMessage" name="message" rows="3" required></textarea>
+          <div class="row wrap">
+            <label class="inline">
+              Mode
+              <select id="chatMode">
+                <option value="auto">Auto</option>
+                <option value="deterministic">Deterministic (no model)</option>
+                <option value="model">Model</option>
+              </select>
+            </label>
+            <label class="inline">
+              Depth
+              <select id="chatDepth">
+                <option value="concise">Concise</option>
+                <option value="deep">Deep research</option>
+              </select>
+            </label>
+            <label class="inline checkbox">
+              <input type="checkbox" id="chatWeb" />
+              Use web research
+            </label>
+            <button type="submit">Send</button>
+          </div>
+        </form>
+        <div class="answer" id="chatAnswer" aria-live="polite"></div>
+        <div class="citations" id="chatCitations"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="systemHeading">
+        <h2 id="systemHeading">System inspection</h2>
+        <p class="muted">Read-only summaries. Secrets are redacted; process command-line arguments are never collected.</p>
+        <div class="row wrap">
+          <button type="button" data-system="summary">System</button>
+          <button type="button" data-system="disk">Disk</button>
+          <button type="button" data-system="processes">Processes</button>
+          <button type="button" data-system="directory">Directory</button>
+        </div>
+        <pre class="output" id="systemOutput" aria-live="polite" tabindex="0"></pre>
+      </section>
+
+      <section class="panel wide" aria-labelledby="actionHeading">
+        <h2 id="actionHeading">Typed action builder</h2>
+        <p class="muted">
+          Every action is previewed, then requires your explicit approval, then
+          executes once and is recorded in the audit timeline.
+        </p>
+        <form id="actionForm" class="stack">
+          <label for="actionType">Action</label>
+          <select id="actionType"></select>
+          <div id="actionFields" class="stack"></div>
+          <div class="row">
+            <button type="submit">Preview</button>
+          </div>
+        </form>
+        <div class="preview" id="actionPreview" aria-live="polite"></div>
+      </section>
+
+      <section class="panel wide" aria-labelledby="auditHeading">
+        <h2 id="auditHeading">Immutable audit timeline</h2>
+        <div class="row">
+          <button type="button" id="refreshAudit">Refresh audit</button>
+        </div>
+        <ol class="timeline" id="auditTimeline" aria-live="polite"></ol>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p class="muted" id="footerNote">Local-first · loopback only · no external assets.</p>
+    </footer>
+
+    <script src="/console.js"></script>
+  </body>
+</html>

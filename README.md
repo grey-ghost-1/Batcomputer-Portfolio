@@ -1,6 +1,6 @@
 # Batcomputer Portfolio
 
-Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and backend software roles. The strongest evidence is three production-style Python projects backed by runnable tests, exact local commands, explicit security/reliability boundaries, and honest limitations. The original 20 learning projects remain intact as secondary **Labs & Prototypes**.
+Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and backend software roles. The strongest evidence is four production-style Python projects backed by runnable tests, exact local commands, explicit security/reliability boundaries, and honest limitations. All 20 original learning-project folders remain intact; 19 are secondary **Labs & Prototypes**, while Alfred has been promoted into a local-assistant flagship.
 
 **Strongest stack:** Python, FastAPI, Flask, Pydantic, SQLAlchemy, Alembic, PostgreSQL, SQLite, JavaScript, Pytest, Ruff, Docker configuration, and GitHub Actions.
 
@@ -15,40 +15,46 @@ Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and b
 | [Batcomputer Operations Platform](projects/operations-platform.html) | Tenant-isolated FastAPI modular monolith; Argon2 auth, RBAC, workflows, same-transaction audits, Alembic/PostgreSQL, operator UI | 9 | Local only; not claimed as hosted |
 | [Orbital Data Lab](projects/orbital-data-lab.html) | Deterministic RK4/velocity-Verlet API; bounded inputs, energy drift, content-addressed SQLite, lineage, exports, interactive canvas UI | 8 | Local only; educational, not flight grade |
 | [Algorithms & Quality](projects/algorithm-quality-lab.html) | Original data structures and algorithms; complexity trade-offs and deterministic normal/edge behavior | 7 | Source-and-test project; no service |
-| [Labs & Prototypes](labs.html) | 20 retained small exercises across software, security, IT support, and network/systems fundamentals | Covered by site inventory/link tests | Local scripts only |
+| [Alfred AI Assistant](projects/alfred-ai-assistant.html) | Loopback-only FastAPI; cited website and web knowledge; optional local/compatible reasoning; redacted inspection; typed owner-bound, expiring, approval-gated Windows actions | Dedicated safety, provider, research, API, and UI suite | Native local service only; desktop execution off by default |
+| [Labs & Prototypes](labs.html) | 19 secondary exercises across software, security, IT support, and network/systems fundamentals; all 20 legacy folders retained | Covered by site inventory/link tests | Local scripts only |
 
 ## Architecture
 
 ```text
 Recruiter-facing Flask site (:5000)
-├── Neon HUD, primary case studies, labs, evidence, optional application links
+├── Neon HUD, four primary case studies, labs, evidence, optional application links
 ├── Deterministic Alfred helper (no model or action execution)
 └── Route/link/config/accessibility/deployment-contract tests
 
 Independent FastAPI services
 ├── platform/ (:8000) -> auth/RBAC/workflows/audits -> PostgreSQL (SQLite in tests)
-└── orbital-data-lab/ (:8010) -> simulation/API/exports -> SQLite scenarios
+├── orbital-data-lab/ (:8010) -> simulation/API/exports -> SQLite scenarios
+└── alfred-assistant/ (:8020, loopback only)
+    ├── cited site/web knowledge + optional bounded reasoning providers
+    └── authenticated preview/approval/execution -> local SQLite audit state
 
 Executable quality evidence
 └── algorithms-quality/ -> dependency-free implementations + Pytest
 ```
 
-The Flask site, platform, and Orbital service are separate processes and do not share authentication or process state. `project-evidence.json` maps all 23 project pages to source folders, run commands, implemented behavior, limitations, and validation status.
+The Flask site, platform, Orbital service, and Alfred local service are separate processes and do not share authentication or process state. The public Flask site never proxies Alfred's action APIs. `project-evidence.json` maps all 23 project pages to source folders, run commands, implemented behavior, limitations, and validation status.
 
 ## Repository map
 
 - `batcomputer_console.html`, `style.css`, `app.js` — visually faithful recruiter homepage and deterministic browser behavior
 - `app.py`, `site_config.py` — Flask delivery, safe routes, health/summary/config APIs, optional-link omission, and disabled-by-default session-owned proposal metadata
-- `projects/` — three primary case studies plus the original 20 detail-page paths
+- `projects/` — four primary case studies across the original 23 detail-page paths
 - `Cybersecurity/`, `IT Support/`, `Network/`, `Software Automation/` — all 20 original prototype source folders
 - `platform/` — independently served operations platform, migration, container, UI, and API tests
 - `orbital-data-lab/` — independently served simulation API, storage, UI, container, and tests
 - `algorithms-quality/` — algorithms, edge-case tests, complexity table, and quality report
+- `alfred-assistant/` — native local FastAPI assistant, provider/research boundaries, typed desktop actions, SQLite audit state, console, and tests
+- `ALFRED_STATUS.md` — code-grounded implementation checklist, staged roadmap, threat model, and non-goals
 - `render.yaml`, `docker-compose.yml`, `Dockerfile`, `DEPLOYMENT.md` — deployment path and operational boundaries
 - `scripts/smoke_check.py` — non-mutating health/readiness checks for all deployable services
 - `.github/workflows/ci.yml` — all suites, migration, lint, compile, and Compose config validation
 
-Static HTML/CSS/JavaScript and evidence JSON can be published on GitHub Pages. Flask/FastAPI endpoints, environment-driven application links, Alfred server responses, migrations, and databases cannot run on Pages. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact boundary.
+Static HTML/CSS/JavaScript and evidence JSON can be published on GitHub Pages. Flask/FastAPI endpoints, environment-driven application links, Alfred server responses, migrations, and databases cannot run on Pages. Alfred is deliberately excluded from Render and Docker because desktop skills require a trusted native Windows session and loopback-only binding. See [DEPLOYMENT.md](DEPLOYMENT.md) for the exact boundary.
 
 ## Local development
 
@@ -96,8 +102,10 @@ Set-Location ..
 python -m pytest algorithms-quality\tests -q
 
 # Static checks
-python -m ruff check app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
-python -m compileall -q app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
+python -m ruff check app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
+python -m mypy --check-untyped-defs alfred-assistant\alfred
+python -m compileall -q app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
+node --check alfred-assistant\ui\console.js
 docker compose config --quiet
 ```
 
@@ -109,7 +117,7 @@ CI runs this chain and validates Compose structure. Docker is unavailable in the
 - **Source visibility:** the GitHub repository is public; each flagship retains both local evidence and a clearly labeled source CTA.
 - The root Flask site has no user accounts because it serves public portfolio content. Local proposal metadata is disabled by default, session-owned when enabled, and never reads repository files.
 - The platform implements authentication and tenant boundaries, but not MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations.
-- Alfred is deterministic and predefined. It has no language model, retrieval, memory, autonomous tools, or action execution.
+- The homepage Alfred helper remains deterministic and non-executing. The separate local Alfred service has cited curated/web retrieval and optional reasoning providers. It is not generally autonomous: desktop actions are typed, disabled by default, and require exact preview plus explicit per-action approval.
 - The Orbital model is educational and omits perturbations, burns, atmosphere, ephemerides, uncertainty, collision handling, and flight validation.
 - Algorithm implementations demonstrate reasoning and tests; they do not replace optimized standard-library or production packages.
 - Most retained labs are intentionally small, dependency-light learning prototypes—not production systems.

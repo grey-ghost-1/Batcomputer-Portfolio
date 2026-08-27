@@ -69,7 +69,7 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(payload["project_count"], 23)
         self.assertEqual(len(payload["projects"]), 23)
         self.assertEqual(payload["primary_projects"], list(site.PRIMARY_PROJECTS))
-        self.assertEqual(payload["labs_count"], 20)
+        self.assertEqual(payload["labs_count"], 19)
         self.assertEqual(payload["labs_page"], "labs.html")
         self.assertEqual(payload["evidence_inventory"], "project-evidence.json")
         self.assertEqual(payload["categories"], site.CATEGORY_PAGES)
@@ -142,6 +142,10 @@ class AppTestCase(unittest.TestCase):
             "https://github.com/public/example/tree/main/orbital-data-lab",
         )
         self.assertEqual(
+            config["public_source_urls"]["alfred-assistant"],
+            "https://github.com/public/example/tree/main/alfred-assistant",
+        )
+        self.assertEqual(
             config["public_source_urls"][""],
             "https://github.com/public/example/tree/main",
         )
@@ -171,6 +175,7 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(self.get_status("/batcomputer_console.html"), 200)
         self.assertEqual(self.get_status("/labs.html"), 200)
         self.assertEqual(self.get_status("/project-evidence.json"), 200)
+        self.assertEqual(self.get_status("/ALFRED_STATUS.md"), 200)
 
         for alias, file_name in site.CATEGORY_PAGES.items():
             with self.subTest(alias=alias):
@@ -596,14 +601,15 @@ class StaticContentTestCase(unittest.TestCase):
             "Batcomputer Operations Platform",
             "Orbital Data Lab",
             "Algorithms & Quality",
+            "Alfred AI Assistant",
             "Labs & Prototypes",
-            "20 retained learning prototypes",
+            "19 secondary learning prototypes",
             "No AI model",
         ):
             with self.subTest(expected=expected):
                 self.assertIn(expected, normalized)
 
-        primary_position = normalized.index("Three production-style engineering case studies")
+        primary_position = normalized.index("Four production-style engineering case studies")
         labs_position = normalized.index("Learning archive")
         self.assertLess(primary_position, labs_position)
 
@@ -616,6 +622,7 @@ class StaticContentTestCase(unittest.TestCase):
             "projects/operations-platform.html",
             "projects/orbital-data-lab.html",
             "projects/algorithm-quality-lab.html",
+            "projects/alfred-ai-assistant.html",
             "cybersecurity.html",
             "network_software.html",
             "labs.html",
@@ -629,6 +636,7 @@ class StaticContentTestCase(unittest.TestCase):
             "operations-platform.html": "platform",
             "orbital-data-lab.html": "orbital-data-lab",
             "algorithm-quality-lab.html": "algorithms-quality",
+            "alfred-ai-assistant.html": "alfred-assistant",
         }
         required_sections = (
             "Problem and users",
@@ -648,10 +656,12 @@ class StaticContentTestCase(unittest.TestCase):
                 for section in required_sections:
                     self.assertIn(section, parser.text)
                 self.assertIn(f'data-public-source-path="{source_path}"', content)
-                self.assertIn(
-                    f'href="{REPOSITORY_URL}/tree/{SOURCE_REF}/{source_path}"',
-                    content,
+                source_ref = (
+                    "grey-ghost-1-alfred-desktop-assistant"
+                    if source_path == "alfred-assistant"
+                    else SOURCE_REF
                 )
+                self.assertIn(f'href="{REPOSITORY_URL}/tree/{source_ref}/{source_path}"', content)
                 self.assertNotIn("fake screenshot", content.lower())
 
     def test_flagship_cards_pair_local_evidence_with_public_source(self):
@@ -668,6 +678,10 @@ class StaticContentTestCase(unittest.TestCase):
             "View algorithms evidence": (
                 "projects/algorithm-quality-lab.html",
                 f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality",
+            ),
+            "View Alfred evidence": (
+                "projects/alfred-ai-assistant.html",
+                f"{REPOSITORY_URL}/tree/grey-ghost-1-alfred-desktop-assistant/alfred-assistant",
             ),
         }
         client = site.app.test_client()
@@ -735,22 +749,24 @@ class StaticContentTestCase(unittest.TestCase):
 
     def test_labs_are_accurately_labeled_and_all_legacy_paths_remain(self):
         labs = (ROOT / "labs.html").read_text(encoding="utf-8")
-        self.assertIn("Twenty small, runnable exercises", labs)
-        self.assertIn("three primary case studies", labs)
+        self.assertIn("Nineteen small, runnable exercises", labs)
+        self.assertIn("four primary case studies", labs)
         legacy_sources = [
             path
             for category in ("Cybersecurity", "IT Support", "Network", "Software Automation")
             for path in (ROOT / category).glob("*/main.py")
         ]
         self.assertEqual(len(legacy_sources), 20)
-        legacy_pages = {
+        retained_legacy_pages = {
             project["page"]
             for project in self.evidence["projects"]
-            if project["source_folder"]
+            if project.get("legacy_source_folder", project["source_folder"])
             in {path.parent.relative_to(ROOT).as_posix() for path in legacy_sources}
         }
-        self.assertEqual(len(legacy_pages), 20)
-        self.assertTrue(all((ROOT / page).is_file() for page in legacy_pages))
+        self.assertEqual(len(retained_legacy_pages), 20)
+        self.assertTrue(all((ROOT / page).is_file() for page in retained_legacy_pages))
+        self.assertEqual(site.app.test_client().get("/api/site/summary").get_json()["labs_count"], 19)
+        self.assertTrue((ROOT / "Software Automation" / "alfred-ai-assistant" / "main.py").is_file())
 
     def test_accessibility_and_responsive_contracts_are_present(self):
         home = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")

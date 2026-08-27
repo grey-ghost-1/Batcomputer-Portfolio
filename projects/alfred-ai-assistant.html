@@ -3,25 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alfred Deterministic Assistant | Justin Wimmer HUD</title>
-  <link rel="stylesheet" href="../style.css">
+  <meta name="description" content="Alfred is a local-first FastAPI assistant with cited portfolio and web research, optional local reasoning providers, and strictly approval-gated Windows desktop actions.">
+  <title>Alfred AI Assistant | Justin Wimmer</title>
+  <link rel="stylesheet" href="../style.css?v=alfred-local">
 </head>
 <body class="site-shell">
-<main class="detail-shell">
-  <nav class="detail-nav" aria-label="Site navigation"><a class="home-link" href="../software_development.html">← Back to Software &amp; Automation</a></nav>
+<a class="skip-link" href="#case-study">Skip to case study</a>
+<main class="detail-shell" id="case-study">
+  <nav class="detail-nav" aria-label="Site navigation">
+    <a class="home-link" href="../batcomputer_console.html">Primary work</a>
+    <a class="home-link" href="../project-evidence.json">Evidence</a>
+    <a class="home-link" href="../ALFRED_STATUS.md">Status and roadmap</a>
+  </nav>
+
   <header class="detail-header">
-    <p class="eyebrow">Software Prototype</p>
+    <p class="eyebrow">Primary Work // Local AI &amp; Desktop Safety</p>
     <h1>Alfred AI Assistant</h1>
-    <p class="detail-focus">Despite the retained project path and title, the current implementation is a deterministic keyword matcher with canned local responses, not an AI system.</p>
+    <p class="detail-focus">A native, loopback-only household-manager assistant that answers with cited evidence, can optionally use local or compatible reasoning providers, and cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
+    <div class="case-meta">
+      <span>FastAPI + Pydantic</span>
+      <span>SQLite audit state</span>
+      <span>Typed desktop skills</span>
+      <span>Provider + research boundaries</span>
+    </div>
   </header>
+
   <section class="detail-card">
-    <h2>Evidence snapshot</h2>
-    <p><strong>Source:</strong> <code>Software Automation\alfred-ai-assistant</code></p>
-    <p><strong>Run from repository root:</strong> <code>python "Software Automation\alfred-ai-assistant\main.py" status</code></p>
-    <p><strong>Validation:</strong> Fully local, deterministic, and side-effect free.</p>
+    <h2>Problem and users</h2>
+    <p>General desktop agents are impressive but often hide the most important details: what they can read, what a model actually supplied, what will change, and whether a conversational phrase counts as permission. Alfred is designed for one local Windows operator who wants useful portfolio knowledge, current research, system summaries, and a small set of desktop conveniences without surrendering control.</p>
   </section>
-  <section class="detail-card"><h2>Implemented</h2><ul><li>Text input through one positional command-line argument</li><li>Keyword matching for greeting, status, and help intents</li><li>Fallback response for unmatched text</li></ul></section>
-  <section class="detail-card"><h2>Limitations</h2><p>No language model, wake-word detection, audio capture, speech recognition, text-to-speech engine, Flask route, memory, external information retrieval, or system-task execution exists in this folder.</p></section>
+
+  <section class="detail-card">
+    <h2>Implemented by me</h2>
+    <ul>
+      <li>A separate typed FastAPI service that rejects public binding and is intentionally excluded from public Render and Docker services</li>
+      <li>An original, versioned British household-manager persona: discreet, concise, candid about uncertainty, gently dry, and safety-first</li>
+      <li>A curated website index over fixed first-party evidence paths, with repository-relative citations and instruction-neutralization</li>
+      <li>Optional Ollama and generic OpenAI-compatible reasoning providers with bounded structured messages, timeouts, visible model status, and explicit deterministic fallback</li>
+      <li>Keyless Wikipedia research plus optional Brave Search, normalized dated citations, provenance labels, and SSRF-hardened fixed-source HTTP</li>
+      <li>Read-only system, disk, directory-metadata, and process summaries that omit environment dumps, file contents, secrets, and command lines</li>
+      <li>Typed proposals for folder creation, one-file move/rename, bounded extension organization, allowlisted app launch, allowlisted HTTPS URL launch, and optional clipboard text</li>
+      <li>Owner/session isolation, high-entropy bearer authentication, expiring payload-bound approvals, atomic single-use execution, collision denial, path revalidation, and append-only audit events</li>
+      <li>An accessible responsive local console showing provider, web, index, health, citations, exact previews, approval state, expiry, execution result, and audit history</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Architecture</h2>
+    <ol class="architecture-flow">
+      <li>Local console<br><small>typed input + explicit approval</small></li>
+      <li>FastAPI policy layer<br><small>auth, schemas, ownership</small></li>
+      <li>Knowledge / research / actions<br><small>separate bounded tools</small></li>
+      <li>SQLite + Windows APIs<br><small>audit and approved effects</small></li>
+    </ol>
+    <p>The public Flask portfolio only showcases Alfred. It does not proxy or expose the desktop-control API. The local service listens on <code>127.0.0.1:8020</code>; chat and research orchestration remain separate from typed action execution, so model text cannot become a command.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Safety boundary</h2>
+    <p><strong>Every desktop mutation, application launch, URL launch, or clipboard write follows:</strong> propose → render exact effects and root-relative path diff → approve the canonical payload hash → execute once → record the immutable result. There is no chat shortcut, blanket approval, delete action, recursive operation, overwrite default, raw shell, PowerShell, arbitrary executable, or user-supplied command argument.</p>
+    <p>Paths reject traversal, absolute/UNC/device forms, and links or reparse points that resolve outside configured roots. Execution revalidates paths, filesystem state, URL/app allowlists, ownership, expiry, and stored-payload integrity immediately before claiming the action. Residual local-account and filesystem-race risks are documented in <a href="../ALFRED_STATUS.md">the threat model</a>.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Knowledge and research</h2>
+    <p>Portfolio answers search a bounded index built only from fixed repository evidence sources and return their paths. Research mode consults keyless Wikipedia and, when separately configured, Brave Search. Outbound research permits HTTPS on the standard port, validates DNS and redirects against private, loopback, metadata, reserved, link-local, and multicast destinations, and limits time, bytes, content types, redirects, excerpts, and result counts.</p>
+    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Alfred's persona, action policy, or approval rule. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; provider failure never masquerades as an AI answer.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Trade-offs</h2>
+    <ul>
+      <li>Native Windows execution is required for desktop skills; omitting Alfred from containers avoids a misleading or unsafe deployment story.</li>
+      <li>A fixed knowledge manifest and fixed research providers are narrower than arbitrary RAG or browsing, but they make provenance and SSRF controls reviewable.</li>
+      <li>A shared local action token plus per-tab session ownership is intentionally simpler than accounts; it is suitable for one trusted local operator, not a remote multi-user service.</li>
+      <li>Typed actions sacrifice general automation in exchange for inspectable payloads, deterministic validation, and meaningful approval.</li>
+    </ul>
+  </section>
+
+  <section class="detail-card">
+    <h2>Run and verify</h2>
+    <p><strong>Source:</strong> <code>alfred-assistant</code></p>
+    <p><strong>Legacy source retained:</strong> <code>Software Automation\alfred-ai-assistant</code></p>
+    <p><strong>Run from repository root:</strong></p>
+    <pre><code>python -m pip install -r requirements.txt
+Set-Location alfred-assistant
+Copy-Item .env.example .env
+# Set a generated ALFRED_ACTION_TOKEN and optional allowlists in .env.
+.\start.ps1</code></pre>
+    <p>Open <code>http://127.0.0.1:8020</code>. Desktop execution remains disabled until <code>ALFRED_DESKTOP_ACTIONS_ENABLED=true</code> is deliberately configured.</p>
+    <pre><code>python -m pytest alfred-assistant\tests -q
+python -m ruff check alfred-assistant
+python -m mypy --check-untyped-defs alfred-assistant\alfred
+python -m compileall -q alfred-assistant
+node --check alfred-assistant\ui\console.js</code></pre>
+  </section>
+
+  <section class="detail-card">
+    <h2>Tests</h2>
+    <p>The dedicated suite covers configuration and sanitized status, migrations, API/UI contracts, persona behavior, website citations, provider failures and timeouts, web provenance, prompt-injection handling, SSRF and redirect denial, secret/process redaction, traversal/UNC/link escape, collisions, allowlists, approval ownership, expiry, payload tampering, replay, two-client isolation, disabled execution, and mocked launches. Filesystem mutations are limited to temporary approved roots.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Current Limitations</h2>
+    <p>Alfred is local-only and not generally autonomous. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Next milestones</h2>
+    <p>The staged plan prioritizes Windows reparse/race hardening, token rotation and revocation, transactional skill recovery, citation-faithfulness evaluation, opt-in inspectable memory, push-to-talk before wake words, least-privilege integrations, and a signed native package with no surprise persistence. Completion criteria and non-goals are maintained in <a href="../ALFRED_STATUS.md">ALFRED_STATUS.md</a>.</p>
+  </section>
+
+  <section class="detail-card">
+    <h2>Demo status</h2>
+    <p>No public hosted demo is claimed. Desktop capability only makes sense in a trusted native user session. Review the local evidence above, then inspect the <a data-public-source-path="alfred-assistant" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/grey-ghost-1-alfred-desktop-assistant/alfred-assistant">public source on GitHub</a>.</p>
+  </section>
 </main>
+<script src="../app.js?v=alfred-local"></script>
 </body>
 </html>

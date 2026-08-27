@@ -48,11 +48,21 @@ jobs:
         working-directory: algorithms-quality
         run: python -m pytest tests -q
 
+      - name: Test Alfred local assistant
+        working-directory: alfred-assistant
+        run: python -m pytest tests -q
+
       - name: Lint Python
-        run: python -m ruff check app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
+        run: python -m ruff check app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
 
       - name: Compile Python modules
-        run: python -m compileall -q app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality
+        run: python -m compileall -q app.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
+
+      - name: Type-check Alfred service
+        run: python -m mypy --check-untyped-defs --disallow-untyped-defs --no-implicit-optional alfred-assistant/alfred
+
+      - name: Validate Alfred console JavaScript
+        run: node --check alfred-assistant/ui/console.js
 
       - name: Validate container configuration
         run: docker compose config --quiet

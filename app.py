@@ -53,9 +53,10 @@ PRIMARY_PROJECTS = (
     "operations-platform",
     "orbital-data-lab",
     "algorithm-quality-lab",
+    "alfred-ai-assistant",
 )
 ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
-ROOT_PUBLIC_FILES = {"project-evidence.json"}
+ROOT_PUBLIC_FILES = {"project-evidence.json", "ALFRED_STATUS.md"}
 ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
 PROPOSAL_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
 
