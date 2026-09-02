@@ -607,6 +607,11 @@ class StaticContentTestCase(unittest.TestCase):
             "Orbital Data Lab",
             "Algorithms & Quality",
             "Alfred AI Assistant",
+            "Zion, showcased from the Batcomputer portfolio",
+            "Community Aid Hub",
+            "Health Navigator",
+            "Humanitarian Automation Pipeline",
+            "View Zion on GitHub",
             "Labs & Prototypes",
             "19 secondary learning prototypes",
             "No AI model",
@@ -615,8 +620,11 @@ class StaticContentTestCase(unittest.TestCase):
                 self.assertIn(expected, normalized)
 
         primary_position = normalized.index("Four production-style engineering case studies")
+        zion_position = normalized.index("Zion, showcased from the Batcomputer portfolio")
         labs_position = normalized.index("Learning archive")
         self.assertLess(primary_position, labs_position)
+        self.assertLess(primary_position, zion_position)
+        self.assertLess(zion_position, labs_position)
 
     def test_homepage_navigation_covers_six_categories_and_application(self):
         content = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")

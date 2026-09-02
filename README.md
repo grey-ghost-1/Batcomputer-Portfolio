@@ -1,6 +1,6 @@
 # Batcomputer Portfolio
 
-Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and backend software roles. The strongest evidence is four production-style Python projects backed by runnable tests, exact local commands, explicit security/reliability boundaries, and honest limitations. All 20 original learning-project folders remain intact; 19 are secondary **Labs & Prototypes**, while Alfred has been promoted into a local-assistant flagship.
+Justin Wimmer's dark-neon engineering portfolio for entry-level full-stack and backend software roles. The strongest evidence is four production-style Python projects backed by runnable tests, exact local commands, explicit security/reliability boundaries, and honest limitations. Batcomputer stays the main portfolio surface, while Zion is the outreach work reflected alongside it on the homepage and GitHub. All 20 original learning-project folders remain intact; 19 are secondary **Labs & Prototypes**, while Alfred has been promoted into a local-assistant flagship.
 
 **Strongest stack:** Python, FastAPI, Flask, Pydantic, SQLAlchemy, Alembic, PostgreSQL, SQLite, JavaScript, Pytest, Ruff, Docker configuration, and GitHub Actions.
 
