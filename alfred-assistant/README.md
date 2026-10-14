@@ -1,4 +1,4 @@
-# Alfred Assistant
+# Z Assistant
 
 A local-first, typed FastAPI household-manager service. It can hold broad,
 general-purpose conversations through an explicitly configured Ollama or
@@ -7,7 +7,7 @@ optionally research the public web, and prepare a small set of typed
 desktop actions -- but **every desktop action requires its own explicit
 preview, approval, and execution step.** Nothing runs automatically.
 
-Alfred is an original persona (a discreet, precise, dry-witted British
+Z is an original persona (a discreet, precise, dry-witted British
 household manager). It does not reproduce dialogue, catchphrases, or
 characterization from any copyrighted work.
 
@@ -20,7 +20,7 @@ characterization from any copyrighted work.
 - **Loopback only.** The service refuses to start if configured to bind
   anywhere but `127.0.0.0/8`, `::1`, or `localhost`. There is no supported way
   to expose it on a LAN or the public internet.
-- **No startup persistence.** `start.ps1` runs Alfred in the foreground of
+- **No startup persistence.** `start.ps1` runs Z in the foreground of
   the terminal you launch it from. It does not create a scheduled task, a
   registry Run key, a Windows service, or a startup shortcut. Closing the
   terminal (or `Ctrl+C`) stops it completely; nothing is left running.
@@ -168,7 +168,7 @@ portfolio evidence is attached only for clear portfolio questions or the explici
 `website` mode, preventing unrelated general answers from receiving irrelevant
 site citations.
 
-## What Alfred is not
+## What Z is not
 
 - Not a general browser, crawler, or arbitrary URL fetcher -- web research
   (when enabled) only ever calls a fixed Wikipedia API and, if configured, the

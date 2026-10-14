@@ -31,7 +31,7 @@ def test_persona_policy_version_is_pinned():
 
 def test_persona_descriptor_shape_and_traits():
     descriptor = persona_descriptor()
-    assert descriptor["name"] == "Alfred"
+    assert descriptor["name"] == "Z"
     assert descriptor["policy_version"] == PERSONA_POLICY_VERSION
     assert "discreet" in descriptor["traits"]
     assert "safety-first" in descriptor["traits"]
@@ -145,7 +145,7 @@ def test_small_talk_greetings(message):
 def test_small_talk_identity_question_describes_persona_and_boundary(message):
     result = small_talk(message)
     assert result is not None
-    assert "Alfred" in result
+    assert "Z" in result
     assert personality.BOUNDARY in result
 
 

@@ -151,7 +151,7 @@ textarea {
     letter-spacing: 0.06em;
 }
 
-.alfred-hero {
+.z-hero {
     display: grid;
     grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
     gap: 42px;
@@ -160,26 +160,26 @@ textarea {
     border-bottom: 1px solid var(--neon-grey);
 }
 
-.alfred-hero-copy h1 {
+.z-hero-copy h1 {
     margin: 0 0 12px;
     font-size: clamp(32px, 6vw, 48px);
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
-.alfred-mission {
+.z-mission {
     margin: 0 0 16px;
     color: #f0f0f0;
     line-height: 1.8;
 }
 
-.alfred-hero-console {
+.z-hero-console {
     padding: 0;
     border: 0;
     background: transparent;
 }
 
-.alfred-runtime-strip {
+.z-runtime-strip {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -187,7 +187,7 @@ textarea {
     margin-top: 18px;
 }
 
-.alfred-runtime-strip span {
+.z-runtime-strip span {
     color: #d8d8d8;
     line-height: 1.7;
 }
@@ -363,7 +363,7 @@ textarea {
     color: #ececec;
 }
 
-#alfred-chatbox {
+#z-chatbox {
     display: grid;
     gap: 10px;
     margin-top: 12px;
@@ -373,7 +373,7 @@ textarea {
     box-shadow: none;
 }
 
-#alfred-chat-log {
+#z-chat-log {
     min-height: 200px;
     max-height: 360px;
     overflow-y: auto;
@@ -418,13 +418,13 @@ textarea {
     word-break: break-word;
 }
 
-#alfred-chat-input-row {
+#z-chat-input-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px;
 }
 
-#alfred-chat-input {
+#z-chat-input {
     width: 100%;
     box-sizing: border-box;
     padding: 14px 0;
@@ -435,7 +435,7 @@ textarea {
     outline: none;
 }
 
-#alfred-chat-send {
+#z-chat-send {
     padding: 12px 0;
     border: 0;
     background: transparent;
@@ -684,7 +684,7 @@ body {
 }
 
 .topbar-brand h1,
-.alfred-hero-copy h1,
+.z-hero-copy h1,
 .detail-header h1 {
     letter-spacing: 0.08em;
 }
@@ -720,7 +720,7 @@ body {
     box-shadow: 0 8px 26px rgba(0, 87, 217, 0.24);
 }
 
-.alfred-hero {
+.z-hero {
     position: relative;
     z-index: 1;
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
@@ -735,7 +735,7 @@ body {
     backdrop-filter: blur(14px) saturate(125%);
 }
 
-.alfred-hero::before {
+.z-hero::before {
     position: absolute;
     inset: 12px;
     border: 1px solid rgba(230, 247, 255, 0.09);
@@ -744,18 +744,18 @@ body {
     pointer-events: none;
 }
 
-.alfred-hero-copy,
-.alfred-hero-console {
+.z-hero-copy,
+.z-hero-console {
     position: relative;
     z-index: 1;
 }
 
-.alfred-hero-copy h1 {
+.z-hero-copy h1 {
     font-size: clamp(42px, 7vw, 82px);
     line-height: 0.95;
 }
 
-.alfred-mission {
+.z-mission {
     max-width: 520px;
     color: var(--blue-pale);
     line-height: 1.75;
@@ -767,7 +767,7 @@ body {
     line-height: 1.7;
 }
 
-.alfred-hero-console,
+.z-hero-console,
 .runtime-card,
 .panel,
 .detail-card,
@@ -779,7 +779,7 @@ body {
     backdrop-filter: blur(12px) saturate(120%);
 }
 
-.alfred-hero-console {
+.z-hero-console {
     padding: 22px;
 }
 
@@ -788,7 +788,7 @@ body {
     border-bottom: 1px solid var(--blue-line);
 }
 
-#alfred-chat-log {
+#z-chat-log {
     min-height: 240px;
     padding: 10px 0 18px;
 }
@@ -804,7 +804,7 @@ body {
     border-left-color: var(--blue-bright);
 }
 
-#alfred-chat-input {
+#z-chat-input {
     padding: 13px;
     border: 1px solid var(--blue-line);
     border-radius: 10px;
@@ -812,12 +812,12 @@ body {
     color: var(--blue-pale);
 }
 
-#alfred-chat-input:focus {
+#z-chat-input:focus {
     border-color: rgba(0, 191, 255, 0.68);
     box-shadow: 0 0 0 3px rgba(0, 191, 255, 0.12);
 }
 
-#alfred-chat-send {
+#z-chat-send {
     padding: 12px 17px;
     border: 0;
     border-radius: 10px;
@@ -872,7 +872,7 @@ body {
         padding-top: 20px;
     }
 
-    .alfred-hero {
+    .z-hero {
         min-height: auto;
         padding: 24px;
     }
@@ -889,11 +889,11 @@ body,
     display: none;
 }
 
-.alfred-hero {
+.z-hero {
     background: #050505;
 }
 
-.alfred-hero-console,
+.z-hero-console,
 .runtime-card,
 .panel,
 .detail-card,
@@ -1006,13 +1006,13 @@ body,
     text-shadow: 0 0 8px #00bfff;
 }
 
-.alfred-console {
+.z-console {
     flex: 0 0 min(310px, 28%);
     margin-left: 0;
     text-align: center;
 }
 
-.alfred-label {
+.z-label {
     margin: 0 0 10px;
     color: #00bfff;
     font-family: "Orbitron", "Inter", sans-serif;
@@ -1047,7 +1047,7 @@ body,
     letter-spacing: 1px;
 }
 
-.alfred-input {
+.z-input {
     width: 100%;
     box-sizing: border-box;
     padding: 12px;
@@ -1059,24 +1059,24 @@ body,
     box-shadow: 0 0 10px rgba(0, 191, 255, 0.35);
 }
 
-.alfred-input::placeholder {
+.z-input::placeholder {
     color: rgba(127, 217, 255, 0.72);
 }
 
-.hud-header #alfred-chatbox {
+.hud-header #z-chatbox {
     margin-top: 0;
 }
 
-.hud-header #alfred-chat-log {
+.hud-header #z-chat-log {
     min-height: 110px;
     max-height: 190px;
 }
 
-.hud-header #alfred-chat-input-row {
+.hud-header #z-chat-input-row {
     grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.hud-header #alfred-chat-send {
+.hud-header #z-chat-send {
     padding: 10px 12px;
     border: 1px solid #00bfff;
     border-radius: 2px;
@@ -1085,7 +1085,7 @@ body,
     box-shadow: none;
 }
 
-.alfred-hero .alfred-hero-copy h2 {
+.z-hero .z-hero-copy h2 {
     margin: 0 0 12px;
     color: #ffffff;
     font-family: "Orbitron", "Inter", sans-serif;
@@ -1094,7 +1094,7 @@ body,
     text-transform: uppercase;
 }
 
-.alfred-hero .alfred-console {
+.z-hero .z-console {
     flex: 0 0 min(420px, 38%);
 }
 
@@ -1105,7 +1105,7 @@ body,
         padding: 28px 24px;
     }
 
-    .alfred-console {
+    .z-console {
         flex-basis: auto;
         width: min(100%, 520px);
         margin: 0 auto;
@@ -1736,11 +1736,11 @@ body {
     opacity: 0.98;
 }
 
-.alfred-hero {
+.z-hero {
     background: #050505;
 }
 
-.alfred-hero-console,
+.z-hero-console,
 .runtime-card,
 .panel,
 .detail-card,
@@ -1766,7 +1766,7 @@ body {
     box-shadow: 0 0 14px rgba(0, 191, 255, 0.28);
 }
 
-.alfred-hero-copy h1 {
+.z-hero-copy h1 {
     color: #ffffff;
 }
 
@@ -1835,7 +1835,7 @@ body {
 }
 
 .topbar-brand h1,
-.alfred-hero-copy h1,
+.z-hero-copy h1,
 .detail-header h1 {
     letter-spacing: 0.08em;
 }
@@ -1873,7 +1873,7 @@ body {
     transform: translateY(-1px);
 }
 
-.alfred-hero {
+.z-hero {
     position: relative;
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
     gap: 56px;
@@ -1887,7 +1887,7 @@ body {
     backdrop-filter: blur(18px);
 }
 
-.alfred-hero::before {
+.z-hero::before {
     position: absolute;
     inset: 14px;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -1895,18 +1895,18 @@ body {
     pointer-events: none;
 }
 
-.alfred-hero-copy,
-.alfred-hero-console {
+.z-hero-copy,
+.z-hero-console {
     position: relative;
     z-index: 1;
 }
 
-.alfred-hero-copy h1 {
+.z-hero-copy h1 {
     font-size: clamp(42px, 7vw, 84px);
     line-height: 0.95;
 }
 
-.alfred-mission {
+.z-mission {
     max-width: 520px;
     color: #e0e0e0;
     line-height: 1.7;
@@ -1918,7 +1918,7 @@ body {
     line-height: 1.7;
 }
 
-.alfred-hero-console,
+.z-hero-console,
 .runtime-card,
 .panel,
 .detail-card,
@@ -1930,7 +1930,7 @@ body {
     backdrop-filter: blur(16px);
 }
 
-.alfred-hero-console {
+.z-hero-console {
     padding: 24px;
 }
 
@@ -1939,7 +1939,7 @@ body {
     border-bottom: 1px solid var(--console-line);
 }
 
-#alfred-chat-log {
+#z-chat-log {
     min-height: 240px;
     padding: 10px 0 18px;
 }
@@ -1954,13 +1954,13 @@ body {
     border-left-color: #ffffff;
 }
 
-#alfred-chat-input {
+#z-chat-input {
     padding: 14px;
     border: 1px solid var(--console-line);
     background: rgba(0, 0, 0, 0.35);
 }
 
-#alfred-chat-send {
+#z-chat-send {
     padding: 12px 16px;
     border: 1px solid var(--console-line);
     background: #f2f2f2;
@@ -2001,7 +2001,7 @@ body {
 }
 
 @media (max-width: 900px) {
-    .alfred-hero {
+    .z-hero {
         min-height: auto;
         padding: 30px;
     }
@@ -2014,7 +2014,7 @@ body {
         padding-top: 20px;
     }
 
-    .alfred-hero {
+    .z-hero {
         gap: 28px;
         padding: 24px;
     }
@@ -2120,7 +2120,7 @@ body {
         align-items: stretch;
     }
 
-    .alfred-hero {
+    .z-hero {
         grid-template-columns: 1fr;
     }
 
@@ -2132,7 +2132,7 @@ body {
         grid-template-columns: 1fr;
     }
 
-    #alfred-chat-input-row {
+    #z-chat-input-row {
         grid-template-columns: 1fr;
     }
 }
@@ -2169,11 +2169,11 @@ body,
     display: none;
 }
 
-.alfred-hero {
+.z-hero {
     background: #050505;
 }
 
-.alfred-hero-console,
+.z-hero-console,
 .runtime-card,
 .panel,
 .detail-card,
@@ -2342,7 +2342,7 @@ body,
     background: transparent !important;
 }
 
-.hud-resume-page .alfred-hero,
+.hud-resume-page .z-hero,
 .hud-resume-page .panel,
 .hud-resume-page .detail-card,
 .hud-resume-page .category-card,
@@ -2359,12 +2359,12 @@ body,
 }
 
 /* Unified neon-grey outlines */
-.hud-resume-page :is(.hud-header, .alfred-hero, .panel, .detail-card, .category-card, .runtime-card, .home-link, .visual-metric, .agent-field input, .agent-field textarea, .agent-proposal pre, .chat-entry pre) {
+.hud-resume-page :is(.hud-header, .z-hero, .panel, .detail-card, .category-card, .runtime-card, .home-link, .visual-metric, .agent-field input, .agent-field textarea, .agent-proposal pre, .chat-entry pre) {
     border-color: rgba(216, 216, 216, 0.72) !important;
     box-shadow: 0 0 10px rgba(216, 216, 216, 0.16) !important;
 }
 
-.hud-resume-page :is(.hud-btn, .inline-link, #alfred-chat-input, #alfred-chat-send, .mic-circle) {
+.hud-resume-page :is(.hud-btn, .inline-link, #z-chat-input, #z-chat-send, .mic-circle) {
     border-color: rgba(216, 216, 216, 0.72) !important;
     box-shadow: 0 0 8px rgba(216, 216, 216, 0.14) !important;
 }
@@ -2669,7 +2669,7 @@ body {
     color: #ffffff;
 }
 
-.hud-resume-page .alfred-hero {
+.hud-resume-page .z-hero {
     display: grid;
     grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
     gap: 34px;
@@ -2679,7 +2679,7 @@ body {
     padding: clamp(28px, 5vw, 54px);
 }
 
-.alfred-hero-copy h2,
+.z-hero-copy h2,
 .portfolio-section h2 {
     max-width: 760px;
     margin: 8px 0 16px;
@@ -2773,7 +2773,7 @@ body {
     outline-offset: 3px;
 }
 
-.hud-resume-page .alfred-console {
+.hud-resume-page .z-console {
     min-width: 0;
     padding: 22px;
     border: 1px solid rgba(123, 216, 255, 0.3);
@@ -2790,11 +2790,11 @@ body {
     font-size: 0.75rem;
 }
 
-#alfred-chat-input-row {
+#z-chat-input-row {
     flex-wrap: wrap;
 }
 
-#alfred-chat-input {
+#z-chat-input {
     min-width: 180px;
 }
 
@@ -2947,12 +2947,12 @@ input:focus-visible {
 }
 
 @media (max-width: 940px) {
-    .hud-resume-page .alfred-hero,
+    .hud-resume-page .z-hero,
     .flagship-grid {
         grid-template-columns: 1fr;
     }
 
-    .hud-resume-page .alfred-console {
+    .hud-resume-page .z-console {
         width: auto;
     }
 
@@ -2972,7 +2972,7 @@ input:focus-visible {
         padding-inline: 12px;
     }
 
-    .hud-resume-page .alfred-hero,
+    .hud-resume-page .z-hero,
     .portfolio-section {
         padding: 22px 18px;
     }
@@ -3017,7 +3017,7 @@ input:focus-visible {
     }
 }
 
-/* Controlled public Alfred showcase */
+/* Controlled public Z showcase */
 .showcase-page {
     min-height: 100vh;
     background: #000000 !important;

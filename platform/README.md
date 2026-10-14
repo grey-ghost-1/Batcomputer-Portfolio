@@ -1,4 +1,4 @@
-# Batcomputer Operations Platform
+# Operations Platform
 
 A separate production-style FastAPI flagship. It does not replace or share process state with the root Flask portfolio host.
 
@@ -8,8 +8,8 @@ A separate production-style FastAPI flagship. It does not replace or share proce
 - Argon2 password hashing, signed expiring access tokens, server-side admin/operator/viewer RBAC, and workspace filters on every domain read and mutation.
 - Shared assets and work items cover software automation, defensive cybersecurity, IT support, data engineering/analytics, cloud/network platform, and quality engineering.
 - Asset and work-item CRUD, guarded workflow transitions, filters, bounded pagination, validation envelopes, OpenAPI, liveness/readiness, correlation IDs, JSON request logs, and append-only audit records.
-- Alfred reports `unavailable` or `configured`; it stores approval-pending intents with `executed=false`. No generation, provider call, approval, or execution path exists.
-- The `/` operator UI supports workspace registration/login, asset/work-item creation, workflow start, and Alfred intent recording.
+- Z reports `unavailable` or `configured`; it stores approval-pending intents with `executed=false`. No generation, provider call, approval, or execution path exists.
+- The `/` operator UI supports workspace registration/login, asset/work-item creation, workflow start, and Z intent recording.
 
 ## Local SQLite
 

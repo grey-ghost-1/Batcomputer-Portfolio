@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Alfred is a local-first FastAPI assistant with cited portfolio and web research, optional local reasoning providers, and strictly approval-gated Windows desktop actions.">
-  <title>Alfred AI Assistant | Justin Wimmer</title>
-  <link rel="stylesheet" href="../style.css?v=alfred-local">
+  <meta name="description" content="Z is a local-first FastAPI assistant with cited portfolio and web research, optional local reasoning providers, and strictly approval-gated Windows desktop actions.">
+  <title>Z AI Assistant | Justin Wimmer</title>
+  <link rel="stylesheet" href="../style.css?v=z-local">
 </head>
 <body class="site-shell">
 <a class="skip-link" href="#case-study">Skip to case study</a>
@@ -19,8 +19,8 @@
 
   <header class="detail-header">
     <p class="eyebrow">Primary Work // Local AI &amp; Desktop Safety</p>
-    <h1>Alfred AI Assistant</h1>
-    <p class="detail-focus">A native, loopback-only household-manager assistant for broad safe conversation, cited evidence and research, and carefully bounded desktop help. An operator can optionally connect Ollama or a compatible model; Alfred cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
+    <h1>Z AI Assistant</h1>
+    <p class="detail-focus">A native, loopback-only household-manager assistant for broad safe conversation, cited evidence and research, and carefully bounded desktop help. An operator can optionally connect Ollama or a compatible model; Z cannot alter or launch anything until the operator reviews an exact preview and explicitly approves that single action.</p>
     <div class="case-meta">
       <span>FastAPI + Pydantic</span>
       <span>SQLite audit state</span>
@@ -31,7 +31,7 @@
 
   <section class="detail-card">
     <h2>Problem and users</h2>
-    <p>General desktop agents are impressive but often hide the most important details: what they can read, what a model actually supplied, what will change, and whether a conversational phrase counts as permission. Alfred is designed for one local Windows operator who wants useful portfolio knowledge, current research, system summaries, and a small set of desktop conveniences without surrendering control.</p>
+    <p>General desktop agents are impressive but often hide the most important details: what they can read, what a model actually supplied, what will change, and whether a conversational phrase counts as permission. Z is designed for one local Windows operator who wants useful portfolio knowledge, current research, system summaries, and a small set of desktop conveniences without surrendering control.</p>
   </section>
 
   <section class="detail-card">
@@ -72,13 +72,13 @@
   <section class="detail-card">
     <h2>Knowledge and research</h2>
     <p>Portfolio answers search a bounded index built only from fixed repository evidence sources and return their paths. Research mode consults keyless Wikipedia and, when separately configured, Brave Search. Outbound research permits HTTPS on the standard port, validates DNS and redirects against private, loopback, metadata, reserved, link-local, and multicast destinations, and limits time, bytes, content types, redirects, excerpts, and result counts.</p>
-    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Alfred's persona, action policy, or approval rule. Ordinary safe questions can use the configured model without matching a portfolio keyword, while curated portfolio citations are reserved for clear portfolio questions or an explicit website-evidence mode. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; an unavailable or timed-out provider falls back explicitly and never masquerades as a model answer.</p>
+    <p>Retrieved text is labeled as untrusted data in the provider prompt. It cannot alter Z's persona, action policy, or approval rule. Ordinary safe questions can use the configured model without matching a portfolio keyword, while curated portfolio citations are reserved for clear portfolio questions or an explicit website-evidence mode. Responses disclose whether they used deterministic composition, website evidence, web retrieval, or a configured model; an unavailable or timed-out provider falls back explicitly and never masquerades as a model answer.</p>
   </section>
 
   <section class="detail-card">
     <h2>Trade-offs</h2>
     <ul>
-      <li>Native Windows execution is required for desktop skills; omitting Alfred from containers avoids a misleading or unsafe deployment story.</li>
+      <li>Native Windows execution is required for desktop skills; omitting Z from containers avoids a misleading or unsafe deployment story.</li>
       <li>A fixed knowledge manifest and fixed research providers are narrower than arbitrary RAG or browsing, but they make provenance and SSRF controls reviewable.</li>
       <li>A shared local action token plus per-tab session ownership is intentionally simpler than accounts; it is suitable for one trusted local operator, not a remote multi-user service.</li>
       <li>Typed actions sacrifice general automation in exchange for inspectable payloads, deterministic validation, and meaningful approval.</li>
@@ -111,7 +111,7 @@ node --check alfred-assistant\ui\console.js</code></pre>
 
   <section class="detail-card">
     <h2>Current Limitations</h2>
-    <p>Alfred is local-only and not generally autonomous. Ollama is supported but not assumed to be installed or enabled on another machine. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
+    <p>Z is local-only and not generally autonomous. Ollama is supported but not assumed to be installed or enabled on another machine. No hosted desktop API, arbitrary browsing, arbitrary commands, deletion, screen/mouse/keyboard control, wake word, product voice pipeline, personal semantic memory, email/calendar integration, tray app, signed installer, background service, or startup persistence is implemented. Wikipedia is a narrow reference source; broad/current search requires an operator-supplied Brave key. Model quality depends on the explicitly configured Ollama or compatible endpoint. Approval and path confinement reduce risk but do not sandbox malware already running as the same Windows user.</p>
   </section>
 
   <section class="detail-card">
@@ -124,6 +124,6 @@ node --check alfred-assistant\ui\console.js</code></pre>
     <p>The <a href="../alfred-showcase.html">controlled public showcase</a> provides curated, cited portfolio answers and three synthetic action scenarios. It is not the local service: no model, network research, localhost connection, desktop adapter, or real execution path is present. Desktop capability remains available only in a trusted native user session. Review the local evidence above, then inspect the <a data-public-source-path="alfred-assistant" href="https://github.com/grey-ghost-1/Batcomputer-Portfolio/tree/agents/batcomputer-website-query/alfred-assistant">public source on GitHub</a>.</p>
   </section>
 </main>
-<script src="../app.js?v=alfred-local"></script>
+<script src="../app.js?v=z-local"></script>
 </body>
 </html>

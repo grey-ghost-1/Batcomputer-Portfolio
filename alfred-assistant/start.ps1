@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Starts the Alfred Assistant service natively on Windows, loopback-only.
+    Starts the Z Assistant service natively on Windows, loopback-only.
 
 .DESCRIPTION
     Runs `python -m uvicorn alfred.main:app` bound to a loopback address, in
@@ -14,7 +14,7 @@
 
     Before a non-loopback host is ever handed to Python, this script
     validates it itself and refuses to continue if it is not a loopback
-    address -- Alfred only ever serves 127.0.0.0/8, ::1, or localhost.
+    address -- Z only ever serves 127.0.0.0/8, ::1, or localhost.
 
     Run it from anywhere; it locates its own folder first, so
     `Set-Location alfred-assistant; .\start.ps1` and `.\alfred-assistant\start.ps1`
@@ -116,7 +116,7 @@ if (-not $PSBoundParameters.ContainsKey('Port')) {
 # --- Safety: refuse to bind anywhere but loopback, no exceptions. ------------
 if (-not (Test-LoopbackHost -CandidateHost $BindHost)) {
     $message = "Refusing to start: '$BindHost' is not a loopback address. " +
-        "Use 127.0.0.1, ::1, or localhost -- Alfred never binds to a public or LAN-reachable interface."
+        "Use 127.0.0.1, ::1, or localhost -- Z never binds to a public or LAN-reachable interface."
     Write-Error $message
     exit 1
 }
@@ -147,7 +147,7 @@ $tokenConfigured = [bool](Get-DotEnvValue -Path $EnvFile -Key "ALFRED_ACTION_TOK
 $desktopEnabled = (Get-DotEnvValue -Path $EnvFile -Key "ALFRED_DESKTOP_ACTIONS_ENABLED")
 
 Write-Host ""
-Write-Host "Alfred Assistant -- native local service" -ForegroundColor Cyan
+Write-Host "Z Assistant -- native local service" -ForegroundColor Cyan
 Write-Host ("  Binding to loopback only: http://{0}:{1}" -f $BindHost, $Port) -ForegroundColor Cyan
 Write-Host "  No Docker, no public deployment, no startup persistence -- this window IS the service." -ForegroundColor Cyan
 Write-Host "  Every desktop action still requires its own explicit approve -> execute step." -ForegroundColor Cyan
@@ -157,7 +157,7 @@ Write-Host "  Press Ctrl+C to stop." -ForegroundColor Cyan
 Write-Host ""
 
 # --- Launch in the foreground. No background job, no scheduled task, no ----
-# --- service registration: closing this window stops Alfred completely. ----
+# --- service registration: closing this window stops Z completely. ----
 $server = Start-Process -FilePath $PythonExe `
     -ArgumentList @("-m", "uvicorn", "alfred.main:app", "--host", $BindHost, "--port", $Port) `
     -NoNewWindow -Wait -PassThru

@@ -65,7 +65,7 @@ class AppTestCase(unittest.TestCase):
         self.assertEqual(health.status_code, 200)
         self.assertEqual(
             health.get_json(),
-            {"status": "ok", "service": "batcomputer-website", "projects": 23},
+            {"status": "ok", "service": "portfolio-website", "projects": 23},
         )
 
         summary = self.client.get("/api/site/summary")
@@ -214,7 +214,7 @@ class AppTestCase(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertEqual(self.get_status(path), 404)
 
-    def test_alfred_requires_text_and_is_deterministic(self):
+    def test_z_requires_text_and_is_deterministic(self):
         self.assertEqual(self.client.post("/alfred", json={}).status_code, 400)
         self.assertEqual(self.client.post("/alfred", json={"message": "   "}).status_code, 400)
         self.assertEqual(self.client.post("/alfred", json={"message": []}).status_code, 400)
@@ -321,7 +321,7 @@ class AppTestCase(unittest.TestCase):
     def test_proposal_apis_never_disclose_repository_files(self):
         cases = {
             "app.py": "from flask import Flask",
-            "README.md": "# Batcomputer Portfolio",
+            "README.md": "# Portfolio Website",
             "render.yaml": "batcomputer-platform-db",
             "site_config.py": "REPOSITORY_URL =",
             "platform/app/config.py": "DEVELOPMENT_SECRET =",
@@ -603,10 +603,10 @@ class StaticContentTestCase(unittest.TestCase):
             "Python",
             "FastAPI",
             "PostgreSQL",
-            "Batcomputer Operations Platform",
+            "Operations Platform",
             "Orbital Data Lab",
             "Algorithms & Quality",
-            "Alfred AI Assistant",
+            "Z AI Assistant",
             "Labs & Prototypes",
             "19 secondary learning prototypes",
             "No AI model",
@@ -679,7 +679,7 @@ class StaticContentTestCase(unittest.TestCase):
                 "projects/algorithm-quality-lab.html",
                 f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality",
             ),
-            "View Alfred evidence": (
+            "View Z evidence": (
                 "projects/alfred-ai-assistant.html",
                 f"{REPOSITORY_URL}/tree/{SOURCE_REF}/alfred-assistant",
             ),
@@ -784,7 +784,7 @@ class StaticContentTestCase(unittest.TestCase):
         content = "\n".join(path.read_text(encoding="utf-8") for path in public_files)
         for unsupported in (
             "repository link placeholder",
-            "Desktop\\Batcomputer",
+            "Desktop\\Portfolio",
             "Ollama is enabled on every machine",
             "Embedded AI Assistant",
             "local-demo",

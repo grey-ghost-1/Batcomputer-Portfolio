@@ -155,7 +155,7 @@ def test_process_summary_without_psutil_is_honest_about_the_limitation(monkeypat
 
 def test_process_summary_never_requests_or_exposes_cmdline_when_psutil_present(monkeypatch):
     """Simulate psutil being installed and returning a process whose command
-    line contains a secret; prove Alfred never requests or surfaces it."""
+    line contains a secret; prove Z never requests or surfaces it."""
 
     captured_attrs = {}
 

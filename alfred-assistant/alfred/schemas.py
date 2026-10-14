@@ -1,4 +1,4 @@
-"""Typed request/response models for the Alfred Assistant API."""
+"""Typed request/response models for the Z Assistant API."""
 
 from __future__ import annotations
 

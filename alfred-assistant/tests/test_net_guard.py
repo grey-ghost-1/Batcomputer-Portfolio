@@ -152,7 +152,7 @@ def test_assess_url_empty_dns_result_is_rejected():
 
 def _settings(**overrides):
     class _S:
-        web_user_agent = "AlfredAssistant/test"
+        web_user_agent = "ZAssistant/test"
         web_fetch_timeout_seconds = 2.0
         web_fetch_max_bytes = 1024
         web_max_redirects = 2

@@ -1,4 +1,4 @@
-"""Configuration for the Alfred Assistant service.
+"""Configuration for the Z Assistant service.
 
 All settings are validated with pydantic-settings. The service is local-first:
 the bind host must resolve to a loopback address, desktop actions are disabled
@@ -117,7 +117,7 @@ class Settings(BaseSettings):
     web_max_redirects: int = Field(default=3, ge=0, le=10)
     web_max_results: int = Field(default=5, ge=1, le=20)
     web_user_agent: str = (
-        "AlfredAssistant/1.0 (local portfolio research; "
+        "ZAssistant/1.0 (local portfolio research; "
         "https://github.com/grey-ghost-1/Batcomputer-Portfolio)"
     )
 
@@ -132,7 +132,7 @@ class Settings(BaseSettings):
         if not _is_loopback_host(value):
             raise ValueError(
                 "host must be a loopback address (127.0.0.0/8, ::1, or localhost); "
-                "Alfred refuses to bind to a non-loopback interface"
+                "Z refuses to bind to a non-loopback interface"
             )
         return value
 

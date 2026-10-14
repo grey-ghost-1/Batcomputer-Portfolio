@@ -1,4 +1,4 @@
-"""Bounded data and deterministic behavior for the public Alfred showcase."""
+"""Bounded data and deterministic behavior for the public Z showcase."""
 
 from __future__ import annotations
 
@@ -16,11 +16,11 @@ class Citation:
 
 EVIDENCE = {
     "case-study": Citation(
-        "Alfred case study",
+        "Z case study",
         "projects/alfred-ai-assistant.html",
     ),
     "status": Citation(
-        "Alfred implementation status and threat model",
+        "Z implementation status and threat model",
         "ALFRED_STATUS.md",
     ),
     "inventory": Citation(
@@ -31,8 +31,8 @@ EVIDENCE = {
 
 SUGGESTED_QUESTIONS = (
     "Which projects best demonstrate backend engineering?",
-    "How does Alfred keep desktop actions safe?",
-    "How was Alfred tested?",
+    "How does Z keep desktop actions safe?",
+    "How was Z tested?",
     "What can the full local edition do?",
 )
 
@@ -43,7 +43,7 @@ ANSWERS = {
             "A sensible place to begin is the Operations Platform: it demonstrates typed FastAPI "
             "endpoints, relational modeling, migrations, authentication, tenant isolation, guarded "
             "workflows, and immutable audit events. Orbital Data Lab adds deterministic numerical "
-            "APIs and content-addressed SQLite storage, while Alfred shows policy boundaries around "
+            "APIs and content-addressed SQLite storage, while Z shows policy boundaries around "
             "local providers and desktop adapters."
         ),
         "citations": ("inventory",),
@@ -61,7 +61,7 @@ ANSWERS = {
     "testing": {
         "terms": ("test", "tested", "quality", "ci", "validation"),
         "answer": (
-            "Alfred's dedicated suite covers API contracts, provider failures, citations, prompt "
+            "Z's dedicated suite covers API contracts, provider failures, citations, prompt "
             "injection, SSRF controls, redaction, path confinement, ownership, expiry, tampering, "
             "replay, disabled execution, allowlists, and temporary-directory-only mutations. The "
             "public showcase adds route, state-isolation, approval, simulated-audit, XSS, accessibility, "
@@ -83,7 +83,7 @@ ANSWERS = {
         "terms": ("portfolio", "project", "work", "recruiter", "stack", "technology"),
         "answer": (
             "The portfolio's four primary case studies cover a tenant-isolated operations platform, "
-            "a deterministic orbital simulation service, an algorithms and quality lab, and Alfred's "
+            "a deterministic orbital simulation service, an algorithms and quality lab, and Z's "
             "local-first assistant architecture. Together they provide evidence across Python APIs, "
             "data modeling, browser interfaces, security boundaries, numerical work, and automated tests."
         ),

@@ -1,4 +1,4 @@
-"""Alfred Assistant: a local-first, typed FastAPI household-manager service.
+"""Z Assistant: a local-first, typed FastAPI household-manager service.
 
 The package is intentionally offline by default. Desktop actions are disabled
 until explicitly enabled and every mutating action flows through an auditable

@@ -112,7 +112,7 @@ class AuditEvent(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now_utc)
 
 
-class AlfredIntent(Base):
+class ZIntent(Base):
     __tablename__ = "alfred_intents"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)

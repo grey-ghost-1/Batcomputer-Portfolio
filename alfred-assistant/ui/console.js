@@ -1,6 +1,6 @@
 "use strict";
 
-/* Alfred Assistant local console.
+/* Z Assistant local console.
  * Token is kept in this tab only (sessionStorage). No external assets are used.
  * The session id isolates this tab from other clients of the same server.
  */
@@ -31,7 +31,7 @@ function authHeaders(extra) {
   const headers = Object.assign({ "Content-Type": "application/json" }, extra || {});
   if (state.token) {
     headers["Authorization"] = "Bearer " + state.token;
-    headers["X-Alfred-Session"] = state.session;
+    headers["X-Z-Session"] = state.session;
   }
   return headers;
 }

@@ -9,7 +9,7 @@ from alfred_showcase import MAX_AUDIT_ENTRIES, SCENARIOS
 ROOT = Path(__file__).resolve().parents[1]
 
 
-class AlfredShowcaseApiTestCase(unittest.TestCase):
+class ZShowcaseApiTestCase(unittest.TestCase):
     def setUp(self):
         site.app.config.update(
             TESTING=True,
@@ -205,7 +205,7 @@ class AlfredShowcaseApiTestCase(unittest.TestCase):
                 self.assertEqual(response.status_code, 400)
 
 
-class AlfredShowcaseStaticContractTestCase(unittest.TestCase):
+class ZShowcaseStaticContractTestCase(unittest.TestCase):
     def test_showcase_claims_accessibility_responsive_hooks_and_safe_rendering(self):
         page = (ROOT / "alfred-showcase.html").read_text(encoding="utf-8")
         script = (ROOT / "alfred-showcase.js").read_text(encoding="utf-8")

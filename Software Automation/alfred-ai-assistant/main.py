@@ -5,7 +5,7 @@ import argparse
 def reply(message):
     text = " ".join(message.lower().split())
     if text in {"hi", "hello", "hey"}:
-        return "Hello. Alfred is online and ready to help."
+        return "Hello. Z is online and ready to help."
     if "status" in text or "health" in text:
         return "All systems nominal."
     if "help" in text or "capabilities" in text:

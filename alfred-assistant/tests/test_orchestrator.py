@@ -56,7 +56,7 @@ def test_chat_small_talk_short_circuits_with_no_citations_or_web(settings_factor
     settings = settings_factory()
     orchestrator = _orchestrator(settings, knowledge_dir)
     result = run_async(orchestrator.chat(ChatRequest(message="hello")))
-    assert result["reply"] == "Good day. Alfred at your service — how may I be of use?"
+    assert result["reply"] == "Hi, I'm Z. How can I help?"
     assert result["citations"] == []
     assert result["web_used"] is False
     assert result["reasoning_source"] == "deterministic-composition"

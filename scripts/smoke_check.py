@@ -5,8 +5,8 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 CHECKS = (
-    ("site", "/api/health", {"status": "ok", "service": "batcomputer-website"}),
-    ("platform", "/health/live", {"status": "ok", "service": "batcomputer-platform"}),
+    ("site", "/api/health", {"status": "ok", "service": "portfolio-website"}),
+    ("platform", "/health/live", {"status": "ok", "service": "portfolio-platform"}),
     ("platform", "/health/ready", {"status": "ready", "database": "reachable"}),
     ("orbital", "/health/live", {"status": "ok", "service": "orbital-data-lab"}),
     ("orbital", "/health/ready", {"status": "ready", "database": "reachable"}),

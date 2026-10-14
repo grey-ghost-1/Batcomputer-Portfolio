@@ -93,7 +93,7 @@ def test_wikipedia_source_builds_fixed_domain_citation_url():
         return _wiki_response([("Multi Word Title", "snippet text")])
 
     class _Settings:
-        web_user_agent = "AlfredAssistant/test"
+        web_user_agent = "ZAssistant/test"
         web_fetch_timeout_seconds = 2.0
         web_fetch_max_bytes = 4096
         web_max_redirects = 2
@@ -172,7 +172,7 @@ def test_brave_source_filters_out_ssrf_unsafe_citation_urls():
     source = BraveSource("test-key", resolver=resolver, transport=httpx.MockTransport(handler))
 
     class _Settings:
-        web_user_agent = "AlfredAssistant/test"
+        web_user_agent = "ZAssistant/test"
         web_fetch_timeout_seconds = 2.0
         web_fetch_max_bytes = 4096
         web_max_redirects = 2
@@ -199,7 +199,7 @@ def test_brave_source_skips_results_missing_title_or_url():
     source = BraveSource("test-key", resolver=resolver, transport=httpx.MockTransport(handler))
 
     class _Settings:
-        web_user_agent = "AlfredAssistant/test"
+        web_user_agent = "ZAssistant/test"
         web_fetch_timeout_seconds = 2.0
         web_fetch_max_bytes = 4096
         web_max_redirects = 2
@@ -220,7 +220,7 @@ def test_brave_source_sends_subscription_token_header_not_in_url():
     source = BraveSource("super-secret-brave-key", resolver=resolver, transport=httpx.MockTransport(handler))
 
     class _Settings:
-        web_user_agent = "AlfredAssistant/test"
+        web_user_agent = "ZAssistant/test"
         web_fetch_timeout_seconds = 2.0
         web_fetch_max_bytes = 4096
         web_max_redirects = 2

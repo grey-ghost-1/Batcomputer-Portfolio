@@ -218,7 +218,7 @@ def test_get_settings_is_cached_per_process(monkeypatch, tmp_path):
     assert first is second
 
 
-def test_get_settings_reads_alfred_prefixed_env_vars(monkeypatch, tmp_path):
+def test_get_settings_reads_z_prefixed_env_vars(monkeypatch, tmp_path):
     monkeypatch.setenv("ALFRED_HOST", "127.0.0.1")
     monkeypatch.setenv("ALFRED_PORT", "9090")
     monkeypatch.setenv("ALFRED_DB_PATH", str(tmp_path / "env.db"))

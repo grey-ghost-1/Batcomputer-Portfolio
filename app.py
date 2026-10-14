@@ -79,7 +79,7 @@ CATEGORY_PAGES = {
     "cybersecurity": "cybersecurity.html",
     "it-support": "it_support.html",
     "network-software": "network_software.html",
-    "alfred-agent": "alfred_agent_console.html",
+    "z-agent": "alfred_agent_console.html",
 }
 PRIMARY_PROJECTS = (
     "operations-platform",
@@ -196,18 +196,18 @@ def require_proposals(function):
 def local_reply(message):
     normalized = " ".join(message.lower().split())
     compact = normalized.replace(" ", "")
-    if compact in {"hi", "hii", "hiii", "hello", "hey", "hialfred", "helloalfred", "heyalfred"}:
-        return "Hello. Alfred's deterministic local helper is ready."
+    if compact in {"hi", "hii", "hiii", "hello", "hey", "hiz", "helloz", "heyz"}:
+        return "Hello. Z's deterministic local helper is ready."
     if "status" in normalized or "health" in normalized:
-        return "The Batcomputer Flask server is online. Alfred is a deterministic helper, not an AI model."
+        return "The portfolio website Flask server is online. Z is a deterministic helper, not an AI model."
     if "what can" in normalized or normalized in {"help", "commands", "capabilities"}:
         return "I can return predefined portfolio guidance. Optional local proposal metadata never reads repository files, generates code, executes actions, or writes files."
     if "who are you" in normalized or "what are you" in normalized:
-        return "I am Alfred, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
+        return "I am Z, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
     if "website" in normalized or "portfolio" in normalized:
-        return "You are viewing Justin Wimmer's Batcomputer portfolio. Use the navigation panel to explore software, cybersecurity, IT support, and network work."
+        return "You are viewing Justin Wimmer's portfolio website. Use the navigation panel to explore software, cybersecurity, IT support, and network work."
     if "software" in normalized or "automation" in normalized:
-        return "The software section covers deterministic text routing, dry-run file planning, local disk metrics, HTML inventory, item validation, and the root Flask HUD."
+        return "The software section covers deterministic text routing, dry-run file planning, local disk metrics, HTML inventory, item validation, and the root Flask portfolio website."
     if "cyber" in normalized or "security" in normalized:
         return "The cybersecurity section covers bounded TCP checks, failed-login parsing, offline advisory matching, training-hash comparison, and a local reflection check."
     if "network" in normalized:
@@ -246,7 +246,7 @@ def home():
 
 @app.get("/api/health")
 def health():
-    return jsonify({"status": "ok", "service": "batcomputer-website", "projects": len(project_inventory())})
+    return jsonify({"status": "ok", "service": "portfolio-website", "projects": len(project_inventory())})
 
 
 @app.get("/healthz")
@@ -305,7 +305,7 @@ def static_page(page):
 
 
 @app.post("/alfred")
-def alfred():
+def z_chat():
     payload = request.get_json(silent=True) or {}
     raw_message = payload.get("message", "")
     if not isinstance(raw_message, str):

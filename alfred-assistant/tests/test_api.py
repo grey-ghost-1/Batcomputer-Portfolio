@@ -18,7 +18,7 @@ SESSION_B = "session-bbbbbbbbbbbbbbbbbbbbbbbb"
 
 
 def auth_headers(token=TEST_TOKEN, session=SESSION_A):
-    return {"Authorization": f"Bearer {token}", "X-Alfred-Session": session}
+    return {"Authorization": f"Bearer {token}", "X-Z-Session": session}
 
 
 @pytest.fixture
@@ -62,7 +62,7 @@ def test_readiness_reports_schema_version_and_index(app_client):
 
 def test_capabilities_lists_all_actions_and_safety_policy(app_client):
     body = app_client.get("/api/capabilities").json()
-    assert body["persona"]["name"] == "Alfred"
+    assert body["persona"]["name"] == "Z"
     assert set(body["answer_modes"]) >= {"deterministic", "model", "website", "web"}
     assert {a["action_type"] for a in body["actions"]} == {
         "create_folder",
@@ -100,7 +100,7 @@ def test_ui_index_served_with_csp_and_security_headers(app_client):
     assert response.headers["Content-Security-Policy"] == CSP
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     assert response.headers["Referrer-Policy"] == "no-referrer"
-    assert "Alfred" in response.text
+    assert "Z" in response.text
 
 
 def test_csp_forbids_external_script_and_object_sources():
@@ -140,7 +140,7 @@ def test_ui_missing_asset_returns_honest_404_json(app_client, monkeypatch, tmp_p
 
 
 def test_actions_endpoint_requires_bearer_token(app_client):
-    response = app_client.get("/api/actions", headers={"X-Alfred-Session": SESSION_A})
+    response = app_client.get("/api/actions", headers={"X-Z-Session": SESSION_A})
     assert response.status_code == 401
 
 
@@ -157,7 +157,7 @@ def test_actions_endpoint_requires_valid_session_header(app_client):
 
 def test_actions_endpoint_rejects_malformed_session_header(app_client):
     response = app_client.get(
-        "/api/actions", headers={"Authorization": f"Bearer {TEST_TOKEN}", "X-Alfred-Session": "short"}
+        "/api/actions", headers={"Authorization": f"Bearer {TEST_TOKEN}", "X-Z-Session": "short"}
     )
     assert response.status_code == 400
 

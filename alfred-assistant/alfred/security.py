@@ -32,15 +32,15 @@ def authenticate(request: Request, settings: Settings) -> Principal:
     if not settings.token_matches(credential):
         raise HTTPException(status_code=401, detail="invalid action token")
 
-    session_id = request.headers.get("x-alfred-session", "")
+    session_id = request.headers.get("x-z-session", "")
     if not _SESSION_RE.match(session_id):
         raise HTTPException(
             status_code=400,
-            detail="a valid X-Alfred-Session id (16-128 url-safe chars) is required",
+            detail="a valid X-Z-Session id (16-128 url-safe chars) is required",
         )
 
-    user_id = request.headers.get("x-alfred-user", LOCAL_USER) or LOCAL_USER
+    user_id = request.headers.get("x-z-user", LOCAL_USER) or LOCAL_USER
     if not _USER_RE.match(user_id):
-        raise HTTPException(status_code=400, detail="invalid X-Alfred-User id")
+        raise HTTPException(status_code=400, detail="invalid X-Z-User id")
 
     return Principal(user_id=user_id, session_id=session_id)

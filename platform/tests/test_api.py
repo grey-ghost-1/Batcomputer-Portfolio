@@ -75,7 +75,7 @@ def login(client: TestClient, workspace: str, email: str) -> str:
 def test_health_openapi_and_expiring_auth(client: TestClient):
     assert client.get("/health/live").json()["status"] == "ok"
     assert client.get("/health/ready").json() == {"status": "ready", "database": "reachable"}
-    assert client.get("/openapi.json").json()["info"]["title"] == "Batcomputer Operations Platform"
+    assert client.get("/openapi.json").json()["info"]["title"] == "Operations Platform"
     token = register(client, "Wayne Operations")
     claims = jwt.decode(token, get_settings().secret_key, algorithms=["HS256"])
     assert datetime.fromtimestamp(claims["exp"], UTC) > datetime.now(UTC)
@@ -294,8 +294,8 @@ def test_validation_uses_explicit_error_envelope(client: TestClient):
     assert len(generated.headers["x-correlation-id"]) == 36
 
 
-def test_alfred_is_unavailable_and_intents_never_execute(client: TestClient):
-    token = register(client, "Alfred")
+def test_z_is_unavailable_and_intents_never_execute(client: TestClient):
+    token = register(client, "Z")
     status_response = client.get("/api/v1/alfred/status", headers=auth(token)).json()
     assert status_response == {
         "status": "unavailable",

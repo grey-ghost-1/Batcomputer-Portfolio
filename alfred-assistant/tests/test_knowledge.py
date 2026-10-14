@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import json
 
-from alfred import config as alfred_config
+from alfred import config as z_config
 from alfred.knowledge import PRIMARY_CASE_STUDIES, build_index, sanitize_snippet
 
 
@@ -73,7 +73,7 @@ def test_build_index_against_real_repository_root_is_self_consistent():
     """Smoke check against the real repo -- read-only, and does not touch the
     database or create any app instance."""
 
-    index = build_index(alfred_config.REPOSITORY_ROOT)
+    index = build_index(z_config.REPOSITORY_ROOT)
     assert index.document_count > 0
     assert set(index.sources) <= {"README.md", "project-evidence.json"}
 

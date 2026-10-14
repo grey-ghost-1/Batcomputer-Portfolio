@@ -1,4 +1,4 @@
-"""FastAPI application for the Alfred Assistant service.
+"""FastAPI application for the Z Assistant service.
 
 Wires configuration, persistence, the knowledge index, the reasoning provider,
 the web-research pipeline, and the typed action lifecycle into a local-first,
@@ -60,7 +60,7 @@ def create_app(
     store = ProposalStore(db, settings, launcher=launcher)
 
     app = FastAPI(
-        title="Alfred Assistant",
+        title="Z Assistant",
         version="1.0.0",
         description=(
             "Local-first household-manager assistant. Loopback only. Desktop actions "

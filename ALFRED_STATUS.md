@@ -1,11 +1,11 @@
-# Alfred status and staged roadmap
+# Z status and staged roadmap
 
 Last reviewed: 2026-08-27
 
 > Implementation status is reconciled against code and passing tests. Unchecked service items remain
 > in progress until that evidence exists.
 
-Alfred is an original local household-manager-style assistant: discreet, concise, respectful, and
+Z is an original local household-manager-style assistant: discreet, concise, respectful, and
 deliberately cautious. The product does not reproduce dialogue, catchphrases, biography, or
 characterization from Batman-related works.
 
@@ -24,16 +24,16 @@ lines.
 ### Implemented now
 
 - [x] The root Flask site retains a deterministic `local_reply` helper for portfolio questions.
-  It has no model or action path and remains separate from the local Alfred service.
-- [x] Root Flask coding/HUD proposals remain disabled by default, session-owned, metadata-only,
+  It has no model or action path and remains separate from the local Z service.
+- [x] Root Flask coding/homepage proposals remain disabled by default, session-owned, metadata-only,
   non-reading, and non-writing.
-- [x] The Operations Platform retains its approval-pending Alfred intent boundary. Those intents
+- [x] The Operations Platform retains its approval-pending Z intent boundary. Those intents
   never generate content or execute actions.
 - [x] A separate typed FastAPI service runs natively on loopback, independently of the public Flask
   portfolio service deployed by the Render Blueprint.
 - [x] Health, readiness, capabilities, sanitized configuration, provider status, index status,
   chat, inspection, action, and audit APIs are available.
-- [x] Alfred can answer bounded portfolio questions from a curated allowlist of repository
+- [x] Z can answer bounded portfolio questions from a curated allowlist of repository
   documents and returns repository-relative citations.
 - [x] Indexed content is treated as untrusted reference text, not as instructions. No arbitrary
   path or file-reading request is accepted through chat.
@@ -75,12 +75,12 @@ lines.
   building, exact previews, approval confirmation, execution state, and immutable audit history.
 - [x] Tests mock application/URL/clipboard launches and restrict filesystem mutation to temporary
   approved roots.
-- [x] Alfred is the fourth Primary Work case study; all three existing flagships and all 20 legacy
+- [x] Z is the fourth Primary Work case study; all three existing flagships and all 20 legacy
   prototype folders remain present.
 - [x] A separate public Flask showcase provides deterministic answers from a fixed evidence set,
   visible local citations, and three recruiter scenarios over synthetic data.
 - [x] Public scenarios demonstrate `propose -> exact preview -> explicit approval -> simulated
-  result -> session-local audit` without importing, proxying, or invoking the local Alfred service,
+  result -> session-local audit` without importing, proxying, or invoking the local Z service,
   model providers, research, inspection, repository readers, or desktop executors.
 - [x] The public site applies a nonce-free same-origin CSP, framing denial, MIME sniffing denial,
   restrictive browser permissions, no-referrer policy, no-store API caching, and production HSTS.
@@ -88,7 +88,7 @@ lines.
 ### Partial
 
 - [~] **Model-assisted conversation:** Ollama or a compatible endpoint can add bounded reasoning
-  and broad safe conversation when deliberately configured, but Alfred is not a general autonomous agent and typed,
+  and broad safe conversation when deliberately configured, but Z is not a general autonomous agent and typed,
   deterministic validation remains the safety source of truth.
 - [~] **Web research:** keyless reference lookup and optional broad search are available, but this
   is not an unrestricted browser, crawler, paywalled-content reader, or guarantee of freshness or
@@ -228,7 +228,7 @@ Completion criteria:
 
 Residual risks include a compromised local user account, malicious software already running with
 the same OS privileges, filesystem races that cannot be eliminated without OS-level handles, and
-misconfigured approved roots or application allowlists. Alfred is a convenience boundary, not a
+misconfigured approved roots or application allowlists. Z is a convenience boundary, not a
 malware sandbox or privilege-separation system.
 
 ## Non-goals

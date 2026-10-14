@@ -51,7 +51,7 @@ jobs:
         working-directory: algorithms-quality
         run: python -m pytest tests -q
 
-      - name: Test Alfred local assistant
+      - name: Test Z local assistant
         working-directory: alfred-assistant
         run: python -m pytest tests -q
 
@@ -61,7 +61,7 @@ jobs:
       - name: Compile Python modules
         run: python -m compileall -q app.py alfred_showcase.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
 
-      - name: Type-check Alfred service
+      - name: Type-check Z service
         run: python -m mypy --check-untyped-defs --disallow-untyped-defs --no-implicit-optional alfred-assistant/alfred
 
       - name: Validate JavaScript

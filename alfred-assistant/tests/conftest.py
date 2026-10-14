@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for the Alfred Assistant test suite.
+"""Shared pytest fixtures for the Z Assistant test suite.
 
 No test in this suite ever performs a live network call: HTTP-capable code is
 always exercised through an injected ``httpx.MockTransport`` (or a stub DNS

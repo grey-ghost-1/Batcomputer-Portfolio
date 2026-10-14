@@ -1,1 +1,1 @@
-"""Batcomputer operations platform."""
+"""Operations platform."""
