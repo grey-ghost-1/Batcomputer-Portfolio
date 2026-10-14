@@ -7,7 +7,8 @@ from pathlib import Path
 from flask import Flask, jsonify, request, send_from_directory, session
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from alfred_showcase import (
+from site_config import public_site_config
+from z_showcase import (
     MAX_AUDIT_ENTRIES,
     MAX_QUESTION_LENGTH,
     SCENARIOS,
@@ -15,7 +16,6 @@ from alfred_showcase import (
     answer_question,
     public_scenarios,
 )
-from site_config import public_site_config
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -79,16 +79,16 @@ CATEGORY_PAGES = {
     "cybersecurity": "cybersecurity.html",
     "it-support": "it_support.html",
     "network-software": "network_software.html",
-    "alfred-agent": "alfred_agent_console.html",
+    "z-agent": "z_agent_console.html",
 }
 PRIMARY_PROJECTS = (
     "operations-platform",
     "orbital-data-lab",
     "algorithm-quality-lab",
-    "alfred-ai-assistant",
+    "z-ai-assistant",
 )
 ROOT_PUBLIC_SUFFIXES = {".html", ".css", ".js"}
-ROOT_PUBLIC_FILES = {"project-evidence.json", "ALFRED_STATUS.md"}
+ROOT_PUBLIC_FILES = {"project-evidence.json", "Z_STATUS.md"}
 ASSET_PUBLIC_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".pdf"}
 PROPOSAL_TEXT_SUFFIXES = {".css", ".html", ".js", ".json", ".md", ".py", ".txt", ".yaml", ".yml"}
 CONTENT_SECURITY_POLICY = "; ".join(
@@ -196,18 +196,18 @@ def require_proposals(function):
 def local_reply(message):
     normalized = " ".join(message.lower().split())
     compact = normalized.replace(" ", "")
-    if compact in {"hi", "hii", "hiii", "hello", "hey", "hialfred", "helloalfred", "heyalfred"}:
-        return "Hello. Alfred's deterministic local helper is ready."
+    if compact in {"hi", "hii", "hiii", "hello", "hey", "hiz", "helloz", "heyz"}:
+        return "Hello. Z's deterministic local helper is ready."
     if "status" in normalized or "health" in normalized:
-        return "The Batcomputer Flask server is online. Alfred is a deterministic helper, not an AI model."
+        return "The portfolio website Flask server is online. Z is a deterministic helper, not an AI model."
     if "what can" in normalized or normalized in {"help", "commands", "capabilities"}:
         return "I can return predefined portfolio guidance. Optional local proposal metadata never reads repository files, generates code, executes actions, or writes files."
     if "who are you" in normalized or "what are you" in normalized:
-        return "I am Alfred, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
+        return "I am Z, a deterministic local portfolio helper with predefined responses. I am not an AI model and do not execute workspace tasks."
     if "website" in normalized or "portfolio" in normalized:
-        return "You are viewing Justin Wimmer's Batcomputer portfolio. Use the navigation panel to explore software, cybersecurity, IT support, and network work."
+        return "You are viewing Justin Wimmer's portfolio website. Use the navigation panel to explore software, cybersecurity, IT support, and network work."
     if "software" in normalized or "automation" in normalized:
-        return "The software section covers deterministic text routing, dry-run file planning, local disk metrics, HTML inventory, item validation, and the root Flask HUD."
+        return "The software section covers deterministic text routing, dry-run file planning, local disk metrics, HTML inventory, item validation, and the root Flask portfolio website."
     if "cyber" in normalized or "security" in normalized:
         return "The cybersecurity section covers bounded TCP checks, failed-login parsing, offline advisory matching, training-hash comparison, and a local reflection check."
     if "network" in normalized:
@@ -246,7 +246,7 @@ def home():
 
 @app.get("/api/health")
 def health():
-    return jsonify({"status": "ok", "service": "batcomputer-website", "projects": len(project_inventory())})
+    return jsonify({"status": "ok", "service": "portfolio-website", "projects": len(project_inventory())})
 
 
 @app.get("/healthz")
@@ -304,8 +304,8 @@ def static_page(page):
     return send_from_directory(BASE_DIR, relative.as_posix())
 
 
-@app.post("/alfred")
-def alfred():
+@app.post("/z")
+def z_chat():
     payload = request.get_json(silent=True) or {}
     raw_message = payload.get("message", "")
     if not isinstance(raw_message, str):
@@ -323,13 +323,13 @@ def alfred():
     )
 
 
-@app.get("/api/alfred-showcase/state")
-def alfred_showcase_state():
+@app.get("/api/z-showcase/state")
+def z_showcase_state():
     return jsonify(_showcase_state())
 
 
-@app.post("/api/alfred-showcase/ask")
-def ask_alfred_showcase():
+@app.post("/api/z-showcase/ask")
+def ask_z_showcase():
     payload = _json_payload()
     if payload is None:
         return jsonify({"error": "A JSON object is required."}), 415
@@ -344,8 +344,8 @@ def ask_alfred_showcase():
     return jsonify(answer_question(question))
 
 
-@app.post("/api/alfred-showcase/proposals")
-def create_alfred_showcase_proposal():
+@app.post("/api/z-showcase/proposals")
+def create_z_showcase_proposal():
     payload = _json_payload()
     if payload is None:
         return jsonify({"error": "A JSON object is required."}), 415
@@ -366,8 +366,8 @@ def create_alfred_showcase_proposal():
     return jsonify({"proposal": proposal, "real_execution_enabled": False})
 
 
-@app.post("/api/alfred-showcase/proposals/<proposal_id>/approve")
-def approve_alfred_showcase_proposal(proposal_id):
+@app.post("/api/z-showcase/proposals/<proposal_id>/approve")
+def approve_z_showcase_proposal(proposal_id):
     payload = _json_payload()
     if payload is None:
         return jsonify({"error": "A JSON object is required."}), 415
@@ -405,8 +405,8 @@ def approve_alfred_showcase_proposal(proposal_id):
     )
 
 
-@app.post("/api/alfred-showcase/proposals/<proposal_id>/reject")
-def reject_alfred_showcase_proposal(proposal_id):
+@app.post("/api/z-showcase/proposals/<proposal_id>/reject")
+def reject_z_showcase_proposal(proposal_id):
     payload = _json_payload()
     if payload is None:
         return jsonify({"error": "A JSON object is required."}), 415
@@ -421,8 +421,8 @@ def reject_alfred_showcase_proposal(proposal_id):
     return jsonify({"result": "Proposal rejected. Nothing was simulated or recorded."})
 
 
-@app.post("/api/alfred-showcase/reset")
-def reset_alfred_showcase():
+@app.post("/api/z-showcase/reset")
+def reset_z_showcase():
     payload = _json_payload()
     if payload is None:
         return jsonify({"error": "A JSON object is required."}), 415
@@ -543,7 +543,7 @@ def create_hud_proposal():
         return jsonify({"error": "Task is required."}), 400
     if len(task) > 2000:
         return jsonify({"error": "Task is too long."}), 400
-    target_file = "batcomputer_console.html"
+    target_file = "portfolio_console.html"
     stored_task = truncate_metadata(task, SESSION_TASK_LIMIT)
     proposal = {
         "proposal_id": secrets.token_urlsafe(24),

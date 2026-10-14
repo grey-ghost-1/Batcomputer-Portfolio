@@ -1,6 +1,6 @@
 # Deployment guide
 
-No service in this repository is claimed as currently deployed. This layer provides a repeatable Render release for the Flask portfolio and its controlled Alfred showcase as one public web service. The other repository applications remain independently runnable:
+No service in this repository is claimed as currently deployed. This layer provides a repeatable Render release for the Flask portfolio and its controlled Z showcase as one public web service. The other repository applications remain independently runnable:
 
 | Service | Runtime | Default port | Persistence | Health |
 |---|---|---:|---|---|
@@ -8,9 +8,9 @@ No service in this repository is claimed as currently deployed. This layer provi
 | Operations platform | FastAPI + Uvicorn | 8000 | PostgreSQL + Alembic | `/health/live`, `/health/ready` |
 | Orbital Data Lab | FastAPI + Uvicorn | 8010 | SQLite scenario file | `/health/live`, `/health/ready` |
 | Algorithms & Quality | Python tests only | N/A | None | N/A |
-| Alfred local assistant | FastAPI + Uvicorn (native Windows only) | 8020 | Local SQLite audit store | `/health/live`, `/health/ready` |
+| Z local assistant | FastAPI + Uvicorn (native Windows only) | 8020 | Local SQLite audit store | `/health/live`, `/health/ready` |
 
-The applications do not depend on one another at runtime. This Render release intentionally deploys only the portfolio. It includes a controlled Alfred showcase backed only by fixed evidence and synthetic per-session state. The Operations Platform and Orbital Data Lab are not provisioned by this Blueprint. **The desktop-capable Alfred service is never a public deployment target.** It rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
+The applications do not depend on one another at runtime. This Render release intentionally deploys only the portfolio. It includes a controlled Z showcase backed only by fixed evidence and synthetic per-session state. The Operations Platform and Orbital Data Lab are not provisioned by this Blueprint. **The desktop-capable Z service is never a public deployment target.** It rejects non-loopback binding, starts with execution disabled, and must run natively on the user's trusted Windows session. It is intentionally absent from Docker Compose and Render.
 
 ## Local production-like startup
 
@@ -38,8 +38,8 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 Set-Location orbital-data-lab
 python -m uvicorn orbital_lab.api:app --host 0.0.0.0 --port 8010
 
-# Alfred (separate trusted local terminal; see alfred-assistant/README.md first)
-Set-Location alfred-assistant
+# Z (separate trusted local terminal; see z-assistant/README.md first)
+Set-Location z-assistant
 .\start.ps1
 ```
 
@@ -47,15 +47,15 @@ For a local multi-container environment, copy `.env.example` to `.env`, replace 
 
 ## Render blueprint
 
-[`render.yaml`](render.yaml) defines one manually activated Python web service named `batcomputer-portfolio`. It installs the root requirements, starts `app:app` with Gunicorn, binds only the deployment process to `0.0.0.0:$PORT`, and uses `/healthz` for health checks. Local `python app.py` startup remains loopback-only on port 5000. Automatic deploys are off so applying or promoting a release remains an explicit owner decision.
+[`render.yaml`](render.yaml) defines one manually activated Python web service named `portfolio-website`. It installs the root requirements, starts `app:app` with Gunicorn, binds only the deployment process to `0.0.0.0:$PORT`, and uses `/healthz` for health checks. Local `python app.py` startup remains loopback-only on port 5000. Automatic deploys are off so applying or promoting a release remains an explicit owner decision.
 
 ### Blueprint setup
 
-1. Merge the release into `agents/batcomputer-website-query`, then open the repository's exact [Deploy to Render activation URL](https://render.com/deploy?repo=https://github.com/grey-ghost-1/Batcomputer-Portfolio). Sign in and authorize repository access in Render; these are the remaining owner-controlled steps, and no credentials belong in git.
-2. Review the repository-root `render.yaml`, the `agents/batcomputer-website-query` production branch, and the single `batcomputer-portfolio` service, then apply the Blueprint. Do not add the platform, Orbital, or `alfred-assistant` as linked services.
+1. Merge the release into `main`, then open the repository's exact [Deploy to Render activation URL](https://render.com/deploy?repo=https://github.com/grey-ghost-1/portfolio-website). Sign in and authorize repository access in Render; these are the remaining owner-controlled steps, and no credentials belong in git.
+2. Review the repository-root `render.yaml`, the `main` production branch, and the single `portfolio-website` service, then apply the Blueprint. Do not add the platform, Orbital, or `z-assistant` as linked services.
 3. Confirm Render generated `SITE_SESSION_SECRET`. Keep `SITE_ENVIRONMENT=production`, `SITE_HOSTED_MODE=true`, and `SITE_PROPOSALS_ENABLED=false`. Hosted startup fails closed if these safety requirements conflict or the managed session secret is absent.
-4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://batcomputer-portfolio.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
-5. Verify `/alfred-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
+4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://portfolio-website.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
+5. Verify `/z-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
 
 The hosted process trusts one Render proxy hop for forwarded scheme, client, and host information. Secure cookies, HTTPS URL generation, HSTS, a same-origin CSP, framing denial, MIME-sniffing denial, and a no-referrer policy are enabled in production. Public pages contain no `http://` or localhost links. Port 8020 is not bound, proxied, linked, or configured in the Blueprint.
 
@@ -102,7 +102,7 @@ Compose passes the PostgreSQL host, port, database, user, and password as separa
 
 Review-only proposal endpoints are unavailable unless `SITE_PROPOSALS_ENABLED=true`. Hosted mode rejects startup if that value is enabled. When locally enabled, Flask signs session-owned proposal IDs with `SITE_SESSION_SECRET`; one browser cannot read or decide another browser's proposal. The API records only bounded, user-supplied metadata and never reads or returns repository file content. Session payload limits are regression-tested below Flask's maximum cookie size.
 
-The Alfred showcase routes are intentionally public and require no account because they have no real adapter or billable provider. They accept only a bounded question string, a fixed scenario ID, or explicit boolean approval/reset fields. Answers come from compiled curated copy and fixed local citation paths. Action results and capped audit entries are synthetic and live only in the signed browser session. The Blueprint includes no Alfred, Ollama, OpenAI-compatible, provider, token, or API-key setting. Do not add credentials, a proxy, a service link, or a firewall path to port 8020.
+The Z showcase routes are intentionally public and require no account because they have no real adapter or billable provider. They accept only a bounded question string, a fixed scenario ID, or explicit boolean approval/reset fields. Answers come from compiled curated copy and fixed local citation paths. Action results and capped audit entries are synthetic and live only in the signed browser session. The Blueprint includes no Z, Ollama, OpenAI-compatible, provider, token, or API-key setting. Do not add credentials, a proxy, a service link, or a firewall path to port 8020.
 
 Recruiter-facing flagship cards pair locally served evidence with the public GitHub source on this branch. `SITE_PUBLIC_SOURCE_URL` is an optional override for a public fork or branch move; it must be a complete GitHub tree root such as `https://github.com/owner/repository/tree/main`. The server validates the root and returns tested, fully constructed project URLs for the browser.
 
@@ -135,6 +135,6 @@ Replace the origin if Render assigns a suffixed hostname. The broader smoke scri
 
 ## GitHub Pages boundary
 
-GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Alfred server responses, showcase APIs, environment-driven contact links, or database-backed services. The showcase page explains when its Flask API is unavailable; it does not silently substitute a less controlled workflow. Use the existing Flask deployment path for public interactivity. Run the full Alfred edition only as the documented native loopback service and never expose its action API through a public site.
+GitHub Pages can publish the HTML, CSS, JavaScript, images, project pages, and evidence JSON. It cannot run Flask, FastAPI, Gunicorn, Uvicorn, Alembic, health endpoints, Z server responses, showcase APIs, environment-driven contact links, or database-backed services. The showcase page explains when its Flask API is unavailable; it does not silently substitute a less controlled workflow. Use the existing Flask deployment path for public interactivity. Run the full Z edition only as the documented native loopback service and never expose its action API through a public site.
 
 The GitHub repository is public at the time of this update. The configured branch/tree source URLs have local evidence counterparts so the case studies remain useful if repository visibility or branch names change later.

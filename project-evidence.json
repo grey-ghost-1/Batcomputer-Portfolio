@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "audited_at": "2026-08-26",
-  "repository": "grey-ghost-1/Batcomputer-Portfolio",
+  "repository": "grey-ghost-1/portfolio-website",
   "project_count": 23,
-  "validation_summary": "All 20 retained main.py prototype folders remain intact. Four primary case studies include the operations platform, orbital data lab, algorithm quality lab, and Alfred local assistant. Alfred also has a separate public Flask showcase with fixed cited evidence, synthetic approval scenarios, strict browser headers, and dedicated boundary tests.",
+  "validation_summary": "All 20 retained main.py prototype folders remain intact. Four primary case studies include the operations platform, orbital data lab, algorithm quality lab, and Z local assistant. Z also has a separate public Flask showcase with fixed cited evidence, synthetic approval scenarios, strict browser headers, and dedicated boundary tests.",
   "projects": [
     {
       "slug": "network-scanner",
@@ -156,12 +156,12 @@
       "validation_notes": "Executed with IPv4 CIDR input; deterministic and side-effect free."
     },
     {
-      "slug": "alfred-ai-assistant",
-      "page": "projects/alfred-ai-assistant.html",
-      "source_folder": "alfred-assistant",
-      "legacy_source_folder": "Software Automation/alfred-ai-assistant",
-      "entrypoint": "alfred-assistant/alfred/main.py",
-      "run_command": "Set-Location alfred-assistant; .\\start.ps1",
+      "slug": "z-ai-assistant",
+      "page": "projects/z-ai-assistant.html",
+      "source_folder": "z-assistant",
+      "legacy_source_folder": "Software Automation/z-ai-assistant",
+      "entrypoint": "z-assistant/z/main.py",
+      "run_command": "Set-Location z-assistant; .\\start.ps1",
       "implemented_features": ["loopback-only typed FastAPI service", "versioned original household-manager persona", "broad safe general chat through optional Ollama and OpenAI-compatible providers", "bounded conversation history and honest deterministic provider fallback", "pre-provider refusal of approval-bypass, destructive, credential-theft, and malware requests", "bounded cited website knowledge", "keyless Wikipedia and optional Brave cited research", "SSRF-hardened fixed-source retrieval", "redacted read-only system inspection", "typed approval-gated desktop actions", "payload-bound owner/session approvals with expiry and replay defense", "strict approved-root path confinement and app/URL allowlists", "SQLite proposal and audit history", "accessible local console", "separate controlled public showcase with fixed cited answers", "synthetic propose-preview-approve-result-audit scenarios", "strict Flask CSP and browser security headers"],
       "limitations": ["full assistant remains a local native service and is not hosted or containerized", "public showcase has no model, web research, repository reads, system inspection, real desktop adapters, or durable audit", "desktop execution disabled by default", "no arbitrary browsing, shell, deletion, screen control, voice assistant, durable personal memory, or external productivity integrations", "broad web search and model reasoning require separately configured providers in the local edition"],
       "validation_status": "passed-local-safety-and-public-showcase",
@@ -193,7 +193,7 @@
       "source_folder": "Software Automation/portfolio-website",
       "run_command": "python \"Software Automation\\portfolio-website\\main.py\" .",
       "implemented_features": ["non-recursive HTML discovery", "sorted page-name list", "page count"],
-      "limitations": ["paired script does not serve, render, deploy, or validate links", "actual Flask HUD is in the repository root"],
+      "limitations": ["paired script does not serve, render, deploy, or validate links", "actual Flask portfolio website is in the repository root"],
       "validation_status": "passed-local",
       "validation_notes": "Executed against a temporary directory; read-only glob."
     },
@@ -213,10 +213,10 @@
       "source_folder": "platform",
       "entrypoint": "platform/app/main.py",
       "run_command": "Set-Location platform; python -m uvicorn app.main:app",
-      "implemented_features": ["FastAPI and typed Pydantic API", "SQLAlchemy with PostgreSQL production configuration and SQLite tests", "Alembic migration", "Argon2 passwords and expiring signed authentication", "server-side RBAC and tenant isolation", "six-category asset and work-item CRUD", "guarded workflow transitions", "immutable audit events", "pagination and filtering", "explicit error envelopes", "health and readiness", "correlation IDs and structured logs", "OpenAPI", "functional operator UI", "approval-pending non-executing Alfred intents"],
-      "limitations": ["not hosted", "no MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations", "Alfred never generates or executes content"],
+      "implemented_features": ["FastAPI and typed Pydantic API", "SQLAlchemy with PostgreSQL production configuration and SQLite tests", "Alembic migration", "Argon2 passwords and expiring signed authentication", "server-side RBAC and tenant isolation", "six-category asset and work-item CRUD", "guarded workflow transitions", "immutable audit events", "pagination and filtering", "explicit error envelopes", "health and readiness", "correlation IDs and structured logs", "OpenAPI", "functional operator UI", "approval-pending non-executing Z intents"],
+      "limitations": ["not hosted", "no MFA, SSO, password reset, refresh-token revocation, rate limiting, background jobs, or external integrations", "Z never generates or executes content"],
       "validation_status": "passed-api-and-migration",
-      "validation_notes": "Dedicated tests cover authentication, RBAC, cross-workspace denial, CRUD, workflow rules, audit immutability, validation, health, OpenAPI, and Alfred non-execution. CI applies the initial migration."
+      "validation_notes": "Dedicated tests cover authentication, RBAC, cross-workspace denial, CRUD, workflow rules, audit immutability, validation, health, OpenAPI, and Z non-execution. CI applies the initial migration."
     },
     {
       "slug": "orbital-data-lab",

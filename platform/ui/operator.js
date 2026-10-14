@@ -49,13 +49,13 @@ function renderWorkItems(items) {
 async function load() {
   document.querySelector("#auth").hidden = true;
   document.querySelector("#operator").hidden = false;
-  const [assets, work, alfred] = await Promise.all([
-    api("/api/v1/assets"), api("/api/v1/work-items"), api("/api/v1/alfred/status")
+  const [assets, work, z] = await Promise.all([
+    api("/api/v1/assets"), api("/api/v1/work-items"), api("/api/v1/z/status")
   ]);
   renderAssets(assets.items);
   renderWorkItems(work.items);
-  document.querySelector("#alfred-status").textContent =
-    `${alfred.status}; generation=${alfred.generates_content}; execution=${alfred.executes_actions}`;
+  document.querySelector("#z-status").textContent =
+    `${z.status}; generation=${z.generates_content}; execution=${z.executes_actions}`;
 }
 
 document.querySelector("#auth-form").addEventListener("submit", async event => {
@@ -98,11 +98,11 @@ document.querySelector("#work-items").addEventListener("click", async event => {
     }); await load();
   } catch (error) { showError(error); }
 });
-document.querySelector("#alfred-form").addEventListener("submit", async event => {
+document.querySelector("#z-form").addEventListener("submit", async event => {
   event.preventDefault();
   try {
-    const intent = await api("/api/v1/alfred/intents", {method:"POST", body:JSON.stringify({
-      prompt:document.querySelector("#alfred-prompt").value
+    const intent = await api("/api/v1/z/intents", {method:"POST", body:JSON.stringify({
+      prompt:document.querySelector("#z-prompt").value
     })}); message.textContent = `Intent ${intent.id}: ${intent.status}; executed=${intent.executed}`;
     event.target.reset();
   } catch (error) { showError(error); }

@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: batcomputer-portfolio
+    name: portfolio-website
     runtime: python
     plan: free
-    branch: agents/batcomputer-website-query
+    branch: main
     buildCommand: python -m pip install --disable-pip-version-check --requirement requirements.txt
     startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 4 --access-logfile - app:app
     healthCheckPath: /healthz

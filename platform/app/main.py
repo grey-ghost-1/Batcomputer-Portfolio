@@ -20,7 +20,6 @@ from sqlalchemy.orm import Session
 from .config import Settings, get_settings
 from .database import Base, engine, get_db
 from .models import (
-    AlfredIntent,
     Asset,
     AuditEvent,
     Category,
@@ -29,10 +28,9 @@ from .models import (
     WorkItem,
     Workspace,
     WorkStatus,
+    ZIntent,
 )
 from .schemas import (
-    AlfredIntentCreate,
-    AlfredIntentRead,
     AssetCreate,
     AssetRead,
     AssetUpdate,
@@ -46,10 +44,12 @@ from .schemas import (
     WorkItemCreate,
     WorkItemRead,
     WorkItemUpdate,
+    ZIntentCreate,
+    ZIntentRead,
 )
 from .security import create_token, current_user, hash_password, require_roles, verify_password
 
-logger = logging.getLogger("batcomputer.platform")
+logger = logging.getLogger("portfolio.platform")
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 UI_DIR = Path(__file__).resolve().parents[1] / "ui"
 TRANSITIONS = {
@@ -68,9 +68,9 @@ async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(
-    title="Batcomputer Operations Platform",
+    title="Operations Platform",
     version="1.0.0",
-    description="Tenant-isolated operational assets, workflows, audit evidence, and approval-only Alfred intents.",
+    description="Tenant-isolated operational assets, workflows, audit evidence, and approval-only Z intents.",
     lifespan=lifespan,
 )
 app.add_middleware(
@@ -193,7 +193,7 @@ def operator_js():
 
 @app.get("/health/live", tags=["health"])
 def live():
-    return {"status": "ok", "service": "batcomputer-platform"}
+    return {"status": "ok", "service": "portfolio-platform"}
 
 
 @app.get("/health/ready", tags=["health"])
@@ -476,13 +476,13 @@ def list_audit_events(
     }
 
 
-@app.get("/api/v1/alfred/status", tags=["alfred"])
-def alfred_status(
+@app.get("/api/v1/z/status", tags=["z"])
+def z_status(
     settings: Settings = Depends(get_settings), _user: User = Depends(current_user)
 ):
     return {
-        "status": "configured" if settings.alfred_provider_url else "unavailable",
-        "provider_configured": bool(settings.alfred_provider_url),
+        "status": "configured" if settings.z_provider_url else "unavailable",
+        "provider_configured": bool(settings.z_provider_url),
         "generates_content": False,
         "executes_actions": False,
         "intent_mode": "approval_pending_only",
@@ -490,15 +490,15 @@ def alfred_status(
 
 
 @app.post(
-    "/api/v1/alfred/intents", response_model=AlfredIntentRead, status_code=202, tags=["alfred"]
+    "/api/v1/z/intents", response_model=ZIntentRead, status_code=202, tags=["z"]
 )
-def create_alfred_intent(
-    payload: AlfredIntentCreate,
+def create_z_intent(
+    payload: ZIntentCreate,
     request: Request,
     db: Session = Depends(get_db),
     user: User = Depends(require_roles(Role.ADMIN, Role.OPERATOR)),
 ):
-    intent = AlfredIntent(
+    intent = ZIntent(
         workspace_id=user.workspace_id,
         actor_user_id=user.id,
         prompt=payload.prompt,
@@ -507,6 +507,6 @@ def create_alfred_intent(
     )
     db.add(intent)
     flush(db)
-    audit(db, request, user, "alfred.intent_created", "alfred_intent", intent.id)
+    audit(db, request, user, "z.intent_created", "z_intent", intent.id)
     commit(db)
     return intent

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Batcomputer Operations Platform</title>
+  <title>Operations Platform</title>
   <style>
     :root { color-scheme: dark; font-family: system-ui, sans-serif; background:#07100f; color:#d8fff7; }
     body { max-width:1100px; margin:auto; padding:2rem; }
@@ -14,8 +14,8 @@
   </style>
 </head>
 <body>
-  <h1>Batcomputer Operations Platform</h1>
-  <p class="muted">Tenant-isolated asset and workflow operations. Alfred records approval-pending intents only.</p>
+  <h1>Operations Platform</h1>
+  <p class="muted">Tenant-isolated asset and workflow operations. Z records approval-pending intents only.</p>
   <p id="message"></p>
   <section id="auth">
     <h2>Access</h2>
@@ -48,9 +48,9 @@
       <table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Transition</th></tr></thead><tbody id="work-items"></tbody></table>
     </section>
     <section>
-      <h2>Alfred boundary</h2>
-      <p id="alfred-status"></p>
-      <form id="alfred-form"><input id="alfred-prompt" placeholder="Intent for human approval" required minlength="3"><button>Record intent</button></form>
+      <h2>Z boundary</h2>
+      <p id="z-status"></p>
+      <form id="z-form"><input id="z-prompt" placeholder="Intent for human approval" required minlength="3"><button>Record intent</button></form>
     </section>
   </main>
   <script src="/operator.js"></script>

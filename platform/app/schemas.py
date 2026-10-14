@@ -99,11 +99,11 @@ class AuditRead(APIModel):
     created_at: datetime
 
 
-class AlfredIntentCreate(APIModel):
+class ZIntentCreate(APIModel):
     prompt: str = Field(min_length=3, max_length=2000)
 
 
-class AlfredIntentRead(APIModel):
+class ZIntentRead(APIModel):
     id: str
     prompt: str
     status: str

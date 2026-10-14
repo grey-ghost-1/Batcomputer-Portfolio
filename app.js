@@ -3,10 +3,10 @@ const panels = Array.from(document.querySelectorAll(".panel"));
 const panelIds = new Set(panels.map((panel) => panel.id));
 const redesignConsoleStatusElement = document.getElementById("redesignConsoleStatus");
 const startVoiceInputButton = document.getElementById("startVoiceInput");
-const alfredChatLogElement = document.getElementById("alfred-chat-log");
-const alfredChatInputElement = document.getElementById("alfred-chat-input");
-const alfredChatSendButton = document.getElementById("alfred-chat-send");
-const alfredApiBase = window.location.port === "8080" ? "http://127.0.0.1:5000" : "";
+const zChatLogElement = document.getElementById("z-chat-log");
+const zChatInputElement = document.getElementById("z-chat-input");
+const zChatSendButton = document.getElementById("z-chat-send");
+const zApiBase = window.location.port === "8080" ? "http://127.0.0.1:5000" : "";
 
 function normalizePanelId(panelId) {
     return panelIds.has(panelId) ? panelId : null;
@@ -65,7 +65,7 @@ function setRedesignStatus(message, isError = false) {
 }
 
 function appendChatEntry(role, content, preformatted = false) {
-    if (!alfredChatLogElement) {
+    if (!zChatLogElement) {
         return;
     }
 
@@ -74,7 +74,7 @@ function appendChatEntry(role, content, preformatted = false) {
 
     const label = document.createElement("span");
     label.className = "chat-entry-label";
-    label.textContent = role === "user" ? "You" : "Alfred";
+    label.textContent = role === "user" ? "You" : "Z";
     entry.appendChild(label);
 
     if (preformatted) {
@@ -87,8 +87,8 @@ function appendChatEntry(role, content, preformatted = false) {
         entry.appendChild(body);
     }
 
-    alfredChatLogElement.appendChild(entry);
-    alfredChatLogElement.scrollTop = alfredChatLogElement.scrollHeight;
+    zChatLogElement.appendChild(entry);
+    zChatLogElement.scrollTop = zChatLogElement.scrollHeight;
     return entry;
 }
 
@@ -128,10 +128,10 @@ function speakAssistantResponse(message) {
     window.speechSynthesis.speak(utterance);
 }
 
-function buildLocalAlfredReply(message) {
+function buildLocalZReply(message) {
     const normalized = message.toLowerCase();
     if (normalized.includes("status") || normalized.includes("health")) {
-        return "Standalone mode is loaded, but the Flask service is not connected. Alfred remains a deterministic helper.";
+        return "Standalone mode is loaded, but the Flask service is not connected. Z remains a deterministic helper.";
     }
     if (normalized.includes("help") || normalized.includes("what can")) {
         return "I can return a small set of predefined portfolio and status responses. I do not use a model or perform system actions.";
@@ -139,24 +139,24 @@ function buildLocalAlfredReply(message) {
     return "This deterministic helper can answer predefined questions about the portfolio, software, cybersecurity, IT support, networking, automation, or system status.";
 }
 
-async function sendAlfredMessage(message) {
+async function sendZMessage(message) {
     setRedesignStatus("Checking deterministic responses…");
     const pendingEntry = appendPendingAssistantEntry();
     try {
-        const response = await fetch(`${alfredApiBase}/alfred`, {
+        const response = await fetch(`${zApiBase}/z`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message }),
         });
         const payload = await response.json();
         if (!response.ok) {
-            throw new Error(payload.error || "Unable to reach Alfred.");
+            throw new Error(payload.error || "Unable to reach Z.");
         }
-        updateChatEntry(pendingEntry, payload.reply || "Alfred is standing by.");
+        updateChatEntry(pendingEntry, payload.reply || "Z is standing by.");
         setRedesignStatus("Deterministic helper connected. No model or actions are available.");
         speakAssistantResponse(payload.reply || "The deterministic helper is standing by.");
     } catch (error) {
-        const reply = buildLocalAlfredReply(message);
+        const reply = buildLocalZReply(message);
         updateChatEntry(pendingEntry, reply);
         setRedesignStatus("Standalone mode: Flask service unavailable.", true);
         speakAssistantResponse(reply);
@@ -164,32 +164,32 @@ async function sendAlfredMessage(message) {
 }
 
 async function submitChatMessage() {
-    if (!alfredChatInputElement) {
+    if (!zChatInputElement) {
         return;
     }
 
-    const message = alfredChatInputElement.value.trim();
+    const message = zChatInputElement.value.trim();
     if (!message) {
         return;
     }
 
     appendChatEntry("user", message);
-    alfredChatInputElement.value = "";
+    zChatInputElement.value = "";
 
     const normalized = message.toLowerCase();
     if (normalized === "approve" || normalized === "reject" || normalized === "refresh" || normalized === "refresh state") {
-        const guidance = "The optional local proposal metadata utility is at /alfred_agent_console.html. It is disabled by default and never reads repository files.";
+        const guidance = "The optional local proposal metadata utility is at /z_agent_console.html. It is disabled by default and never reads repository files.";
         appendChatEntry("assistant", guidance);
         setRedesignStatus("Local proposal metadata is disabled by default.");
         speakAssistantResponse(guidance);
         return;
     }
 
-    await sendAlfredMessage(message);
+    await sendZMessage(message);
 }
 
 function setupVoiceInput() {
-    if (!startVoiceInputButton || !alfredChatInputElement) {
+    if (!startVoiceInputButton || !zChatInputElement) {
         return;
     }
 
@@ -212,7 +212,7 @@ function setupVoiceInput() {
 
     recognition.addEventListener("result", (event) => {
         const transcript = event.results[0][0].transcript.trim();
-        alfredChatInputElement.value = transcript;
+        zChatInputElement.value = transcript;
         setRedesignStatus("Voice input captured. Checking deterministic responses.");
         submitChatMessage().catch((error) => {
             setRedesignStatus(error.message, true);
@@ -224,16 +224,16 @@ function setupVoiceInput() {
     });
 }
 
-if (alfredChatSendButton) {
-    alfredChatSendButton.addEventListener("click", () => {
+if (zChatSendButton) {
+    zChatSendButton.addEventListener("click", () => {
         submitChatMessage().catch((error) => {
             setRedesignStatus(error.message, true);
         });
     });
 }
 
-if (alfredChatInputElement) {
-    alfredChatInputElement.addEventListener("keydown", (event) => {
+if (zChatInputElement) {
+    zChatInputElement.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             event.preventDefault();
             submitChatMessage().catch((error) => {
@@ -245,8 +245,8 @@ if (alfredChatInputElement) {
 
 setupVoiceInput();
 
-if (alfredChatLogElement) {
-    alfredChatLogElement.innerHTML = '<div class="chat-empty">Alfred is a deterministic local helper. Ask about this portfolio or use browser voice input; no AI model or action execution is connected.</div>';
+if (zChatLogElement) {
+    zChatLogElement.innerHTML = '<div class="chat-empty">Z is a deterministic local helper. Ask about this portfolio or use browser voice input; no AI model or action execution is connected.</div>';
 }
 
 async function loadPublicSiteConfig() {
