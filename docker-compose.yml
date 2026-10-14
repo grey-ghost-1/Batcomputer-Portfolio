@@ -28,11 +28,11 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: batcomputer
-      POSTGRES_USER: batcomputer
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: portfolio
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U batcomputer -d batcomputer"]
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -46,8 +46,8 @@ services:
       PLATFORM_ENVIRONMENT: ${PLATFORM_ENVIRONMENT:-development}
       PLATFORM_DATABASE_HOST: postgres
       PLATFORM_DATABASE_PORT: "5432"
-      PLATFORM_DATABASE_NAME: batcomputer
-      PLATFORM_DATABASE_USER: batcomputer
+      PLATFORM_DATABASE_NAME: portfolio
+      PLATFORM_DATABASE_USER: portfolio
       PLATFORM_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
       PLATFORM_SECRET_KEY: ${PLATFORM_SECRET_KEY:-development-only-change-before-production}
     depends_on:

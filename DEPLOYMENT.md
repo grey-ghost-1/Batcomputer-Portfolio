@@ -38,8 +38,8 @@ python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 Set-Location orbital-data-lab
 python -m uvicorn orbital_lab.api:app --host 0.0.0.0 --port 8010
 
-# Z (separate trusted local terminal; see alfred-assistant/README.md first)
-Set-Location alfred-assistant
+# Z (separate trusted local terminal; see z-assistant/README.md first)
+Set-Location z-assistant
 .\start.ps1
 ```
 
@@ -47,15 +47,15 @@ For a local multi-container environment, copy `.env.example` to `.env`, replace 
 
 ## Render blueprint
 
-[`render.yaml`](render.yaml) defines one manually activated Python web service named `batcomputer-portfolio`. It installs the root requirements, starts `app:app` with Gunicorn, binds only the deployment process to `0.0.0.0:$PORT`, and uses `/healthz` for health checks. Local `python app.py` startup remains loopback-only on port 5000. Automatic deploys are off so applying or promoting a release remains an explicit owner decision.
+[`render.yaml`](render.yaml) defines one manually activated Python web service named `portfolio-website`. It installs the root requirements, starts `app:app` with Gunicorn, binds only the deployment process to `0.0.0.0:$PORT`, and uses `/healthz` for health checks. Local `python app.py` startup remains loopback-only on port 5000. Automatic deploys are off so applying or promoting a release remains an explicit owner decision.
 
 ### Blueprint setup
 
-1. Merge the release into `agents/batcomputer-website-query`, then open the repository's exact [Deploy to Render activation URL](https://render.com/deploy?repo=https://github.com/grey-ghost-1/Batcomputer-Portfolio). Sign in and authorize repository access in Render; these are the remaining owner-controlled steps, and no credentials belong in git.
-2. Review the repository-root `render.yaml`, the `agents/batcomputer-website-query` production branch, and the single `batcomputer-portfolio` service, then apply the Blueprint. Do not add the platform, Orbital, or `alfred-assistant` as linked services.
+1. Merge the release into `main`, then open the repository's exact [Deploy to Render activation URL](https://render.com/deploy?repo=https://github.com/grey-ghost-1/portfolio-website). Sign in and authorize repository access in Render; these are the remaining owner-controlled steps, and no credentials belong in git.
+2. Review the repository-root `render.yaml`, the `main` production branch, and the single `portfolio-website` service, then apply the Blueprint. Do not add the platform, Orbital, or `z-assistant` as linked services.
 3. Confirm Render generated `SITE_SESSION_SECRET`. Keep `SITE_ENVIRONMENT=production`, `SITE_HOSTED_MODE=true`, and `SITE_PROPOSALS_ENABLED=false`. Hosted startup fails closed if these safety requirements conflict or the managed session secret is absent.
-4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://batcomputer-portfolio.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
-5. Verify `/alfred-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
+4. Trigger the first manual deploy and wait for the `/healthz` check to pass. The expected URL is `https://portfolio-website.onrender.com` when that globally unique service hostname is available; otherwise use the exact `https://<render-assigned-service-name>.onrender.com` shown by Render. The corresponding health URL is `<service-origin>/healthz`.
+5. Verify `/z-showcase.html` on that HTTPS origin. It must report curated evidence, no connected model, disabled network tools, and permanently simulated execution.
 
 The hosted process trusts one Render proxy hop for forwarded scheme, client, and host information. Secure cookies, HTTPS URL generation, HSTS, a same-origin CSP, framing denial, MIME-sniffing denial, and a no-referrer policy are enabled in production. Public pages contain no `http://` or localhost links. Port 8020 is not bound, proxied, linked, or configured in the Blueprint.
 

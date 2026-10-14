@@ -147,8 +147,8 @@ class AppTestCase(unittest.TestCase):
             "https://github.com/public/example/tree/main/orbital-data-lab",
         )
         self.assertEqual(
-            config["public_source_urls"]["alfred-assistant"],
-            "https://github.com/public/example/tree/main/alfred-assistant",
+            config["public_source_urls"]["z-assistant"],
+            "https://github.com/public/example/tree/main/z-assistant",
         )
         self.assertEqual(
             config["public_source_urls"][""],
@@ -177,10 +177,10 @@ class AppTestCase(unittest.TestCase):
 
     def test_static_category_and_project_routes(self):
         self.assertEqual(self.get_status("/"), 200)
-        self.assertEqual(self.get_status("/batcomputer_console.html"), 200)
+        self.assertEqual(self.get_status("/portfolio_console.html"), 200)
         self.assertEqual(self.get_status("/labs.html"), 200)
         self.assertEqual(self.get_status("/project-evidence.json"), 200)
-        self.assertEqual(self.get_status("/ALFRED_STATUS.md"), 200)
+        self.assertEqual(self.get_status("/Z_STATUS.md"), 200)
 
         for alias, file_name in site.CATEGORY_PAGES.items():
             with self.subTest(alias=alias):
@@ -215,12 +215,12 @@ class AppTestCase(unittest.TestCase):
                 self.assertEqual(self.get_status(path), 404)
 
     def test_z_requires_text_and_is_deterministic(self):
-        self.assertEqual(self.client.post("/alfred", json={}).status_code, 400)
-        self.assertEqual(self.client.post("/alfred", json={"message": "   "}).status_code, 400)
-        self.assertEqual(self.client.post("/alfred", json={"message": []}).status_code, 400)
+        self.assertEqual(self.client.post("/z", json={}).status_code, 400)
+        self.assertEqual(self.client.post("/z", json={"message": "   "}).status_code, 400)
+        self.assertEqual(self.client.post("/z", json={"message": []}).status_code, 400)
 
-        first = self.client.post("/alfred", json={"message": "status"})
-        second = self.client.post("/alfred", json={"message": "status"})
+        first = self.client.post("/z", json={"message": "status"})
+        second = self.client.post("/z", json={"message": "status"})
         self.assertEqual(first.status_code, 200)
         self.assertEqual(first.get_json(), second.get_json())
         payload = first.get_json()
@@ -322,7 +322,7 @@ class AppTestCase(unittest.TestCase):
         cases = {
             "app.py": "from flask import Flask",
             "README.md": "# Portfolio Website",
-            "render.yaml": "batcomputer-platform-db",
+            "render.yaml": "portfolio-platform-db",
             "site_config.py": "REPOSITORY_URL =",
             "platform/app/config.py": "DEVELOPMENT_SECRET =",
         }
@@ -372,7 +372,7 @@ class AppTestCase(unittest.TestCase):
             self.assertNotIn(forbidden_key, serialized_hud)
 
     def test_hud_preview_approval_and_rejection_do_not_write(self):
-        home = ROOT / "batcomputer_console.html"
+        home = ROOT / "portfolio_console.html"
         original = home.read_bytes()
 
         self.assertEqual(self.client.post("/api/hud-redesign/proposals", json={}).status_code, 400)
@@ -596,7 +596,7 @@ class StaticContentTestCase(unittest.TestCase):
 
     def test_homepage_is_recruiter_clear_and_flagship_first(self):
         parser = TextParser()
-        parser.feed((ROOT / "batcomputer_console.html").read_text(encoding="utf-8"))
+        parser.feed((ROOT / "portfolio_console.html").read_text(encoding="utf-8"))
         normalized = " ".join(parser.text.split())
         for expected in (
             "ENTRY-LEVEL FULL-STACK / BACKEND SOFTWARE ENGINEER",
@@ -619,7 +619,7 @@ class StaticContentTestCase(unittest.TestCase):
         self.assertLess(primary_position, labs_position)
 
     def test_homepage_navigation_covers_six_categories_and_application(self):
-        content = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        content = (ROOT / "portfolio_console.html").read_text(encoding="utf-8")
         parser = LinkParser()
         parser.feed(content)
         expected_links = {
@@ -627,7 +627,7 @@ class StaticContentTestCase(unittest.TestCase):
             "projects/operations-platform.html",
             "projects/orbital-data-lab.html",
             "projects/algorithm-quality-lab.html",
-            "projects/alfred-ai-assistant.html",
+            "projects/z-ai-assistant.html",
             "cybersecurity.html",
             "network_software.html",
             "labs.html",
@@ -641,7 +641,7 @@ class StaticContentTestCase(unittest.TestCase):
             "operations-platform.html": "platform",
             "orbital-data-lab.html": "orbital-data-lab",
             "algorithm-quality-lab.html": "algorithms-quality",
-            "alfred-ai-assistant.html": "alfred-assistant",
+            "z-ai-assistant.html": "z-assistant",
         }
         required_sections = (
             "Problem and users",
@@ -665,7 +665,7 @@ class StaticContentTestCase(unittest.TestCase):
                 self.assertNotIn("fake screenshot", content.lower())
 
     def test_flagship_cards_pair_local_evidence_with_public_source(self):
-        home = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        home = (ROOT / "portfolio_console.html").read_text(encoding="utf-8")
         flagship_links = {
             "View platform evidence": (
                 "projects/operations-platform.html",
@@ -680,8 +680,8 @@ class StaticContentTestCase(unittest.TestCase):
                 f"{REPOSITORY_URL}/tree/{SOURCE_REF}/algorithms-quality",
             ),
             "View Z evidence": (
-                "projects/alfred-ai-assistant.html",
-                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/alfred-assistant",
+                "projects/z-ai-assistant.html",
+                f"{REPOSITORY_URL}/tree/{SOURCE_REF}/z-assistant",
             ),
         }
         client = site.app.test_client()
@@ -756,10 +756,10 @@ class StaticContentTestCase(unittest.TestCase):
         self.assertEqual(len(retained_legacy_pages), 20)
         self.assertTrue(all((ROOT / page).is_file() for page in retained_legacy_pages))
         self.assertEqual(site.app.test_client().get("/api/site/summary").get_json()["labs_count"], 19)
-        self.assertTrue((ROOT / "Software Automation" / "alfred-ai-assistant" / "main.py").is_file())
+        self.assertTrue((ROOT / "Software Automation" / "z-ai-assistant" / "main.py").is_file())
 
     def test_accessibility_and_responsive_contracts_are_present(self):
-        home = (ROOT / "batcomputer_console.html").read_text(encoding="utf-8")
+        home = (ROOT / "portfolio_console.html").read_text(encoding="utf-8")
         css = (ROOT / "style.css").read_text(encoding="utf-8")
         self.assertIn('class="skip-link"', home)
         self.assertIn('aria-label="Six project categories"', home)
@@ -779,7 +779,7 @@ class StaticContentTestCase(unittest.TestCase):
         public_files = (
             list(ROOT.glob("*.html"))
             + list((ROOT / "projects").glob("*.html"))
-            + [ROOT / "README.md", ROOT / "app.js", ROOT / "alfred_agent.js"]
+            + [ROOT / "README.md", ROOT / "app.js", ROOT / "z_agent.js"]
         )
         content = "\n".join(path.read_text(encoding="utf-8") for path in public_files)
         for unsupported in (

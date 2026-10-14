@@ -476,13 +476,13 @@ def list_audit_events(
     }
 
 
-@app.get("/api/v1/alfred/status", tags=["alfred"])
+@app.get("/api/v1/z/status", tags=["z"])
 def z_status(
     settings: Settings = Depends(get_settings), _user: User = Depends(current_user)
 ):
     return {
-        "status": "configured" if settings.alfred_provider_url else "unavailable",
-        "provider_configured": bool(settings.alfred_provider_url),
+        "status": "configured" if settings.z_provider_url else "unavailable",
+        "provider_configured": bool(settings.z_provider_url),
         "generates_content": False,
         "executes_actions": False,
         "intent_mode": "approval_pending_only",
@@ -490,7 +490,7 @@ def z_status(
 
 
 @app.post(
-    "/api/v1/alfred/intents", response_model=ZIntentRead, status_code=202, tags=["alfred"]
+    "/api/v1/z/intents", response_model=ZIntentRead, status_code=202, tags=["z"]
 )
 def create_z_intent(
     payload: ZIntentCreate,
@@ -507,6 +507,6 @@ def create_z_intent(
     )
     db.add(intent)
     flush(db)
-    audit(db, request, user, "alfred.intent_created", "z_intent", intent.id)
+    audit(db, request, user, "z.intent_created", "z_intent", intent.id)
     commit(db)
     return intent

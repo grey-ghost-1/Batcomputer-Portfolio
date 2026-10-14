@@ -20,12 +20,12 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./platform.db"
     database_host: str | None = None
     database_port: int = Field(default=5432, ge=1, le=65535)
-    database_name: str = "batcomputer"
+    database_name: str = "portfolio"
     database_user: str | None = None
     database_password: SecretStr | None = None
     secret_key: str = DEVELOPMENT_SECRET
     access_token_minutes: int = Field(default=30, ge=5, le=1440)
-    alfred_provider_url: str | None = None
+    z_provider_url: str | None = None
     allowed_origins: str = "http://127.0.0.1:8000,http://localhost:8000"
 
     @field_validator("database_url", mode="before")

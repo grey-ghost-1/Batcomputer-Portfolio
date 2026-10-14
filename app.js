@@ -143,7 +143,7 @@ async function sendZMessage(message) {
     setRedesignStatus("Checking deterministic responses…");
     const pendingEntry = appendPendingAssistantEntry();
     try {
-        const response = await fetch(`${zApiBase}/alfred`, {
+        const response = await fetch(`${zApiBase}/z`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message }),
@@ -178,7 +178,7 @@ async function submitChatMessage() {
 
     const normalized = message.toLowerCase();
     if (normalized === "approve" || normalized === "reject" || normalized === "refresh" || normalized === "refresh state") {
-        const guidance = "The optional local proposal metadata utility is at /alfred_agent_console.html. It is disabled by default and never reads repository files.";
+        const guidance = "The optional local proposal metadata utility is at /z_agent_console.html. It is disabled by default and never reads repository files.";
         appendChatEntry("assistant", guidance);
         setRedesignStatus("Local proposal metadata is disabled by default.");
         speakAssistantResponse(guidance);

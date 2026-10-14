@@ -52,25 +52,25 @@ jobs:
         run: python -m pytest tests -q
 
       - name: Test Z local assistant
-        working-directory: alfred-assistant
+        working-directory: z-assistant
         run: python -m pytest tests -q
 
       - name: Lint Python
-        run: python -m ruff check app.py alfred_showcase.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
+        run: python -m ruff check app.py z_showcase.py site_config.py scripts tests platform orbital-data-lab algorithms-quality z-assistant
 
       - name: Compile Python modules
-        run: python -m compileall -q app.py alfred_showcase.py site_config.py scripts tests platform orbital-data-lab algorithms-quality alfred-assistant
+        run: python -m compileall -q app.py z_showcase.py site_config.py scripts tests platform orbital-data-lab algorithms-quality z-assistant
 
       - name: Type-check Z service
-        run: python -m mypy --check-untyped-defs --disallow-untyped-defs --no-implicit-optional alfred-assistant/alfred
+        run: python -m mypy --check-untyped-defs --disallow-untyped-defs --no-implicit-optional z-assistant/z
 
       - name: Validate JavaScript
         run: |
           node --check app.js
-          node --check alfred-showcase.js
+          node --check z-showcase.js
           node --check local-links.js
-          node --check alfred_agent.js
-          node --check alfred-assistant/ui/console.js
+          node --check z_agent.js
+          node --check z-assistant/ui/console.js
           node --check orbital-data-lab/ui/orbital.js
           node --check platform/ui/operator.js
 

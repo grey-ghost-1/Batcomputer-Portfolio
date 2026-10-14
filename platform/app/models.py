@@ -113,7 +113,7 @@ class AuditEvent(Base):
 
 
 class ZIntent(Base):
-    __tablename__ = "alfred_intents"
+    __tablename__ = "z_intents"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=new_id)
     workspace_id: Mapped[str] = mapped_column(ForeignKey("workspaces.id"), index=True)

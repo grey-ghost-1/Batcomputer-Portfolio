@@ -116,17 +116,17 @@ def test_database_fields_encode_uri_special_password_characters():
         environment="production",
         database_host="postgres",
         database_port=5432,
-        database_name="batcomputer",
-        database_user="batcomputer",
+        database_name="portfolio",
+        database_user="portfolio",
         database_password=special_password,
         secret_key="unique-production-secret-with-at-least-32-characters",
     )
     parsed = make_url(settings.database_url)
     assert parsed.drivername == "postgresql+psycopg"
-    assert parsed.username == "batcomputer"
+    assert parsed.username == "portfolio"
     assert parsed.password == special_password
     assert parsed.host == "postgres"
-    assert parsed.database == "batcomputer"
+    assert parsed.database == "portfolio"
     assert "%40%3A%2F%23" in settings.database_url
     alembic_config = Config()
     alembic_config.set_main_option(
@@ -296,7 +296,7 @@ def test_validation_uses_explicit_error_envelope(client: TestClient):
 
 def test_z_is_unavailable_and_intents_never_execute(client: TestClient):
     token = register(client, "Z")
-    status_response = client.get("/api/v1/alfred/status", headers=auth(token)).json()
+    status_response = client.get("/api/v1/z/status", headers=auth(token)).json()
     assert status_response == {
         "status": "unavailable",
         "provider_configured": False,
@@ -305,7 +305,7 @@ def test_z_is_unavailable_and_intents_never_execute(client: TestClient):
         "intent_mode": "approval_pending_only",
     }
     intent = client.post(
-        "/api/v1/alfred/intents",
+        "/api/v1/z/intents",
         headers=auth(token),
         json={"prompt": "Draft a maintenance plan"},
     )
@@ -317,11 +317,11 @@ def test_z_is_unavailable_and_intents_never_execute(client: TestClient):
         environment="test",
         database_url=get_settings().database_url,
         secret_key=get_settings().secret_key,
-        alfred_provider_url="https://configured.invalid",
+        z_provider_url="https://configured.invalid",
     )
     app.dependency_overrides[get_settings] = lambda: configured
     try:
-        configured_status = client.get("/api/v1/alfred/status", headers=auth(token)).json()
+        configured_status = client.get("/api/v1/z/status", headers=auth(token)).json()
     finally:
         app.dependency_overrides.clear()
     assert configured_status["status"] == "configured"

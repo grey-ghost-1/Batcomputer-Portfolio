@@ -2,16 +2,16 @@ import os
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
-REPOSITORY_URL = "https://github.com/grey-ghost-1/Batcomputer-Portfolio"
-SOURCE_REF = "agents/batcomputer-website-query"
+REPOSITORY_URL = "https://github.com/grey-ghost-1/portfolio-website"
+SOURCE_REF = "main"
 PUBLIC_SOURCE_PATHS = (
     "",
     "platform",
     "orbital-data-lab",
     "algorithms-quality",
     "algorithms-quality/QUALITY.md",
-    "alfred-assistant",
-    "ALFRED_STATUS.md",
+    "z-assistant",
+    "Z_STATUS.md",
     ".github/workflows/ci.yml",
 )
 

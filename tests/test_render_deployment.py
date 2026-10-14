@@ -37,9 +37,9 @@ class RenderManifestTestCase(unittest.TestCase):
         self.assertEqual(len(self.manifest["services"]), 1)
         service = self.manifest["services"][0]
         self.assertEqual(service["type"], "web")
-        self.assertEqual(service["name"], "batcomputer-portfolio")
+        self.assertEqual(service["name"], "portfolio-website")
         self.assertEqual(service["runtime"], "python")
-        self.assertEqual(service["branch"], "agents/batcomputer-website-query")
+        self.assertEqual(service["branch"], "main")
         self.assertEqual(service["healthCheckPath"], "/healthz")
         self.assertEqual(service["autoDeployTrigger"], "off")
         self.assertNotIn("dockerfilePath", service)
@@ -67,7 +67,7 @@ class RenderManifestTestCase(unittest.TestCase):
         self.assertEqual(variables["SITE_HOSTED_MODE"]["value"], "true")
         self.assertEqual(variables["SITE_PROPOSALS_ENABLED"]["value"], "false")
         self.assertTrue(variables["SITE_SESSION_SECRET"]["generateValue"])
-        forbidden_fragments = ("ALFRED", "OLLAMA", "OPENAI", "PROVIDER", "TOKEN", "API_KEY")
+        forbidden_fragments = ("Z_", "OLLAMA", "OPENAI", "PROVIDER", "TOKEN", "API_KEY")
         for variable in variables:
             with self.subTest(variable=variable):
                 self.assertFalse(any(fragment in variable for fragment in forbidden_fragments))
@@ -151,7 +151,7 @@ class HostedRuntimeTestCase(unittest.TestCase):
             self.assertNotIn("Server", health.headers)
             self.assertIn("max-age=31536000", health.headers["Strict-Transport-Security"])
 
-            state = client.get("/api/alfred-showcase/state").get_json()
+            state = client.get("/api/z-showcase/state").get_json()
             self.assertIsNone(state["model"])
             self.assertFalse(state["network_enabled"])
             self.assertFalse(state["real_execution_enabled"])
@@ -177,8 +177,8 @@ class HostedLinkContractTestCase(unittest.TestCase):
         self.assertEqual(violations, [])
 
     def test_public_showcase_uses_only_same_origin_api_requests(self):
-        script = (ROOT / "alfred-showcase.js").read_text(encoding="utf-8")
-        self.assertIn('const apiBase = "/api/alfred-showcase";', script)
+        script = (ROOT / "z-showcase.js").read_text(encoding="utf-8")
+        self.assertIn('const apiBase = "/api/z-showcase";', script)
         for forbidden in ("http://", "https://", "localhost", "127.0.0.1", "8020"):
             self.assertNotIn(forbidden, script)
 
